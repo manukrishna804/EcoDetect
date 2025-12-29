@@ -3,6 +3,7 @@ import HomeDashboard from "./pages/HomeDashboard";
 import DetectSpecies from "./pages/DetectSpecies";
 import DetectResult from "./pages/DetectResult";
 import PrecautionFirstAid from "./pages/PrecautionFirstAid";
+import PlanAwareness from "./pages/PlanAwareness";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/detect" element={<DetectSpecies />} />
         <Route path="/result" element={<DetectResult />} />
         <Route path="/precaution" element={<PrecautionFirstAid />} />
+        <Route path="/plan-awareness" element={<PlanAwareness />} />
       </Routes>
     </BrowserRouter>
   );
