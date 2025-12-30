@@ -15,8 +15,9 @@ export default function PlanAwareness() {
     return (
         <div className="pa-container">
             {/* Header */}
-            <div className="pa-content">
-                <div className="pa-header">
+
+            <header className="pa-header">
+                <div className="pa-content">
                     <div className="pa-header-top">
                         <button className="pa-search-btn">
                             <span className="material-symbols-outlined">search</span>
@@ -24,6 +25,9 @@ export default function PlanAwareness() {
                     </div>
                     <h1 className="pa-title">Learn & Awareness</h1>
                 </div>
+            </header>
+
+            <div className="pa-content">
 
                 {/* Hero Card */}
                 <div className="pa-fact-card">
