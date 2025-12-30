@@ -4,6 +4,7 @@ import DetectSpecies from "./pages/DetectSpecies";
 import DetectResult from "./pages/DetectResult";
 import PrecautionFirstAid from "./pages/PrecautionFirstAid";
 import PlanAwareness from "./pages/PlanAwareness";
+import SafetyTips from "./pages/Learn&Awareness/safety_tips";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/result" element={<DetectResult />} />
         <Route path="/precaution" element={<PrecautionFirstAid />} />
         <Route path="/plan-awareness" element={<PlanAwareness />} />
+        <Route path="/learn/safety-tips" element={<SafetyTips />} />
       </Routes>
     </BrowserRouter>
   );

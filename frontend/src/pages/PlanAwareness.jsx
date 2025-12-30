@@ -65,7 +65,7 @@ export default function PlanAwareness() {
                     </div>
 
                     {/* Card 2 */}
-                    <div className="pa-card">
+                    <Link to="/learn/safety-tips" className="pa-card">
                         <div className="pa-card-img-container" style={{ backgroundImage: `url(${safetyImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">shield</span>
@@ -75,7 +75,7 @@ export default function PlanAwareness() {
                             <h3>Safety Tips</h3>
                             <p>Immediate actions</p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Card 3 */}
                     <div className="pa-card">
