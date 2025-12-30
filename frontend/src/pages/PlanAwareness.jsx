@@ -91,7 +91,7 @@ export default function PlanAwareness() {
                     </Link>
 
                     {/* Card 4 */}
-                    <div className="pa-card">
+                    <Link to="/learn/first-aid-basics" className="pa-card">
                         <div className="pa-card-img-container" style={{ backgroundImage: `url(${firstAidImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">medical_services</span>
@@ -101,7 +101,7 @@ export default function PlanAwareness() {
                             <h3>First Aid Basics</h3>
                             <p>Treating bites</p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Card 5 */}
                     <div className="pa-card">
