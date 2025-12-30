@@ -150,11 +150,12 @@ export default function SafetyTips() {
                     <p>This section focuses on prevention and awareness.</p>
                     <p>For medical response or treatment guidance, refer to the First Aid Basics section.</p>
 
-                    <div className="st-footer-links">
-                        <Link to="/plan-awareness" className="st-footer-link">Back to Learn & Awareness</Link>
-                        {/* Assuming specific routes based on context or user prompt - leaving generic for now or linking back */}
-                        {/* <Link to="/species-library" className="st-footer-link">Species Library</Link> */}
-                    </div>
+                   <div className="prev-footer-nav">
+                                       <Link to="/learn/prevention" className="prev-nav-pill">Prevention</Link>
+                                       <Link to="/learn/first-aid-basics" className="prev-nav-pill">First Aid Basics</Link>
+                                       <Link to="/learn/seasonal-alerts" className="prev-nav-pill">Seasonal Alerts</Link>
+                                       <Link to="/learn/community" className="prev-nav-pill">Community Awareness</Link>
+                                   </div>
                 </footer>
 
             </div>

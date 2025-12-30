@@ -104,7 +104,7 @@ export default function PlanAwareness() {
                     </Link>
 
                     {/* Card 5 */}
-                    <div className="pa-card">
+                    <Link to="/learn/seasonal-alerts" className="pa-card">
                         <div className="pa-card-img-container" style={{ backgroundImage: `url(${seasonalImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">calendar_month</span>
@@ -114,10 +114,10 @@ export default function PlanAwareness() {
                             <h3>Seasonal Alerts</h3>
                             <p>Monthly watch</p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Card 6 */}
-                    <div className="pa-card">
+                    <Link to="/learn/community" className="pa-card">
                         <div className="pa-card-img-container" style={{ backgroundImage: `url(${communityImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">forum</span>
@@ -127,7 +127,7 @@ export default function PlanAwareness() {
                             <h3>Community</h3>
                             <p>Local stories</p>
                         </div>
-                    </div>
+                    </Link>
 
                 </div>
             </div>

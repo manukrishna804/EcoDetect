@@ -7,6 +7,8 @@ import PlanAwareness from "./pages/PlanAwareness";
 import SafetyTips from "./pages/Learn&Awareness/safety_tips";
 import Prevention from "./pages/Learn&Awareness/prevention";
 import FirstAidBasics from "./pages/Learn&Awareness/firstaid_basics";
+import SeasonalAlerts from "./pages/Learn&Awareness/seasonal_alerts";
+import Community from "./pages/Learn&Awareness/community";
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/learn/safety-tips" element={<SafetyTips />} />
         <Route path="/learn/prevention" element={<Prevention />} />
         <Route path="/learn/first-aid-basics" element={<FirstAidBasics />} />
+        <Route path="/learn/seasonal-alerts" element={<SeasonalAlerts />} />
+        <Route path="/learn/community" element={<Community />} />
       </Routes>
     </BrowserRouter>
   );

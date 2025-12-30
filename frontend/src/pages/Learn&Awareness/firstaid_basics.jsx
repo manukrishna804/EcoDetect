@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './FirstAidBasics.css';
 
 const FirstAidBasics = () => {
@@ -222,10 +223,10 @@ const FirstAidBasics = () => {
 
                 {/* Footer Navigation */}
                 <div className="fa-footer-nav">
-                    <span className="fa-nav-pill">Safety Tips</span>
-                    <span className="fa-nav-pill">Prevention</span>
-                    <span className="fa-nav-pill">Seasonal Alerts</span>
-                    <span className="fa-nav-pill">Community Awareness</span>
+                    <Link to="/learn/safety-tips" className="fa-nav-pill">Safety Tips</Link>
+                    <Link to="/learn/prevention" className="fa-nav-pill">Prevention</Link>
+                    <Link to="/learn/seasonal-alerts" className="fa-nav-pill">Seasonal Alerts</Link>
+                    <Link to="/learn/community" className="fa-nav-pill">Community Awareness</Link>
                 </div>
 
             </div>

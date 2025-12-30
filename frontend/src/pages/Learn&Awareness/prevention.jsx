@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Prevention.css';
 
 const Prevention = () => {
@@ -317,10 +318,10 @@ const Prevention = () => {
 
                 {/* Footer Navigation */}
                 <div className="prev-footer-nav">
-                    <span className="prev-nav-pill">Safety Tips</span>
-                    <span className="prev-nav-pill">First Aid Basics</span>
-                    <span className="prev-nav-pill">Seasonal Alerts</span>
-                    <span className="prev-nav-pill">Community Awareness</span>
+                    <Link to="/learn/safety-tips" className="prev-nav-pill">Safety Tips</Link>
+                    <Link to="/learn/first-aid-basics" className="prev-nav-pill">First Aid Basics</Link>
+                    <Link to="/learn/seasonal-alerts" className="prev-nav-pill">Seasonal Alerts</Link>
+                    <Link to="/learn/community" className="prev-nav-pill">Community Awareness</Link>
                 </div>
 
             </div>
