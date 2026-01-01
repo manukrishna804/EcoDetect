@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import './snake.css';
-import biteImage from '../../assets/bite.png';
+import './snake_emergency.css';
+import biteImage from '../assets/snake_emergency/bite.png';
 
 const SnakeEmergency = () => {
   const [activeTab, setActiveTab] = useState('firstaid');

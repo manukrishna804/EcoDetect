@@ -1,0 +1,36 @@
+{
+    "protocols": {
+        "mosquito_disease_prevention": {
+            "type": "precaution",
+            "video_path": "/videos/mosquito_precaution.mp4"
+        },
+        "mosquito_bite_firstaid": {
+            "type": "first_aid",
+            "video_path": "/videos/mosquito_firstaid.mp4"
+        },
+        "snakebite_neuro": {
+            "type": "first_aid",
+            "video_path": "/videos/snake_neuro_firstaid.mp4"
+        },
+        "snakebite_hemotoxic": {
+            "type": "first_aid",
+            "video_path": "/videos/snake_hemo_firstaid.mp4"
+        },
+        "frog_toxin_exposure": {
+            "type": "first_aid",
+            "video_path": "/videos/frog_toxin_firstaid.mp4"
+        },
+        "spider_bite_firstaid": {
+            "type": "first_aid",
+            "video_path": "/videos/spider_firstaid.mp4"
+        },
+        "avoid_snake_encounter": {
+            "type": "precaution",
+            "video_path": "/videos/snake_precaution.mp4"
+        },
+        "avoid_frog_handling": {
+            "type": "precaution",
+            "video_path": "/videos/frog_precaution.mp4"
+        }
+    }
+}
