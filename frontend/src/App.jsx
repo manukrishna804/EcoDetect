@@ -5,6 +5,7 @@ import DetectResult from "./pages/DetectResult";
 import PrecautionFirstAid from "./pages/PrecautionFirstAid";
 import PlanAwareness from "./pages/PlanAwareness";
 import SafetyTips from "./pages/Learn&Awareness/safety_tips";
+
 import SnakeEmergency from "./pages/Learn&Awareness/snake";
 
 function App() {
