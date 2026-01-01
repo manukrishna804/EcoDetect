@@ -5,6 +5,7 @@ import DetectResult from "./pages/DetectResult";
 import PrecautionFirstAid from "./pages/PrecautionFirstAid";
 import PlanAwareness from "./pages/PlanAwareness";
 import SafetyTips from "./pages/Learn&Awareness/safety_tips";
+import SnakeEmergency from "./pages/Learn&Awareness/snake";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/precaution" element={<PrecautionFirstAid />} />
         <Route path="/plan-awareness" element={<PlanAwareness />} />
         <Route path="/learn/safety-tips" element={<SafetyTips />} />
+        <Route path="/snake" element={<SnakeEmergency />} />
       </Routes>
     </BrowserRouter>
   );
