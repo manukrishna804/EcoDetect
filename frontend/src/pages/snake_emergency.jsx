@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './snake_emergency.css';
 import biteImage from '../assets/snake_emergency/bite.png';
+import AntivenomMap from '../components/AntivenomMap';
 
 const SnakeEmergency = () => {
   const [activeTab, setActiveTab] = useState('firstaid');
@@ -18,7 +19,6 @@ const SnakeEmergency = () => {
             <span className="warning-icon">⚠️</span>
           </div>
         </div>
-        <button className="sound-icon">🔊</button>
       </header>
 
       {/* ===== TAB SWITCHER ===== */}
@@ -181,22 +181,7 @@ const SnakeEmergency = () => {
                 <span className="urgency-icon">🏥</span>
                 Nearest Antivenom
               </h2>
-              <div className="map-container">
-                <div className="map-mockup">
-                  <div className="map-marker">📍</div>
-                </div>
-              </div>
-
-              <div className="hospital-card">
-                <div className="hospital-header">
-                  <div className="hospital-info">
-                    <h3>City General Hospital</h3>
-                    <p className="hospital-distance">2.3 km • 8 min away</p>
-                  </div>
-                  <span className="antivenom-badge">Antivenom Available</span>
-                </div>
-                <button className="go-button">🧭 GO - Navigate Now</button>
-              </div>
+              <AntivenomMap />
             </section>
           </>
         )}

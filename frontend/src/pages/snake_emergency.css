@@ -113,13 +113,7 @@ body {
   text-transform: uppercase;
 }
 
-.sound-icon {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  opacity: 0.7;
-}
+
 
 /* ===== TAB SWITCHER - FLOATING PILL ===== */
 .tab-switcher {
