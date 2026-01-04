@@ -93,7 +93,7 @@ export const hospitals = [
     // ================= PALAKKAD =================
     { id: 73, name: "Government Tribal Specialty Hospital, Kottathara", district: "Palakkad", latitude: 11.0821, longitude: 76.6542, antivenom: true },
     { id: 74, name: "Palana Hospital, Palakkad", district: "Palakkad", latitude: 10.7412, longitude: 76.6312, antivenom: true },
-    { id: 75, name: "Valluvanad Hospital, Ottapalam", district: "Palakkad", latitude: 10.7712, longitude: 76.3812, antivenom: true },
+    { id: 75, name: "Valluvanad Hospital, Ottapalam", district: "Palakkad", latitude: 10.7746, longitude: 76.3605, antivenom: true },
     { id: 76, name: "PK Das Institute of Medical Sciences, Palakkad", district: "Palakkad", latitude: 10.7582, longitude: 76.4112, antivenom: true },
     { id: 77, name: "Government District Hospital, Palakkad", district: "Palakkad", latitude: 10.7781, longitude: 76.6512, antivenom: true },
     { id: 78, name: "Sevana Hospital, Pattambi", district: "Palakkad", latitude: 10.8052, longitude: 76.1852, antivenom: true },
