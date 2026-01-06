@@ -1,14 +1,12 @@
 // AntivenomMap.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import './AntivenomMap.css';
-import { hospitals } from '../data/hospitals';
 import userIconImg from '../assets/snake_emergency/user.png';
 import hospitalIconImg from '../assets/snake_emergency/hospital.png';
 import nearestHospitalIconImg from '../assets/snake_emergency/medicine.png';
-
 
 // --- Fix for default Leaflet Marker Icons in React ---
 import iconMarker2x from 'leaflet/dist/images/marker-icon-2x.png';
@@ -70,70 +68,9 @@ const MapController = ({ userLocation, nearestHospital }) => {
   return null;
 };
 
-const AntivenomMap = () => {
-  const [userLocation, setUserLocation] = useState(null); // { lat, lng }
-  const [sortedHospitals, setSortedHospitals] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [permissionDenied, setPermissionDenied] = useState(false);
-  const [nearestId, setNearestId] = useState(null);
-
-  // Default center (Kerala) if location denied
+const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied }) => {
   const defaultCenter = { lat: 10.8505, lng: 76.2711 }; 
-
-  // Haversine Formula for Distance Calculation (in km)
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
-    return d;
-  };
-
-  const deg2rad = (deg) => {
-    return deg * (Math.PI / 180);
-  };
-
-  useEffect(() => {
-    const antivenomHospitals = hospitals.filter(h => h.antivenom);
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          setUserLocation({ lat: latitude, lng: longitude });
-
-          // Calculate Distances
-          const hospitalsWithDistance = antivenomHospitals.map(hospital => {
-            const dist = calculateDistance(latitude, longitude, hospital.latitude, hospital.longitude);
-            return { ...hospital, distance: dist };
-          });
-
-          // Sort by nearest distance
-          hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
-          setSortedHospitals(hospitalsWithDistance);
-          setNearestId(hospitalsWithDistance[0]?.id); // Track nearest ID
-          setLoading(false);
-        },
-        (error) => {
-          console.error("Error getting location: ", error);
-          setPermissionDenied(true);
-          const hospitalsWithoutDistance = antivenomHospitals.map(h => ({ ...h, distance: null }));
-          setSortedHospitals(hospitalsWithoutDistance);
-          setLoading(false);
-        },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
-    } else {
-      setPermissionDenied(true);
-      setSortedHospitals(antivenomHospitals.map(h => ({ ...h, distance: null })));
-      setLoading(false);
-    }
-  }, []);
+  const nearestId = sortedHospitals.length > 0 ? sortedHospitals[0].id : null;
 
   const openGoogleMaps = (lat, lng) => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
