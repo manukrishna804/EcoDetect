@@ -1,10 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './snake_emergency.css';
 import biteImage from '../assets/snake_emergency/bite.png';
 import AntivenomMap from '../components/AntivenomMap';
+import { hospitals } from '../data/hospitals';
 
 const SnakeEmergency = () => {
   const [activeTab, setActiveTab] = useState('firstaid');
+  
+  // --- Geolocation & Hospital Data State ---
+  const [userLocation, setUserLocation] = useState(null);
+  const [sortedHospitals, setSortedHospitals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [permissionDenied, setPermissionDenied] = useState(false);
+
+  // --- Helper Functions ---
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+  };
+
+  const openGoogleMaps = (lat, lng) => {
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    window.open(url, '_blank');
+  };
+
+  // --- Effect to Get Location & Sort Hospitals ---
+  useEffect(() => {
+    const antivenomHospitals = hospitals.filter(h => h.antivenom);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+
+          // Calculate Distances
+          const hospitalsWithDistance = antivenomHospitals.map(hospital => {
+            const dist = calculateDistance(latitude, longitude, hospital.latitude, hospital.longitude);
+            return { ...hospital, distance: dist };
+          });
+
+          // Sort by nearest distance
+          hospitalsWithDistance.sort((a, b) => a.distance - b.distance);
+          setSortedHospitals(hospitalsWithDistance);
+          setLoading(false);
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
+          setPermissionDenied(true);
+          const hospitalsWithoutDistance = antivenomHospitals.map(h => ({ ...h, distance: null }));
+          setSortedHospitals(hospitalsWithoutDistance);
+          setLoading(false);
+        },
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+      );
+    } else {
+      setPermissionDenied(true);
+      setSortedHospitals(antivenomHospitals.map(h => ({ ...h, distance: null })));
+      setLoading(false);
+    }
+  }, []);
+
+  const handleNearestHospitalClick = () => {
+    if (sortedHospitals.length > 0 && sortedHospitals[0].latitude && sortedHospitals[0].longitude) {
+       openGoogleMaps(sortedHospitals[0].latitude, sortedHospitals[0].longitude);
+    } else {
+       alert("Unable to locate nearest hospital. Please ensure location services are enabled.");
+    }
+  };
 
   return (
     <div className="snake-emergency-container">
@@ -181,7 +255,12 @@ const SnakeEmergency = () => {
                 <span className="urgency-icon">🏥</span>
                 Nearest Antivenom
               </h2>
-              <AntivenomMap />
+              <AntivenomMap 
+                userLocation={userLocation}
+                sortedHospitals={sortedHospitals}
+                loading={loading}
+                permissionDenied={permissionDenied}
+              />
             </section>
           </>
         )}
@@ -353,8 +432,8 @@ const SnakeEmergency = () => {
 
       {/* ===== FIXED BOTTOM ACTION BAR ===== */}
       <div className="bottom-action-bar">
-        <button className="hospital-button">🏥 Nearest Hospital</button>
-        <button className="sos-button">🚨 SOS CALL</button>
+        <button className="hospital-button" onClick={handleNearestHospitalClick}>🏥 Nearest Hospital</button>
+        <button className="sos-button" onClick={() => window.location.href = 'tel:112'}>🚨 SOS CALL</button>
       </div>
     </div>
   );
