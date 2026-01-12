@@ -1,0 +1,444 @@
+/* Global/Page Layout */
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif;
+    color: #0f172a;
+    /* text-slate-900 */
+    background-color: #f6f8f6;
+    /* bg-background-light */
+    transition: background-color 200ms ease;
+}
+
+/* Header */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: rgba(246, 248, 246, 0.9);
+    /* bg-background-light/90 */
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+    /* border-gray-200/50 */
+}
+
+.headerContent {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+}
+
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    /* 10 */
+    height: 2.5rem;
+    /* 10 */
+    border-radius: 9999px;
+    /* full */
+    transition: background-color 150ms ease;
+    color: #0f172a;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.iconButton:hover {
+    background-color: rgba(229, 231, 235, 0.5);
+    /* hover:bg-gray-200/50 */
+}
+
+.title {
+    font-size: 1.125rem;
+    /* text-lg */
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    /* tracking-tight */
+    margin: 0;
+}
+
+/* Main Content */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    width: 100%;
+    max-width: 28rem;
+    /* max-w-md */
+    margin: 0 auto;
+    padding-bottom: 6rem;
+    /* pb-24 */
+}
+
+/* Upload Section */
+.uploadSection {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    /* gap-6 */
+}
+
+.uploadCard {
+    position: relative;
+    cursor: pointer;
+
+}
+
+.uploadBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    border-radius: 1rem;
+    /* 2xl */
+    border: 2px dashed #d0e7d7;
+    background-color: #ffffff;
+    /* bg-surface-light */
+    padding: 2.5rem 1.5rem;
+    /* py-10 px-6 */
+    transition: all 150ms ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dragging {
+    border-color: #14b84b;
+    /* border-primary */
+    background-color: rgba(20, 184, 75, 0.1);
+    /* bg-primary/10 */
+}
+
+.uploadCard:hover .uploadBox {
+    border-color: #14b84b;
+    /* border-primary */
+    background-color: rgba(20, 184, 75, 0.05);
+    /* bg-primary/5 */
+}
+
+.uploadIconWrapper {
+    width: 4rem;
+    /* 16 */
+    height: 4rem;
+    border-radius: 9999px;
+    background-color: rgba(20, 184, 75, 0.1);
+    /* bg-primary/10 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #14b84b;
+    /* text-primary */
+    margin-bottom: 0.5rem;
+}
+
+.uploadTextPrimary {
+    color: #0f172a;
+    font-size: 1.125rem;
+    /* text-lg */
+    font-weight: 700;
+    margin: 0;
+}
+
+.uploadTextSecondary {
+    color: #64748b;
+    /* text-slate-500 */
+    font-size: 0.875rem;
+    /* text-sm */
+    margin: 0;
+}
+
+.galleryButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    /* 10 */
+    padding: 0 1.5rem;
+    border-radius: 0.5rem;
+    /* lg */
+    background-color: rgba(20, 184, 75, 0.1);
+    color: #14b84b;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: background-color 150ms ease;
+    border: none;
+    cursor: pointer;
+}
+
+.galleryButton:hover {
+    background-color: rgba(20, 184, 75, 0.2);
+}
+
+/* Divider */
+.dividerWrapper {
+    position: relative;
+    display: flex;
+    padding: 0.5rem 0;
+    align-items: center;
+}
+
+.dividerLine {
+    flex-grow: 1;
+    border-top: 1px solid #e5e7eb;
+    /* border-gray-200 */
+}
+
+.dividerText {
+    flex-shrink: 0;
+    margin: 0 1rem;
+    color: #94a3b8;
+    /* text-slate-400 */
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Camera Button */
+.cameraButton {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: 3.5rem;
+    /* 14 */
+    border-radius: 0.75rem;
+    /* xl */
+    background-color: #ffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 150ms ease;
+    cursor: pointer;
+}
+
+.cameraButton:active {
+    transform: scale(0.98);
+}
+
+.cameraButton:hover {
+    border-color: rgba(20, 184, 75, 0.5);
+    /* border-primary/50 */
+}
+
+.cameraIconWrapper {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #14b84b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-right: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 150ms ease;
+}
+
+.cameraButton:hover .cameraIconWrapper {
+    transform: scale(1.1);
+}
+
+.cameraButtonText {
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Recent Capture Section */
+.recentCaptureSection {
+    margin-top: 2rem;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
+}
+
+.sectionTitle {
+    color: #0f172a;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    margin: 0;
+}
+
+.viewAllButton {
+    color: #14b84b;
+    font-size: 0.875rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.viewAllButton:hover {
+    text-decoration: underline;
+}
+
+.previewCard {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    /* border-gray-100 */
+
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 700ms duration-700 ease;
+}
+
+.previewCard:hover .previewImage {
+    transform: scale(1.05);
+}
+
+.imageOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+    opacity: 0.6;
+}
+
+.statusBadge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(4px);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.statusDot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #22c55e;
+    /* green-500 */
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
+}
+
+.statusText {
+    font-size: 0.75rem;
+    /* text-xs */
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.deleteButton {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: background-color 150ms ease;
+    border: none;
+    cursor: pointer;
+}
+
+.deleteButton:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.fileInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+}
+
+.fileName {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.fileMeta {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.75rem;
+    margin: 0;
+}
+
+/* Footer Action */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background-color: rgba(246, 248, 246, 0.8);
+    backdrop-filter: blur(16px);
+    /* blur-lg */
+    border-top: 1px solid #e5e7eb;
+    z-index: 20;
+}
+
+.footerContent {
+    max-width: 28rem;
+    margin: 0 auto;
+}
+
+.detectButton {
+    width: 100%;
+    height: 3.5rem;
+    background-color: #14b84b;
+    color: white;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 1.125rem;
+    /* text-lg */
+    box-shadow: 0 10px 15px -3px rgba(20, 184, 75, 0.3);
+    /* shadow-primary/30 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: transform 150ms ease;
+    border: none;
+    cursor: pointer;
+}
+
+.detectButton:hover {
+    background-color: rgba(20, 184, 75, 0.9);
+}
+
+.detectButton:active {
+    transform: scale(0.98);
+}
