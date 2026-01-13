@@ -1,0 +1,301 @@
+/* Page Layout */
+.page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    background-color: #f6f8f6;
+    color: #0e1b12;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+.page * {
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%;
+    max-width: 28rem;
+    background-color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    justify-content: space-between;
+    background-color: white;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.backButton {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    color: #1f2937;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.backButton:hover {
+    background-color: #f3f4f6;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+/* Hero Image */
+.heroImageContainer {
+    width: 100%;
+    height: 14rem;
+    background-color: #e5e7eb;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Main Content */
+.main {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 4rem;
+}
+
+.speciesTitle {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #111827;
+    margin: 0 0 0.75rem 0;
+    text-transform: capitalize;
+}
+
+/* Badges */
+.badgeRow {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.badgeDanger {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.badgeVenom {
+    background-color: #ffedd5;
+    color: #f97316;
+}
+
+.badgeSafe {
+    background-color: #dcfce7;
+    color: #22c55e;
+}
+
+/* Section Headers */
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Lists (Do's and Don'ts) */
+.listContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.listItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.75rem;
+}
+
+.listItemIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+.iconSuccess {
+    background-color: #dcfce7;
+    color: #22c55e;
+}
+
+.iconError {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+.listItemText {
+    font-size: 0.9375rem;
+    color: #374151;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* SOS Buttons */
+.actionButtons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+.sosButton {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+}
+
+.hospitalButton {
+    background-color: #22c55e;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+}
+
+/* First Aid Timeline */
+.timeline {
+    position: relative;
+    padding-left: 1rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 1rem;
+    bottom: 0;
+    left: 2rem;
+    /* Center of the number circle approximately */
+    width: 2px;
+    background-color: #e5e7eb;
+    z-index: 0;
+}
+
+.timelineItem {
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    z-index: 1;
+}
+
+.stepNumber {
+    width: 2rem;
+    height: 2rem;
+    background-color: #10b981;
+    /* Green circle */
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px white;
+    /* Create gap around line */
+}
+
+.stepNumber[data-index="safe"] {
+    background-color: #3b82f6;
+}
+
+.stepContent {
+    flex: 1;
+    background-color: white;
+}
+
+.stepTitle {
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.25rem 0;
+    font-size: 1rem;
+}
+
+.stepDesc {
+    color: #4b5563;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Symptoms Grid */
+.symptomsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.symptomCard {
+    background-color: white;
+    border: 1px solid #f3f4f6;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #374151;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
