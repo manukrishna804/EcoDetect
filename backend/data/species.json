@@ -1,0 +1,693 @@
+{
+    "species": {
+        "ades": {
+            "scientific_name": "Aedes aegypti",
+            "category": "mosquito",
+            "venomous": false,
+            "danger_level": "high",
+            "risk_group": "mosquito_disease",
+            "firstaid_protocol": "mosquito_bite_firstaid",
+            "precaution_protocol": "mosquito_disease_prevention",
+            "risk_info": {
+                "possible_effects": [
+                    "dengue",
+                    "zika",
+                    "chikungunya"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/insects/aedes.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "orange",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": true,
+            "ai_note": "Disease-carrying mosquito. Avoid stagnant water."
+        },
+        "culex": {
+            "scientific_name": "Culex mosquito",
+            "category": "mosquito",
+            "venomous": false,
+            "danger_level": "medium",
+            "risk_group": "mosquito_disease",
+            "firstaid_protocol": "mosquito_bite_firstaid",
+            "precaution_protocol": "mosquito_disease_prevention",
+            "risk_info": {
+                "possible_effects": [
+                    "malaria",
+                    "filariasis"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/insects/culex.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "yellow",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": true,
+            "ai_note": "Common night-biting mosquito."
+        },
+        "Bubble Frog": {
+            "scientific_name": "Uperodon globulosus",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/bubble_frog.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Harmless burrowing frog."
+        },
+        "Cane Toad": {
+            "scientific_name": "Rhinella marina",
+            "category": "frog",
+            "venomous": true,
+            "danger_level": "medium",
+            "risk_group": "frog_toxic",
+            "firstaid_protocol": "frog_toxin_exposure",
+            "precaution_protocol": "avoid_frog_handling",
+            "risk_info": {
+                "possible_effects": [
+                    "toxin exposure"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/cane_toad.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "orange",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Toxic skin secretions present."
+        },
+        "Chinese Edible Frog": {
+            "scientific_name": "Hoplobatrachus rugulosus",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/chinese_edible.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Non-toxic frog species."
+        },
+        "Common Green Frog": {
+            "scientific_name": "Pelophylax esculentus",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/common_green.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Harmless amphibian."
+        },
+        "Common Tree Frog": {
+            "scientific_name": "Polypedates maculatus",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/tree_frog.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Often seen near houses."
+        },
+        "Pacman Frog": {
+            "scientific_name": "Ceratophrys",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "medium",
+            "risk_group": "frog_bite",
+            "firstaid_protocol": "clean_minor_wound",
+            "precaution_protocol": "avoid_handling",
+            "risk_info": {
+                "possible_effects": [
+                    "painful bite"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/pacman.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "yellow",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Can bite if threatened."
+        },
+        "Pignose Frog": {
+            "scientific_name": "Kaloula pulchra",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/pignose.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Non-toxic frog species."
+        },
+        "Poison Dart Frog": {
+            "scientific_name": "Dendrobatidae",
+            "category": "frog",
+            "venomous": true,
+            "danger_level": "medium",
+            "risk_group": "frog_toxic",
+            "firstaid_protocol": "frog_toxin_exposure",
+            "precaution_protocol": "avoid_frog_handling",
+            "risk_info": {
+                "possible_effects": [
+                    "skin irritation",
+                    "numbness"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/poison_dart.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "orange",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Highly toxic in wild environments."
+        },
+        "Smoky Jungle Frog": {
+            "scientific_name": "Leptodactylus pentadactylus",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/smoky_jungle.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Non-toxic jungle frog species."
+        },
+        "Spotted Litter Frog": {
+            "scientific_name": "Fejervarya limnocharis",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/spotted_litter.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Common ground-dwelling frog."
+        },
+        "White-s Tree Frog": {
+            "scientific_name": "Litoria caerulea",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/frogs/whites_tree.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Calm, non-toxic tree frog."
+        },
+        "check_keel-back": {
+            "scientific_name": "Xenochrophis piscator",
+            "category": "snake",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "non_venomous_snake",
+            "firstaid_protocol": "snakebite_non_venomous",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "minor bite"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/snakes/checkered_keelback.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": true,
+            "ai_note": "Often confused with venomous snakes."
+        },
+        "indian_python": {
+            "scientific_name": "Python molurus",
+            "category": "snake",
+            "venomous": false,
+            "danger_level": "medium",
+            "risk_group": "constrictor_snake",
+            "firstaid_protocol": "snakebite_non_venomous",
+            "precaution_protocol": "maintain_distance",
+            "risk_info": {
+                "possible_effects": [
+                    "constriction risk"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/indian_python.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "orange",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "Large constrictor snake."
+        },
+        "ratsnakes": {
+            "scientific_name": "Ptyas mucosa",
+            "category": "snake",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "non_venomous_snake",
+            "firstaid_protocol": "snakebite_non_venomous",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "defensive bite"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/snakes/ratsnake.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": true,
+            "ai_note": "Commonly mistaken for cobras."
+        },
+        "sandboa": {
+            "scientific_name": "Eryx johnii",
+            "category": "snake",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "non_venomous_snake",
+            "firstaid_protocol": "snakebite_non_venomous",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/snakes/sand_boa.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Harmless burrowing snake."
+        },
+        "King cobra": {
+            "scientific_name": "Ophiophagus hannah",
+            "category": "snake",
+            "venomous": true,
+            "danger_level": "extreme",
+            "risk_group": "snake_neurotoxic",
+            "firstaid_protocol": "snakebite_neuro",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "respiratory failure"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/king_cobra.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "red",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "Highly venomous apex predator."
+        },
+        "Russels_viper": {
+            "scientific_name": "Daboia russelii",
+            "category": "snake",
+            "venomous": true,
+            "danger_level": "extreme",
+            "risk_group": "snake_hemotoxic",
+            "firstaid_protocol": "snakebite_hemo",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "severe bleeding",
+                    "organ failure"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/russells_viper.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "red",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "One of the deadliest snakes in India."
+        },
+        "common-kraits": {
+            "scientific_name": "Bungarus caeruleus",
+            "category": "snake",
+            "venomous": true,
+            "danger_level": "extreme",
+            "risk_group": "snake_neurotoxic",
+            "firstaid_protocol": "snakebite_neuro",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "muscle paralysis"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/common_krait.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "red",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "Bites often occur at night."
+        },
+        "indian_cobra": {
+            "scientific_name": "Naja naja",
+            "category": "snake",
+            "venomous": true,
+            "danger_level": "extreme",
+            "risk_group": "snake_neurotoxic",
+            "firstaid_protocol": "snakebite_neuro",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "respiratory paralysis"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/indian_cobra.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "red",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "Highly venomous snake common in India."
+        },
+        "pit_viper": {
+            "scientific_name": "Trimeresurus species",
+            "category": "snake",
+            "venomous": true,
+            "danger_level": "high",
+            "risk_group": "snake_hemotoxic",
+            "firstaid_protocol": "snakebite_hemo",
+            "precaution_protocol": "avoid_snake_encounter",
+            "risk_info": {
+                "possible_effects": [
+                    "tissue damage",
+                    "bleeding"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": true
+            },
+            "media": {
+                "image": "/images/snakes/pit_viper.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "orange",
+                "show_emergency_banner": true
+            },
+            "hotspot_risk": true,
+            "ai_note": "Heat-sensing pit organs present."
+        },
+        "Golden orb weaver": {
+            "scientific_name": "Nephila pilipes",
+            "category": "spider",
+            "venomous": true,
+            "danger_level": "low",
+            "risk_group": "mild_venom_spider",
+            "firstaid_protocol": "spider_bite_mild",
+            "precaution_protocol": "avoid_web_contact",
+            "risk_info": {
+                "possible_effects": [
+                    "localized pain",
+                    "redness"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/spiders/golden_orb.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "yellow",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Large web-building spider; rarely dangerous."
+        },
+        "Huntsman spider": {
+            "scientific_name": "Heteropoda venatoria",
+            "category": "spider",
+            "venomous": true,
+            "danger_level": "low",
+            "risk_group": "mild_venom_spider",
+            "firstaid_protocol": "spider_bite_mild",
+            "precaution_protocol": "avoid_direct_contact",
+            "risk_info": {
+                "possible_effects": [
+                    "temporary pain"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/spiders/huntsman.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "yellow",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Fast-moving spider often found indoors."
+        },
+        "Peacock spider": {
+            "scientific_name": "Maratus species",
+            "category": "spider",
+            "venomous": true,
+            "danger_level": "low",
+            "risk_group": "mild_venom_spider",
+            "firstaid_protocol": "spider_bite_mild",
+            "precaution_protocol": "avoid_direct_contact",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/spiders/peacock.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Small, colorful spider; harmless to humans."
+        },
+        "Yellow Garden Spider": {
+            "scientific_name": "Argiope aurantia",
+            "category": "spider",
+            "venomous": true,
+            "danger_level": "low",
+            "risk_group": "mild_venom_spider",
+            "firstaid_protocol": "spider_bite_mild",
+            "precaution_protocol": "avoid_web_contact",
+            "risk_info": {
+                "possible_effects": [
+                    "mild swelling"
+                ]
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/images/spiders/yellow_garden.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Non-aggressive garden spider."
+        }
+    }
+}

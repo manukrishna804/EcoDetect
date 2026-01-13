@@ -37,36 +37,50 @@ def load_model():
 # Load model on start (or first request)
 load_model()
 
-def get_snake_info(class_name):
-    # Load snake data
-    json_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'snakes.json')
+
+def get_species_info(class_name):
+    # Load species data
+    json_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'species.json')
     try:
         with open(json_path, 'r') as f:
-            snakes_data = json.load(f)
+            data = json.load(f)
+            species_data = data.get("species", {})
         
         # Normalize class name
         class_name_lower = class_name.lower().strip()
         
-        # 1. Exact match
-        for snake in snakes_data:
-            if snake['name'].lower() == class_name_lower:
-                return snake
+        # Match class name with keys in species.json (case-insensitive)
+        matched_key = None
+        for key in species_data.keys():
+            if key.lower().strip() == class_name_lower or key.lower() in class_name_lower or class_name_lower in key.lower():
+                matched_key = key
+                break
+        
+        if matched_key:
+            info = species_data[matched_key]
+            # strict requirement: return ONLY minimal fields
+            return {
+                "common_name": matched_key,
+                "species_name": class_name, # The model class
+                "danger_level": info.get("danger_level", "Unknown"),
+                "confidence_score": 0.0, # Placeholder, will be updated
+                # Detailed results as requested
+                "risk_info": info.get("risk_info", {}),
+                "ai_note": info.get("ai_note", ""),
+                "emergency": info.get("emergency", {}),
+                "scientific_name": info.get("scientific_name", "")
+            }
                 
-        # 2. Match if valid class is in database name (e.g. 'cobra' in 'King Cobra')
-        # or vice versa
-        for snake in snakes_data:
-            snake_name = snake['name'].lower()
-            if class_name_lower in snake_name or snake_name in class_name_lower:
-                return snake
-                
-        # 3. Fallback: Return a generic template with the detected name
+        # Fallback: Return a generic template with the detected name
         return {
-            "name": class_name,
-            "biological_name": "Unknown",
-            "risk": "Unknown",
-            "description": f"Detected as {class_name}, but specific details are not in our database.",
-            "image": "https://via.placeholder.com/300?text=" + class_name.replace(" ", "+"),
-            "confidence_score": 0.0
+            "common_name": class_name,
+            "species_name": class_name,
+            "danger_level": "Unknown",
+            "confidence_score": 0.0,
+            "risk_info": {},
+            "ai_note": "No specific data found for this species.",
+            "emergency": {},
+            "scientific_name": "Unknown"
         }
     except Exception as e:
         print(f"Error reading JSON: {e}")
@@ -76,12 +90,8 @@ def get_snake_info(class_name):
 def detect():
     global model
     if model is None:
-        # Try loading again if it failed initially
         load_model()
         if model is None:
-             # Fallback to dummy if model fails strictly? Or return error?
-             # User asked to use the .pt, so we should try to use it.
-             # If completely fails, maybe return error.
              return jsonify({"error": "Detection model not available"}), 500
 
     if 'image' not in request.files:
@@ -106,10 +116,9 @@ def detect():
         # Get top prediction (highest confidence)
         r = results[0]
         if len(r.boxes) == 0:
-             return jsonify({"error": "No snake detected"}), 200
+             return jsonify({"error": "No species detected"}), 200
              
         # Find box with max confidence
-        # Ultralytics boxes are usually sorted? Let's just take the one with max conf.
         best_box = max(r.boxes, key=lambda x: x.conf[0])
         
         conf = float(best_box.conf[0])
@@ -117,17 +126,12 @@ def detect():
         class_name = model.names[cls_id]
         
         # Retrieve info
-        snake_info = get_snake_info(class_name)
+        species_info = get_species_info(class_name)
         
-        if snake_info:
+        if species_info:
             # Update confidence with actual detection score
-            # Create a copy to not mutate the cache/list reference
-            response_data = snake_info.copy()
+            response_data = species_info.copy()
             response_data['confidence_score'] = round(conf, 2)
-            
-            # If the JSON image is a placeholder, maybe we keep it? 
-            # Or we could return the uploaded image as base64? 
-            # For now, keep the database image as reference.
             
             return jsonify(response_data)
         else:
@@ -137,3 +141,4 @@ def detect():
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+

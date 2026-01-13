@@ -9,6 +9,13 @@ export default function DetectSpecies() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Camera State
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
@@ -46,8 +53,55 @@ export default function DetectSpecies() {
     fileInputRef.current.click();
   };
 
-  const triggerCamera = () => {
-    cameraInputRef.current.click();
+  // Camera Functions
+  const startCamera = async () => {
+    try {
+      setShowCamera(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' }
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      alert("Could not access camera. Please check permissions.");
+      setShowCamera(false);
+    }
+  };
+
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setShowCamera(false);
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+
+      // Set canvas dimensions to match video
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // Draw video frame to canvas
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // Convert to file
+      canvas.toBlob((blob) => {
+        const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
+        const imageUrl = URL.createObjectURL(file);
+
+        setImage(imageUrl);
+        setSelectedFile(file);
+        stopCamera();
+      }, 'image/jpeg');
+    }
   };
 
   const handleDetect = async () => {
@@ -79,6 +133,28 @@ export default function DetectSpecies() {
 
   return (
     <div className={styles.page}>
+
+      {/* Camera Overlay */}
+      {showCamera && (
+        <div className={styles.cameraOverlay}>
+          <button className={styles.closeCameraBtn} onClick={stopCamera}>
+            <span className="material-symbols-outlined">close</span>
+          </button>
+          <div className={styles.cameraView}>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className={styles.videoFeed}
+            />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+          </div>
+          <div className={styles.cameraControls}>
+            <button className={styles.captureBtn} onClick={capturePhoto}></button>
+          </div>
+        </div>
+      )}
+
       {/* Hidden Inputs */}
       <input
         type="file"
@@ -87,6 +163,7 @@ export default function DetectSpecies() {
         accept="image/*"
         style={{ display: 'none' }}
       />
+      {/* Keeping legacy input for fallback if needed, but primary is custom now */}
       <input
         type="file"
         ref={cameraInputRef}
@@ -141,8 +218,8 @@ export default function DetectSpecies() {
             <div className={styles.dividerLine}></div>
           </div>
 
-          {/* Camera Button */}
-          <button className={styles.cameraButton} onClick={triggerCamera}>
+          {/* Camera Button - Updated to trigger custom camera */}
+          <button className={styles.cameraButton} onClick={startCamera}>
             <div className={styles.cameraIconWrapper}>
               <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>photo_camera</span>
             </div>
