@@ -442,6 +442,7 @@
 .detectButton:active {
     transform: scale(0.98);
 }
+
 /* Camera Custom Interface */
 .cameraOverlay {
     position: fixed;
@@ -475,7 +476,7 @@
     left: 0;
     right: 0;
     height: 120px;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -488,7 +489,7 @@
     height: 72px;
     border-radius: 50%;
     background-color: white;
-    border: 4px solid rgba(255,255,255,0.3);
+    border: 4px solid rgba(255, 255, 255, 0.3);
     cursor: pointer;
     transition: transform 0.1s;
 }
@@ -504,7 +505,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
     border: none;
     display: flex;
@@ -514,3 +515,119 @@
     z-index: 60;
 }
 
+
+/* Location Modal */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modalContent {
+    background-color: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    max-width: 24rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modalIcon {
+    width: 3.5rem;
+    height: 3.5rem;
+    background-color: #dcfce7;
+    /* green-100 */
+    color: #16a34a;
+    /* green-600 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.modalIcon span {
+    font-size: 2rem;
+}
+
+.modalTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.75rem;
+}
+
+.modalText {
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+.modalActions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.modalAllowBtn {
+    width: 100%;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: #16a34a;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.modalAllowBtn:hover {
+    background-color: #15803d;
+}
+
+.modalSkipBtn {
+    width: 100%;
+    height: 3rem;
+    border-radius: 9999px;
+    background-color: transparent;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.modalSkipBtn:hover {
+    color: #0f172a;
+    background-color: #f1f5f9;
+}
