@@ -13,6 +13,7 @@ import Community from "./pages/Learn&Awareness/community";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Welcome from "./pages/Welcome";
+import HotspotPage from "./pages/hotspot";
 
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/learn/first-aid-basics" element={<FirstAidBasics />} />
         <Route path="/learn/seasonal-alerts" element={<SeasonalAlerts />} />
         <Route path="/learn/community" element={<Community />} />
+        <Route path="/hotspots" element={<HotspotPage />} />
       </Routes>
     </BrowserRouter >
   );
