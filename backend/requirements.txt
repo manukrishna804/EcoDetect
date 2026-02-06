@@ -2,3 +2,4 @@ Flask
 flask-cors
 ultralytics
 Pillow
+firebase-admin
