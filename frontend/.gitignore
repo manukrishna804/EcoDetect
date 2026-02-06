@@ -7,12 +7,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Build output
 node_modules
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,6 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-*.json
-firebase-adminsdk*.json
 
+# Firebase secrets (ONLY these)
+firebase-adminsdk*.json
+backend/firebase/serviceAccountKey.json
