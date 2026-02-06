@@ -157,10 +157,51 @@ export default function DetectSpecies() {
     }
   };
 
+  // Helper to get fresh location
+  const getCurrentLocation = () => {
+    return new Promise((resolve) => {
+      if (!('geolocation' in navigator)) {
+        resolve({ lat: null, lng: null, allowed: false });
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            allowed: true
+          });
+        },
+        (error) => {
+          console.error("Location error:", error);
+          // Return null/false on error so we still proceed with detection
+          resolve({ lat: null, lng: null, allowed: false });
+        },
+        { timeout: 10000, enableHighAccuracy: true, maximumAge: 0 } 
+      );
+    });
+  };
+
   const handleDetect = async () => {
     if (!image || !selectedFile) return;
 
     setIsProcessing(true);
+    
+    // 1. Fetch fresh location (waits for browser prompt/gps)
+    // We do this BEFORE the backend call so we have accurate coords
+    let freshLocation = { lat: null, lng: null, allowed: false };
+    try {
+        // If allowed previously or permission state provides it
+        freshLocation = await getCurrentLocation();
+        
+        // Update local state just for UI consistency (optional but good)
+        if (freshLocation.allowed) {
+            setLocationData(freshLocation);
+        }
+    } catch (e) {
+        console.warn("Could not fetch location:", e);
+    }
+
     const formData = new FormData();
     formData.append('image', selectedFile);
 
@@ -178,26 +219,27 @@ export default function DetectSpecies() {
       console.log("DETECTION RESULT FROM BACKEND:", result);
 
       const detectionData = {
-  tempUserId: localStorage.getItem("tempUserId"),
+        tempUserId: localStorage.getItem("tempUserId"),
+        
+        // Use the FRESH location
+        location: {
+          lat: freshLocation.lat ?? null,
+          lng: freshLocation.lng ?? null,
+          available: freshLocation.allowed
+        },
 
-  location: {
-    lat: locationData.lat ?? null,
-    lng: locationData.lng ?? null,
-    available: locationData.allowed
-  },
+        // ✅ FIXED FIELD MAPPING
+        detected_class: result.species_name || result.common_name || "unknown",
 
-  // ✅ FIXED FIELD MAPPING
-  detected_class: result.species_name || result.common_name || "unknown",
+        // ✅ CATEGORY IS NOT FROM BACKEND → SET SAFELY
+        category: result.category || "unknown",
 
-  // ✅ CATEGORY IS NOT FROM BACKEND → SET SAFELY
-  category: result.category || "unknown",
-
-  // ✅ SAFE OPTIONAL FIELDS
-  scientific_name: result.scientific_name || "unknown",
-  venomous: result.venomous ?? false,
-  danger_level: result.danger_level || "unknown",
-  confidence: result.confidence_score ?? 0
-};
+        // ✅ SAFE OPTIONAL FIELDS
+        scientific_name: result.scientific_name || "unknown",
+        venomous: result.venomous ?? false,
+        danger_level: result.danger_level || "unknown",
+        confidence: result.confidence_score ?? 0
+      };
 
       saveDetection(detectionData);
       navigate('/result', { state: { result: result, image: image } });

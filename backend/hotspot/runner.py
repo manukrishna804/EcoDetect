@@ -11,13 +11,18 @@ from hotspot.logic import (
 
 def run_hotspot_analysis(db, radius_km=10, detection_hours=24):
     """
-    Main hotspot analysis function that:
-    1. Fetches recent detections (last 24 hours)
-    2. Fetches existing hotspots
-    3. Matches detections to existing hotspots (within radius_km)
-    4. Updates existing hotspots or creates new ones
-    5. Merges nearby hotspots
-    6. Cleans up stale hotspots (older than 7 days with no recent activity)
+    Main hotspot analysis function with strict 24-hour rolling window.
+    
+    STRATEGY: RE-AGGREGATION
+    1. Fetch ALL valid detections from last 24h.
+    2. Cluster them into 'fresh' hotspots (in-memory).
+    3. Fetch existing hotspots from Firestore.
+    4. Match fresh hotspots to existing ones to preserve IDs:
+       - If fresh matches existing: Update existing doc with fresh counts/ids.
+       - If fresh has no match: Create new hotspot doc.
+       - If existing has no match: Leave it alone (it becomes naturally 'stale' as timestamps age).
+    
+    This ensures that hotspots ALWAYS reflect only the last 24h of activity.
     """
     
     # Step 1: Fetch recent detections
@@ -26,199 +31,122 @@ def run_hotspot_analysis(db, radius_km=10, detection_hours=24):
     print(f"[RUNNER] Found {len(detections)} recent detections")
     
     if len(detections) == 0:
-        print(f"[RUNNER] No detections found.")
+        print(f"[RUNNER] No recent detections. Hotspots will naturally go stale.")
         return {"status": "No detections found", "hotspots_created": 0, "hotspots_updated": 0}
+
+    # Map for easy lookup to calculate max timestamp
+    detections_map = {d['id']: d for d in detections}
+
+    # Step 2: Calculate 'Ideal' Hotspots from Scratch (Clustering)
+    print(f"[RUNNER] Clustering recent detections into fresh hotspots...")
+    # This clusters all passed detections. 
+    # Logic note: find_hotspots only returns clusters that contain at least one high/extreme risk detection.
+    # This is correct behavior: we don't want hotspots of just low-risk animals.
+    fresh_hotspots = find_hotspots(detections, radius_km)
     
-    # Step 2: Fetch existing hotspots
-    print(f"[RUNNER] Fetching existing hotspots...")
+    # Merge nearby fresh hotspots to ensure clean clusters
+    if len(fresh_hotspots) > 1:
+        fresh_hotspots = merge_nearby_hotspots(fresh_hotspots, radius_km)
+    
+    print(f"[RUNNER] Calculated {len(fresh_hotspots)} fresh hotspots active in last 24h")
+
+    # Step 3: Fetch existing hotspots to try and preserve IDs
+    print(f"[RUNNER] Fetching existing hotspots for ID matching...")
     existing_hotspots = get_existing_hotspots(db)
-    
-    # Step 3: Match detections to existing hotspots or create new ones
-    hotspots_to_update = {}  # hotspot_id -> hotspot dict
-    hotspots_to_create = []
-    processed_detection_ids = set()
-    
-    # Match detections to existing hotspots or create new ones
-    for detection in detections:
-        if detection["id"] in processed_detection_ids:
-            continue
+    existing_map = {h['id']: h for h in existing_hotspots}
+    used_existing_ids = set()
+
+    hotspots_to_update = {} # ID -> Update Data
+    hotspots_to_create = [] # List of dicts
+
+    for fresh in fresh_hotspots:
+        # Calculate lastDetectedAt for this cluster
+        cluster_timestamps = []
+        for det_id in fresh.get("detection_ids", []):
+            if det_id in detections_map:
+                cluster_timestamps.append(detections_map[det_id]["timestamp"])
         
-        # EXCLUDE insects/mosquitoes from hotspot creation (but they're still in detections collection)
-        detection_category = detection.get("category", "unknown").lower()
-        if detection_category in ["mosquito", "insect"]:
-            print(f"[RUNNER] Skipping {detection['species']} (category: {detection_category}) - insects don't create hotspots")
-            processed_detection_ids.add(detection["id"])  # Mark as processed so we skip it
-            continue
+        last_detected_at = max(cluster_timestamps) if cluster_timestamps else firestore.SERVER_TIMESTAMP
         
-        # Check if detection is high/extreme risk (required for hotspot)
-        if detection["danger_level"] not in ["high", "extreme"]:
-            # Skip low-risk detections unless they're near an existing hotspot
-            nearest_hotspot, distance = find_nearest_hotspot(
-                detection["lat"], detection["lng"],
-                existing_hotspots, radius_km
-            )
-            if nearest_hotspot:
-                # Add low-risk detection to existing hotspot
-                hotspot_id = nearest_hotspot["id"]
-                if hotspot_id not in hotspots_to_update:
-                    hotspots_to_update[hotspot_id] = nearest_hotspot.copy()
-                update_hotspot_with_detection(hotspots_to_update[hotspot_id], detection, radius_km)
-                processed_detection_ids.add(detection["id"])
-            else:
-                # Low-risk detection with no nearby hotspot - skip it
-                processed_detection_ids.add(detection["id"])
-            continue
-        
-        # For high/extreme risk detections, find nearest hotspot
-        nearest_hotspot, distance = find_nearest_hotspot(
-            detection["lat"], detection["lng"],
+        # Try to find a matching existing hotspot
+        nearest_existing, distance = find_nearest_hotspot(
+            fresh["center_lat"], fresh["center_lng"],
             existing_hotspots, radius_km
         )
-        
-        if nearest_hotspot:
-            # Update existing hotspot
-            hotspot_id = nearest_hotspot["id"]
-            if hotspot_id not in hotspots_to_update:
-                hotspots_to_update[hotspot_id] = nearest_hotspot.copy()
-            update_hotspot_with_detection(hotspots_to_update[hotspot_id], detection, radius_km)
-            processed_detection_ids.add(detection["id"])
-        else:
-            # Will create new hotspot later - mark as processed to avoid double processing
-            # (We'll handle unmatched detections in Step 4)
-            pass
-    
-    # Step 4: Handle unmatched detections (create new hotspots)
-    unmatched_detections = [d for d in detections if d["id"] not in processed_detection_ids]
-    
-    if unmatched_detections:
-        print(f"[RUNNER] Processing {len(unmatched_detections)} unmatched detections...")
-        
-        # For single high/extreme risk detection, create hotspot directly
-        if len(unmatched_detections) == 1:
-            detection = unmatched_detections[0]
-            if detection["danger_level"] in ["high", "extreme"]:
-                print(f"[RUNNER] Creating single-detection hotspot for {detection['species']}")
-                new_hotspot = create_new_hotspot_from_detection(detection)
-                hotspots_to_create.append(new_hotspot)
+
+        match_id = None
+        if nearest_existing and distance < radius_km:
+            # Found a match!
+            eid = nearest_existing["id"]
+            if eid not in used_existing_ids:
+                match_id = eid
+                used_existing_ids.add(eid)
+                print(f"[RUNNER] Fresh hotspot ({fresh['species']}) matches existing {eid} (dist={distance:.2f}km)")
             else:
-                print(f"[RUNNER] Skipping single low-risk detection: {detection['species']}")
+                print(f"[RUNNER] Fresh hotspot ({fresh['species']}) matched used ID {eid}, creating new instead.")
+        
+        # Prepare data (common for update and create)
+        hotspot_data = {
+            "detection_count": fresh["count"],
+            "detection_ids": fresh["detection_ids"],
+            "species_counts": fresh["species_counts"],
+            "species": fresh["species"],
+            "danger_level": fresh["danger_level"],
+            "species_summary": fresh.get("summary", ""),
+            "center": {
+                "lat": fresh["center_lat"],
+                "lng": fresh["center_lng"]
+            },
+            "lastDetectedAt": last_detected_at, # KEY FEATURE: Sliding window timestamp
+            "updated_at": firestore.SERVER_TIMESTAMP
+        }
+
+        if match_id:
+            hotspots_to_update[match_id] = hotspot_data
         else:
-            # Multiple unmatched detections - cluster them
-            print(f"[RUNNER] Clustering {len(unmatched_detections)} unmatched detections...")
-            new_hotspot_clusters = find_hotspots(unmatched_detections, radius_km)
-            hotspots_to_create.extend(new_hotspot_clusters)
-            
-            # Handle any remaining single detections that didn't cluster
-            processed_in_clusters = set()
-            for cluster in new_hotspot_clusters:
-                processed_in_clusters.update(cluster.get("detection_ids", []))
-            
-            remaining = [d for d in unmatched_detections if d["id"] not in processed_in_clusters]
-            for detection in remaining:
-                if detection["danger_level"] in ["high", "extreme"]:
-                    print(f"[RUNNER] Creating hotspot for isolated detection: {detection['species']}")
-                    new_hotspot = create_new_hotspot_from_detection(detection)
-                    hotspots_to_create.append(new_hotspot)
-    
-    # Step 5: Merge nearby hotspots (both existing and new)
-    all_hotspots = list(hotspots_to_update.values()) + hotspots_to_create
-    if len(all_hotspots) > 1:
-        print(f"[RUNNER] Merging nearby hotspots...")
-        merged_hotspots = merge_nearby_hotspots(all_hotspots, radius_km)
-        
-        # Separate merged hotspots back into update/create lists
-        hotspots_to_update = {}
-        hotspots_to_create = []
-        
-        for hotspot in merged_hotspots:
-            if hotspot.get("id"):
-                # This is an existing hotspot that was merged
-                hotspots_to_update[hotspot["id"]] = hotspot
-            else:
-                # This is a new hotspot
-                hotspots_to_create.append(hotspot)
-    
-    # Step 6: Update existing hotspots in Firestore
+            # New hotspot needs a few more fields for creation
+            create_payload = hotspot_data.copy()
+            create_payload["created_at"] = firestore.SERVER_TIMESTAMP
+            create_payload["radius_km"] = radius_km
+            hotspots_to_create.append(create_payload)
+
+    # Step 4: Execute Updates
     updated_count = 0
-    for hotspot_id, hotspot in hotspots_to_update.items():
+    for hid, data in hotspots_to_update.items():
         try:
-            # Prepare update data
-            update_data = {
-                "detection_count": hotspot["detection_count"],
-                "detection_ids": hotspot["detection_ids"],
-                "species_counts": hotspot["species_counts"],
-                "species": hotspot["species"],
-                "danger_level": hotspot["danger_level"],
-                "species_summary": hotspot.get("summary", hotspot.get("species_summary", "")),
-                "center": {
-                    "lat": hotspot["center_lat"],
-                    "lng": hotspot["center_lng"]
-                },
-                "updated_at": firestore.SERVER_TIMESTAMP
-            }
-            
-            db.collection("hotspots").document(hotspot_id).update(update_data)
+            db.collection("hotspots").document(hid).update(data)
             updated_count += 1
-            print(f"[RUNNER] Updated hotspot {hotspot_id}: {hotspot['detection_count']} detections, species='{hotspot['species']}', species_counts={hotspot['species_counts']}")
+            print(f"[RUNNER] Updated hotspot {hid}: species='{data['species']}'")
         except Exception as e:
-            print(f"[ERROR] Failed to update hotspot {hotspot_id}: {e}")
-    
-    # Step 7: Create new hotspots in Firestore
+            print(f"[ERROR] Failed to update hotspot {hid}: {e}")
+
+    # Step 5: Execute Creates
     created_count = 0
-    created_hotspot_ids = []
-    
-    for hotspot in hotspots_to_create:
+    created_ids = []
+    for data in hotspots_to_create:
         try:
-            hotspot_ref = db.collection("hotspots").add({
-                "species": hotspot["species"],
-                "species_counts": hotspot.get("species_counts", {hotspot["species"]: hotspot["detection_count"]}),
-                "danger_level": hotspot["danger_level"],
-                "center": {
-                    "lat": hotspot["center_lat"],
-                    "lng": hotspot["center_lng"]
-                },
-                "radius_km": radius_km,
-                "detection_count": hotspot.get("count", hotspot.get("detection_count", 1)),
-                "detection_ids": hotspot.get("detection_ids", []),
-                "species_summary": hotspot.get("summary", ""),
-                "species_counts": hotspot.get("species_counts", {}),
-                "created_at": firestore.SERVER_TIMESTAMP,
-                "updated_at": firestore.SERVER_TIMESTAMP
-            })
-            
-            hotspot_id = hotspot_ref[1].id
-            created_hotspot_ids.append(hotspot_id)
+            ref = db.collection("hotspots").add(data)
+            hid = ref[1].id
+            created_ids.append(hid)
             created_count += 1
-            print(f"[RUNNER] Created hotspot {hotspot_id}: species='{hotspot.get('species')}', species_counts={hotspot.get('species_counts', {})}, summary='{hotspot.get('summary', 'New hotspot')}'")
+            print(f"[RUNNER] Created new hotspot {hid}: species='{data['species']}'")
             
-            # Create alert for new hotspot (only for snake/wildlife, not insects)
-            # Check if hotspot contains any insect detections
-            hotspot_category = hotspot.get("category", "unknown")
-            if hotspot_category not in ["mosquito", "insect"]:
-                # Alert should show all species, not just primary
-                alert_species = hotspot.get("species", "Unknown")
-                alert_summary = hotspot.get("summary", hotspot.get("species_summary", "New hotspot"))
-                db.collection("alerts").add({
-                    "species": alert_species,
-                    "message": f"High-risk hotspot detected: {alert_summary}",
-                    "hotspot_id": hotspot_id,
-                    "radius_km": radius_km,
-                    "created_at": firestore.SERVER_TIMESTAMP
-                })
-                print(f"[RUNNER] Created alert for hotspot {hotspot_id} with species='{alert_species}', summary='{alert_summary}'")
+            # Optional: Create Alert for new/re-emerged hotspot
+            db.collection("alerts").add({
+                "species": data["species"],
+                "message": f"Hotspot Active: {data['species_summary']}",
+                "hotspot_id": hid,
+                "radius_km": radius_km,
+                "created_at": firestore.SERVER_TIMESTAMP
+            })
+
         except Exception as e:
             print(f"[ERROR] Failed to create hotspot: {e}")
-    
-    # Step 8: Clean up stale hotspots (older than 7 days with no recent detections)
-    print(f"[RUNNER] Cleaning up stale hotspots...")
-    stale_threshold = firestore.SERVER_TIMESTAMP
-    # Note: In production, you'd want to check updated_at timestamp
-    # For now, we'll skip this to avoid deleting active hotspots
-    
+
     return {
         "status": "success",
         "hotspots_created": created_count,
         "hotspots_updated": updated_count,
-        "hotspot_ids": created_hotspot_ids,
+        "hotspot_ids": created_ids,
         "total_detections_processed": len(detections)
     }

@@ -27,3 +27,6 @@ dist-ssr
 # Firebase secrets (ONLY these)
 firebase-adminsdk*.json
 backend/firebase/serviceAccountKey.json
+# Python cache
+__pycache__/
+*.pyc
