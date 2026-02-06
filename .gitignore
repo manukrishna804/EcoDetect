@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+.env
+
+# Recursive ignores
+**/venv/
+**/__pycache__/
+
+# Specific
+backend/venv/
+frontend/venv/
+
+# Firebase keys
+serviceAccountKey.json
+**/serviceAccountKey.json
+

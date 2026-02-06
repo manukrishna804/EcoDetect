@@ -30,3 +30,15 @@ backend/firebase/serviceAccountKey.json
 # Python cache
 __pycache__/
 *.pyc
+
+# Python virtual environments
+venv/
+backend/venv/
+.env/
+.env.*
+
+# Python build / cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
