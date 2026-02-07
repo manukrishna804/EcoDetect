@@ -1,4 +1,6 @@
+# =====================
 # Logs
+# =====================
 logs
 *.log
 npm-debug.log*
@@ -7,16 +9,20 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# =====================
 # Build output
-node_modules
-dist
-dist-ssr
+# =====================
+node_modules/
+dist/
+dist-ssr/
 *.local
 
-# Editor / OS
+# =====================
+# Editor / OS files
+# =====================
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
@@ -24,9 +30,14 @@ dist-ssr
 *.sln
 *.sw?
 
-# Firebase secrets (ONLY these)
+# =====================
+# Firebase secrets
+# =====================
 firebase-adminsdk*.json
 backend/firebase/serviceAccountKey.json
+
+# =====================
 # Python cache
+# =====================
 __pycache__/
 *.pyc
