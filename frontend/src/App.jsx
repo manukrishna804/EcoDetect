@@ -15,6 +15,7 @@ import SignUp from "./pages/SignUp";
 import Welcome from "./pages/Welcome";
 import HotspotPage from "./pages/hotspot";
 import Alerts from "./pages/alerts";
+import MosquitoSafety from "./pages/MosquitoSafety";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
         <Route path="/learn/community" element={<Community />} />
         <Route path="/hotspots" element={<HotspotPage />} />
         <Route path="/alerts" element={<Alerts />} />
+        <Route path="/mosquito-safety" element={<MosquitoSafety />} />
       </Routes>
     </BrowserRouter >
   );
