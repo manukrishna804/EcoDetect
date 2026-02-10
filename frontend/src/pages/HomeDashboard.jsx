@@ -1,6 +1,6 @@
 
 import React from "react";
-import "./EcoDetectHome.css";
+import "./HomeDashboard.css";
 
 const features = [
   { icon: "📷", title: "Detect", sub: "Scanner" },
