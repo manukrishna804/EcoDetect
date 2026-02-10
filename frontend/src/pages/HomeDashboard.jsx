@@ -1,5 +1,7 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import "./HomeDashboard.css";
 
 const features = [
@@ -24,12 +26,29 @@ function Sighting({ name, time, img }) {
 }
 
 export default function HomeDashboard() {
+  const [userName, setUserName] = useState("User");
+
+  useEffect(() => {
+    // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && user.displayName) {
+        setUserName(user.displayName);
+      } else if (user && user.email) {
+        // Fallback to email username if no display name
+        setUserName(user.email.split('@')[0]);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div className="eco-container">
       {/* HEADER */}
       <header className="eco-header">
         <h1>EcoDetect</h1>
-        <div className="eco-profile">Hello, Alex</div>
+        <div className="eco-profile">Hello, {userName}</div>
       </header>
 
       {/* FEATURE GRID */}

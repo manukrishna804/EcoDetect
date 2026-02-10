@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
@@ -31,9 +31,15 @@ export default function SignUp() {
         setError('');
         setLoading(true);
         try {
-            // Note: In a real app, we'd save fullName, phone, location to Firestore here.
-            // For now, only Auth is implemented.
-            await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+            // Create user account
+            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+
+            // Update user profile with display name
+            await updateProfile(userCredential.user, {
+                displayName: formData.fullName
+            });
+
+            // Note: In a real app, we'd also save phone, location to Firestore here.
             navigate('/home');
         } catch (err) {
             setError(err.message);
