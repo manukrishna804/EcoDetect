@@ -41,3 +41,21 @@ backend/firebase/serviceAccountKey.json
 # =====================
 __pycache__/
 *.pyc
+
+# =====================
+# Backend (Merged)
+# =====================
+# Environment variables
+.env
+
+# Python
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# OS
+Thumbs.db
