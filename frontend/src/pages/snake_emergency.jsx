@@ -6,12 +6,17 @@ import { hospitals } from '../data/hospitals';
 
 const SnakeEmergency = () => {
   const [activeTab, setActiveTab] = useState('firstaid');
-  
+
   // --- Geolocation & Hospital Data State ---
   const [userLocation, setUserLocation] = useState(null);
   const [sortedHospitals, setSortedHospitals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [permissionDenied, setPermissionDenied] = useState(false);
+
+  // --- SOS Modal State ---
+  const [showSOSModal, setShowSOSModal] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
+  const [copySuccess, setCopySuccess] = useState("");
 
   // --- Helper Functions ---
   const deg2rad = (deg) => {
@@ -74,9 +79,41 @@ const SnakeEmergency = () => {
 
   const handleNearestHospitalClick = () => {
     if (sortedHospitals.length > 0 && sortedHospitals[0].latitude && sortedHospitals[0].longitude) {
-       openGoogleMaps(sortedHospitals[0].latitude, sortedHospitals[0].longitude);
+      openGoogleMaps(sortedHospitals[0].latitude, sortedHospitals[0].longitude);
     } else {
-       alert("Unable to locate nearest hospital. Please ensure location services are enabled.");
+      alert("Unable to locate nearest hospital. Please ensure location services are enabled.");
+    }
+  };
+
+  // --- SOS Handlers ---
+  const handleSOSClick = () => {
+    setShowSOSModal(true);
+    setSelectedService(null);
+    setCopySuccess("");
+  };
+
+  const handleCloseModal = () => {
+    setShowSOSModal(false);
+    setSelectedService(null);
+    setCopySuccess("");
+  };
+
+  const handleServiceSelect = (service) => {
+    setSelectedService(service);
+    setCopySuccess("");
+  };
+
+  const handleCopyNumber = async () => {
+    if (selectedService) {
+      try {
+        await navigator.clipboard.writeText(selectedService.number);
+        setCopySuccess("Emergency number copied successfully.");
+
+        // Auto-clear success message after 3 seconds
+        setTimeout(() => setCopySuccess(""), 3000);
+      } catch (err) {
+        setCopySuccess("Failed to copy. Please type manually.");
+      }
     }
   };
 
@@ -255,7 +292,7 @@ const SnakeEmergency = () => {
                 <span className="urgency-icon">🏥</span>
                 Nearest Antivenom
               </h2>
-              <AntivenomMap 
+              <AntivenomMap
                 userLocation={userLocation}
                 sortedHospitals={sortedHospitals}
                 loading={loading}
@@ -265,7 +302,7 @@ const SnakeEmergency = () => {
           </>
         )}
 
-{activeTab === 'precautions' && (
+        {activeTab === 'precautions' && (
           <>
             <section className="section">
               <h2 className="section-title">
@@ -433,8 +470,60 @@ const SnakeEmergency = () => {
       {/* ===== FIXED BOTTOM ACTION BAR ===== */}
       <div className="bottom-action-bar">
         <button className="hospital-button" onClick={handleNearestHospitalClick}>🏥 Nearest Hospital</button>
-        <button className="sos-button" onClick={() => window.location.href = 'tel:112'}>🚨 SOS CALL</button>
+        <button className="sos-button" onClick={handleSOSClick}>🚨 SOS CALL</button>
       </div>
+
+      {/* SOS MODAL */}
+      {showSOSModal && (
+        <div className="sos-overlay">
+          <div className="sos-modal">
+            <button className="sos-close-btn" onClick={handleCloseModal}>✕</button>
+
+            <div className="sos-header">
+              <h3>🚨 Emergency Assistance Required</h3>
+              <p className="sos-warning">Use this feature only in real emergencies.</p>
+            </div>
+
+            {!selectedService ? (
+              <div className="sos-options">
+                <button
+                  className="sos-service-btn ambulance"
+                  onClick={() => handleServiceSelect({ name: "Ambulance", number: "112" })}
+                >
+                  🚑 Call Ambulance (112)
+                </button>
+                <button
+                  className="sos-service-btn forest"
+                  onClick={() => handleServiceSelect({ name: "Forest Dept", number: "1800 425 4733" })}
+                >
+                  🌲 Call Forest Dept (1800 425 4733)
+                </button>
+              </div>
+            ) : (
+              <div className="sos-details">
+                <h4>{selectedService.name}</h4>
+                <div className="sos-number-display">
+                  {selectedService.number}
+                </div>
+
+                <p className="sos-instruction">
+                  Please call this number immediately from your mobile phone.
+                </p>
+
+                <button className="sos-action-btn" onClick={handleCopyNumber}>
+                  📋 Copy Number
+                </button>
+
+                {copySuccess && <p className="sos-success-msg">✅ {copySuccess}</p>}
+
+                <button className="sos-back-btn" onClick={() => setSelectedService(null)}>
+                  ← Back to options
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
