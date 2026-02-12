@@ -332,50 +332,51 @@ export default function DetectSpecies() {
       {/* Main Content */}
       <main className={styles.main}>
         {/* Upload Section */}
-        <div className={styles.uploadSection}>
-          <div className={styles.uploadCard} onClick={triggerGallery}>
-            <div
-              className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <div className={styles.uploadIconWrapper}>
-                <span className="material-symbols-outlined" style={{ fontSize: '2.25rem' }}>cloud_upload</span>
+        {!image && (
+          <div className={styles.uploadSection}>
+            <div className={styles.uploadCard} onClick={triggerGallery}>
+              <div
+                className={`${styles.uploadBox} ${isDragging ? styles.dragging : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className={styles.uploadIconWrapper}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '2.25rem' }}>cloud_upload</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', textAlign: 'center' }}>
+                  <p className={styles.uploadTextPrimary}>Upload Photo</p>
+                  <p className={styles.uploadTextSecondary}>Drag & drop or select from gallery</p>
+                </div>
+                <button className={styles.galleryButton} onClick={(e) => { e.stopPropagation(); triggerGallery(); }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', marginRight: '0.5rem' }}>image</span>
+                  Choose from Gallery
+                </button>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem', textAlign: 'center' }}>
-                <p className={styles.uploadTextPrimary}>Upload Photo</p>
-                <p className={styles.uploadTextSecondary}>Drag & drop or select from gallery</p>
+            </div>
+
+            {/* Divider */}
+            <div className={styles.dividerWrapper}>
+              <div className={styles.dividerLine}></div>
+              <span className={styles.dividerText}>OR</span>
+              <div className={styles.dividerLine}></div>
+            </div>
+
+            {/* Camera Button - Updated to trigger custom camera */}
+            <button className={styles.cameraButton} onClick={startCamera}>
+              <div className={styles.cameraIconWrapper}>
+                <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>photo_camera</span>
               </div>
-              <button className={styles.galleryButton} onClick={(e) => { e.stopPropagation(); triggerGallery(); }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '1.125rem', marginRight: '0.5rem' }}>image</span>
-                Choose from Gallery
-              </button>
-            </div>
+              <span className={styles.cameraButtonText}>Open Camera</span>
+            </button>
           </div>
-
-          {/* Divider */}
-          <div className={styles.dividerWrapper}>
-            <div className={styles.dividerLine}></div>
-            <span className={styles.dividerText}>OR</span>
-            <div className={styles.dividerLine}></div>
-          </div>
-
-          {/* Camera Button - Updated to trigger custom camera */}
-          <button className={styles.cameraButton} onClick={startCamera}>
-            <div className={styles.cameraIconWrapper}>
-              <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>photo_camera</span>
-            </div>
-            <span className={styles.cameraButtonText}>Open Camera</span>
-          </button>
-        </div>
+        )}
 
         {/* Recent Capture Section */}
         {image && (
           <div className={styles.recentCaptureSection}>
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>Recent Capture</h3>
-              <button className={styles.viewAllButton}>View All</button>
             </div>
             <div className={styles.previewCard}>
               <img
@@ -402,6 +403,27 @@ export default function DetectSpecies() {
                 <p className={styles.fileMeta}>Ready to process</p>
               </div>
             </div>
+            
+            <button className={styles.uploadAnotherButton} onClick={() => { setImage(null); setSelectedFile(null); }} style={{
+              marginTop: '1rem',
+              background: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              color: 'var(--text-primary)',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem',
+              width: '100%',
+              fontSize: '0.95rem',
+              fontWeight: '500',
+              transition: 'all 0.2s ease'
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '1.25rem' }}>add_photo_alternate</span>
+              Upload Another Image
+            </button>
           </div>
         )}
       </main>
