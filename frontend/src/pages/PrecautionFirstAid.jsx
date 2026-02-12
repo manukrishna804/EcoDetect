@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from '../styles/PrecautionFirstAid.module.css';
 import { protocols } from '../data/protocols';
+import protocolVideos from '../data/protocol_videos.json';
 
 export default function PrecautionFirstAid() {
   const location = useLocation();
@@ -46,6 +47,10 @@ export default function PrecautionFirstAid() {
   }
 
   const data = protocols[protocolKey] || protocols["snakebite_non_venomous"];
+
+  // Determine video path
+  const videoData = protocolVideos.protocols[protocolKey];
+  const videoPath = videoData?.video_path;
 
   // Scroll to top on mount
   useEffect(() => {
@@ -170,6 +175,32 @@ export default function PrecautionFirstAid() {
               ))}
             </div>
           </section>
+
+          {/* Protocol Video */}
+          {videoPath && (
+            <section>
+              <div className={styles.sectionHeader}>
+                <span className="material-symbols-outlined" style={{ color: '#0ea5e9' }}>play_circle</span>
+                Instructional Video
+              </div>
+              <div className={styles.videoContainer} style={{
+                marginTop: '1rem',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              }}>
+                <video
+                  controls
+                  width="100%"
+                  poster={image} // Use species image as poster
+                  style={{ display: 'block' }}
+                >
+                  <source src={videoPath} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </section>
+          )}
 
           {/* Symptoms */}
           <section>

@@ -12,15 +12,15 @@
             "type": "first_aid",
             "video_path": "/videos/snake_neuro_firstaid.mp4"
         },
-        "snakebite_hemotoxic": {
+        "snakebite_hemo": {
             "type": "first_aid",
             "video_path": "/videos/snake_hemo_firstaid.mp4"
         },
-        "frog_toxin_exposure": {
+        "frog_toxic": {
             "type": "first_aid",
             "video_path": "/videos/frog_toxin_firstaid.mp4"
         },
-        "spider_bite_firstaid": {
+        "spider_bite_mild": {
             "type": "first_aid",
             "video_path": "/videos/spider_firstaid.mp4"
         },

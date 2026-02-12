@@ -95,7 +95,7 @@ export default function HomeDashboard() {
       <header className="eco-header">
         <div className="logo-section">
           <div className="logo-icon">🛡️</div>
-          <h1>EcoGuard AI</h1>
+          <h1>Ecodetect</h1>
         </div>
         <div className="user-profile">
           <span>Hello, {userName}</span>

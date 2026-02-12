@@ -16,7 +16,7 @@ const SnakeEmergency = () => {
   // --- SOS Modal State ---
   const [showSOSModal, setShowSOSModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
-  const [copySuccess, setCopySuccess] = useState("");
+
 
   // --- Helper Functions ---
   const deg2rad = (deg) => {
@@ -89,32 +89,15 @@ const SnakeEmergency = () => {
   const handleSOSClick = () => {
     setShowSOSModal(true);
     setSelectedService(null);
-    setCopySuccess("");
   };
 
   const handleCloseModal = () => {
     setShowSOSModal(false);
     setSelectedService(null);
-    setCopySuccess("");
   };
 
   const handleServiceSelect = (service) => {
     setSelectedService(service);
-    setCopySuccess("");
-  };
-
-  const handleCopyNumber = async () => {
-    if (selectedService) {
-      try {
-        await navigator.clipboard.writeText(selectedService.number);
-        setCopySuccess("Emergency number copied successfully.");
-
-        // Auto-clear success message after 3 seconds
-        setTimeout(() => setCopySuccess(""), 3000);
-      } catch (err) {
-        setCopySuccess("Failed to copy. Please type manually.");
-      }
-    }
   };
 
   return (
@@ -314,7 +297,7 @@ const SnakeEmergency = () => {
               </p>
 
               {/* ===== DAILY SAFETY HABITS ===== */}
-              <h3 className="section-title" style={{ fontSize: '16px', marginTop: '20px' }}>Daily Safety Habits</h3>
+              <h3 className="section-subtitle">Daily Safety Habits</h3>
               <div className="habits-grid">
                 <div className="habit-card">
                   <span className="habit-icon">👢</span>
@@ -371,20 +354,20 @@ const SnakeEmergency = () => {
                 <span className="encounter-title">DO NOT PANIC</span>
                 <div className="encounter-steps">
                   <div className="encounter-step">
-                    <span className="step-bullet">1.</span>
-                    <p>Keep a safe distance (at least 6 feet).</p>
+                    <p><span className="step-bullet">1. </span>
+                      Keep a safe distance (at least 6 feet).</p>
                   </div>
                   <div className="encounter-step">
-                    <span className="step-bullet">2.</span>
-                    <p>Do NOT attempt to touch, catch, or kill it.</p>
+                    <p><span className="step-bullet">2. </span>
+                      Do NOT attempt to touch, catch, or kill it.</p>
                   </div>
                   <div className="encounter-step">
-                    <span className="step-bullet">3.</span>
-                    <p>Slowly back away without sudden movements.</p>
+                    <p><span className="step-bullet">3. </span>
+                      Slowly back away without sudden movements.</p>
                   </div>
                   <div className="encounter-step">
-                    <span className="step-bullet">4.</span>
-                    <p>Call local snake rescue or 112/911.</p>
+                    <p><span className="step-bullet">4. </span>
+                      Call local snake rescue or 112.</p>
                   </div>
                 </div>
               </div>
@@ -510,11 +493,13 @@ const SnakeEmergency = () => {
                   Please call this number immediately from your mobile phone.
                 </p>
 
-                <button className="sos-action-btn" onClick={handleCopyNumber}>
-                  📋 Copy Number
-                </button>
-
-                {copySuccess && <p className="sos-success-msg">✅ {copySuccess}</p>}
+                <a
+                  href={`tel:${selectedService.number.replace(/\s/g, '')}`}
+                  className="sos-action-btn"
+                  style={{ textDecoration: 'none' }}
+                >
+                  📞 Call Now
+                </a>
 
                 <button className="sos-back-btn" onClick={() => setSelectedService(null)}>
                   ← Back to options
