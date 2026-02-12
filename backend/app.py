@@ -1,6 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
 from firebase.firebase_init import init_firebase
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 db = init_firebase()
 
@@ -10,8 +14,10 @@ CORS(app)
 
 from routes.detect import detect_bp
 from hotspot.runner import run_hotspot_analysis
+from routes.chat import chat_bp
 
 app.register_blueprint(detect_bp)
+app.register_blueprint(chat_bp)
 
 # Optional: Only register precaution if it exists
 try:

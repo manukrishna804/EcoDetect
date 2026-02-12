@@ -2,4 +2,5 @@ Flask
 flask-cors
 ultralytics
 Pillow
-firebase-admin
+google-generativeai
+python-dotenv
