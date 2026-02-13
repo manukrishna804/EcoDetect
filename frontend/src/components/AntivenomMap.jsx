@@ -69,7 +69,7 @@ const MapController = ({ userLocation, nearestHospital }) => {
 };
 
 const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied }) => {
-  const defaultCenter = { lat: 10.8505, lng: 76.2711 }; 
+  const defaultCenter = { lat: 10.8505, lng: 76.2711 };
   const nearestId = sortedHospitals.length > 0 ? sortedHospitals[0].id : null;
 
   const openGoogleMaps = (lat, lng) => {
@@ -82,7 +82,7 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
 
   return (
     <div className="antivenom-map-container">
-      
+
       {/* DISCLAIMER */}
       <div className="disclaimer-box">
         <span>⚠️</span>
@@ -100,10 +100,10 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
           </div>
         )}
 
-        <MapContainer 
-          center={mapCenter} 
-          zoom={zoomLevel} 
-          scrollWheelZoom={true} 
+        <MapContainer
+          center={mapCenter}
+          zoom={zoomLevel}
+          scrollWheelZoom={true}
           style={{ height: '100%', width: '100%' }}
         >
           <TileLayer
@@ -122,27 +122,27 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
           {sortedHospitals.map((hospital, index) => {
             const isNearest = hospital.id === nearestId;
             return (
-              <Marker 
-                key={hospital.id} 
+              <Marker
+                key={hospital.id}
                 position={[hospital.latitude, hospital.longitude]}
                 icon={isNearest ? nearestHospitalIcon : hospitalIcon}
                 zIndexOffset={isNearest ? 1000 : 0} // Keep nearest on top
               >
                 <Popup>
                   <div style={{ textAlign: 'center' }}>
-                    <strong>{hospital.name}</strong><br/>
-                    {isNearest && <span style={{ color: '#e63946', fontWeight: '800' }}>⭐ NEAREST HOSPITAL ⭐<br/></span>}
-                    <small>{hospital.district}</small><br/>
-                    <span style={{ color: 'green', fontWeight: 'bold' }}>Antivenom Center</span><br/>
-                    {hospital.distance && <small>{hospital.distance.toFixed(1)} km away</small>}<br/>
-                    <button 
+                    <strong>{hospital.name}</strong><br />
+                    {isNearest && <span style={{ color: '#e63946', fontWeight: '800' }}>⭐ NEAREST HOSPITAL ⭐<br /></span>}
+                    <small>{hospital.district}</small><br />
+                    <span style={{ color: 'green', fontWeight: 'bold' }}>Antivenom Center</span><br />
+                    {hospital.distance && <small>{hospital.distance.toFixed(1)} km away</small>}<br />
+                    <button
                       onClick={() => openGoogleMaps(hospital.latitude, hospital.longitude)}
-                      style={{ 
-                        marginTop: '5px', 
-                        padding: '6px 12px', 
-                        background: isNearest ? '#e63946' : '#4361ee', 
-                        color: 'white', 
-                        border: 'none', 
+                      style={{
+                        marginTop: '5px',
+                        padding: '6px 12px',
+                        background: isNearest ? '#e63946' : '#4361ee',
+                        color: 'white',
+                        border: 'none',
                         borderRadius: '4px',
                         cursor: 'pointer',
                         fontWeight: 'bold'
@@ -157,9 +157,9 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
           })}
 
           {/* Map Controller for Bounds */}
-          <MapController 
-            userLocation={userLocation} 
-            nearestHospital={sortedHospitals[0]} 
+          <MapController
+            userLocation={userLocation}
+            nearestHospital={sortedHospitals[0]}
           />
         </MapContainer>
       </div>
@@ -169,15 +169,15 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
         {sortedHospitals.slice(0, 4).map(hospital => {
           const isNearest = hospital.id === nearestId;
           return (
-            <div 
-              key={hospital.id} 
+            <div
+              key={hospital.id}
               className={`hospital-list-card ${isNearest ? 'nearest-card' : ''}`}
               style={isNearest ? { borderLeft: '6px solid #e63946', background: '#fff5f5' } : {}}
             >
               <div className="hospital-card-header">
                 <div>
                   <h4 className="hospital-name">
-                    {hospital.name} {isNearest && <span style={{color: '#e63946'}}> (Nearest)</span>}
+                    {hospital.name} {isNearest && <span style={{ color: '#e63946' }}> (Nearest)</span>}
                   </h4>
                   <p className="hospital-district">{hospital.district}</p>
                 </div>
@@ -189,13 +189,13 @@ const AntivenomMap = ({ userLocation, sortedHospitals, loading, permissionDenied
                   </span>
                 )}
               </div>
-              
+
               <div className="antivenom-status">
                 <span>💉</span> Antivenom Available
               </div>
 
               <div className="card-actions">
-                <button 
+                <button
                   className="nav-button"
                   onClick={() => openGoogleMaps(hospital.latitude, hospital.longitude)}
                   style={isNearest ? { background: '#e63946' } : {}}
