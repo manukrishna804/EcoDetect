@@ -12,11 +12,15 @@ import SeasonalAlerts from "./pages/Learn&Awareness/seasonal_alerts";
 import Community from "./pages/Learn&Awareness/community";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
 import Welcome from "./pages/Welcome";
 import HotspotPage from "./pages/hotspot";
 import Alerts from "./pages/alerts";
 import MosquitoSafety from "./pages/MosquitoSafety";
 import Chatbot from "./components/Chatbot";
+import BottomNavbar from "./components/BottomNavbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 
 // Wrapper component to conditionally render chatbot
@@ -30,27 +34,31 @@ function AppContent() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Welcome />} />
-        <Route path="/home" element={<HomeDashboard />} />
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/detect" element={<DetectSpecies />} />
-        <Route path="/result" element={<DetectResult />} />
-        <Route path="/precaution" element={<PrecautionFirstAid />} />
-        <Route path="/plan-awareness" element={<PlanAwareness />} />
-        <Route path="/learn/safety-tips" element={<SafetyTips />} />
-        <Route path="/learn/prevention" element={<Prevention />} />
-        <Route path="/snake" element={<SnakeEmergency />} />
-        <Route path="/learn/first-aid-basics" element={<FirstAidBasics />} />
-        <Route path="/learn/seasonal-alerts" element={<SeasonalAlerts />} />
-        <Route path="/learn/community" element={<Community />} />
-        <Route path="/hotspots" element={<HotspotPage />} />
-        <Route path="/alerts" element={<Alerts />} />
-        <Route path="/mosquito-safety" element={<MosquitoSafety />} />
+        <Route path="/" element={<PublicRoute><Welcome /></PublicRoute>} />
+        <Route path="/home" element={<ProtectedRoute><HomeDashboard /></ProtectedRoute>} />
+        <Route path="/login" element={<PublicRoute><SignIn /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><SignUp /></PublicRoute>} />
+        <Route path="/detect" element={<ProtectedRoute><DetectSpecies /></ProtectedRoute>} />
+        <Route path="/result" element={<ProtectedRoute><DetectResult /></ProtectedRoute>} />
+        <Route path="/precaution" element={<ProtectedRoute><PrecautionFirstAid /></ProtectedRoute>} />
+        <Route path="/plan-awareness" element={<ProtectedRoute><PlanAwareness /></ProtectedRoute>} />
+        <Route path="/learn/safety-tips" element={<ProtectedRoute><SafetyTips /></ProtectedRoute>} />
+        <Route path="/learn/prevention" element={<ProtectedRoute><Prevention /></ProtectedRoute>} />
+        <Route path="/snake" element={<ProtectedRoute><SnakeEmergency /></ProtectedRoute>} />
+        <Route path="/learn/first-aid-basics" element={<ProtectedRoute><FirstAidBasics /></ProtectedRoute>} />
+        <Route path="/learn/seasonal-alerts" element={<ProtectedRoute><SeasonalAlerts /></ProtectedRoute>} />
+        <Route path="/learn/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+        <Route path="/hotspots" element={<ProtectedRoute><HotspotPage /></ProtectedRoute>} />
+        <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
+        <Route path="/mosquito-safety" element={<ProtectedRoute><MosquitoSafety /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
 
       {/* Conditionally render chatbot */}
       {shouldShowChatbot && <Chatbot />}
+
+      {/* Conditionally render BottomNavbar */}
+      {shouldShowChatbot && <BottomNavbar />}
     </>
   );
 }

@@ -1,23 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap');
 
-:root {
-  --primary-color: #2ecc71;
-  --text-dark: #1e293b;
-  --text-gray: #64748b;
-  --bg-color: #f8fafc;
-  --white: #ffffff;
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  --radius-lg: 24px;
-  --radius-md: 16px;
-}
+
 
 .eco-container {
   font-family: 'Urbanist', sans-serif;
-  max-width: 480px;
-  margin: 0 auto;
+  width: 100%;
   padding-bottom: 100px;
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); inherited */
   min-height: 100vh;
 }
 
@@ -320,71 +309,7 @@
   gap: 4px;
 }
 
-/* BOTTOM NAV */
-.eco-bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 12px 24px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-top: 1px solid #f1f5f9;
-  z-index: 100;
-  max-width: 480px;
-  margin: 0 auto;
-}
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  color: var(--text-gray);
-  cursor: pointer;
-  width: 60px;
-}
-
-.nav-item span {
-  font-size: 1.4rem;
-  margin-bottom: 2px;
-}
-
-.nav-item label {
-  font-size: 0.7rem;
-  font-weight: 500;
-}
-
-.nav-item.active {
-  color: #16a34a;
-}
-
-.nav-fab-container {
-  position: relative;
-  bottom: 16px;
-}
-
-.nav-fab {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #16a34a;
-  border: 4px solid #f0fdf4;
-  color: white;
-  font-size: 1.75rem;
-  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.4);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s;
-}
-
-.nav-fab:active {
-  transform: scale(0.95);
-}
 
 /* SOS MODAL */
 .sos-overlay {
