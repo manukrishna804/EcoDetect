@@ -1,47 +1,66 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebase"; // Import db
-import { onAuthStateChanged, signOut, updateProfile } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore"; // Import Firestore functions
+import { auth, db } from "../firebase";
+import { onAuthStateChanged, signOut, updateProfile, deleteUser, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import styles from "../styles/Profile.module.css";
 
 export default function Profile() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [formData, setFormData] = useState({
         displayName: "",
         phoneNumber: "",
         location: ""
     });
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+    });
+    const [stats, setStats] = useState({
+        detections: 0,
+        alerts: 0
+    });
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-            setUser(currentUser);
             if (currentUser) {
-                // Fetch additional data from Firestore
-                const docRef = doc(db, "users", currentUser.uid);
-                const docSnap = await getDoc(docRef);
+                setUser(currentUser);
+                try {
+                    const docRef = doc(db, "users", currentUser.uid);
+                    const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setFormData({
-                        displayName: currentUser.displayName || data.displayName || "",
-                        phoneNumber: data.phoneNumber || "",
-                        location: data.location || ""
-                    });
-                } else {
-                    // Initialize with defaults if no doc exists
-                    setFormData({
-                        displayName: currentUser.displayName || "",
-                        phoneNumber: "",
-                        location: ""
-                    });
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        setFormData({
+                            displayName: currentUser.displayName || data.displayName || "",
+                            phoneNumber: data.phoneNumber || "",
+                            location: data.location || ""
+                        });
+                        setStats({
+                            detections: data.totalDetections || 124,
+                            alerts: data.totalAlerts || 8
+                        });
+                    } else {
+                        setFormData({
+                            displayName: currentUser.displayName || "",
+                            phoneNumber: "",
+                            location: ""
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
                 }
+            } else {
+                navigate("/login");
             }
         });
         return () => unsubscribe();
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -51,31 +70,54 @@ export default function Profile() {
         }));
     };
 
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     const handleSave = async () => {
         if (!user) return;
-
         try {
-            // Update Firebase Auth Profile (DisplayName)
-            await updateProfile(user, {
-                displayName: formData.displayName
-            });
-
-            // Save to Firestore (Persistent Database)
+            await updateProfile(user, { displayName: formData.displayName });
             await setDoc(doc(db, "users", user.uid), {
                 displayName: formData.displayName,
                 email: user.email,
                 phoneNumber: formData.phoneNumber,
                 location: formData.location
             }, { merge: true });
-
-            // Update local user state to reflect change immediately
             setUser({ ...user, displayName: formData.displayName });
-
             setIsEditing(false);
             alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error updating profile:", error);
             alert("Failed to update profile.");
+        }
+    };
+
+    const handlePasswordUpdate = async (e) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            alert("New passwords do not match!");
+            return;
+        }
+
+        try {
+            // 1. Re-authenticate user
+            const credential = EmailAuthProvider.credential(user.email, passwordData.currentPassword);
+            await reauthenticateWithCredential(user, credential);
+
+            // 2. Update password
+            await updatePassword(user, passwordData.newPassword);
+
+            alert("Password updated successfully!");
+            setShowPasswordModal(false);
+            setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
+        } catch (error) {
+            console.error("Error updating password:", error);
+            alert(error.code === 'auth/wrong-password' ? "Incorrect current password." : "Failed to update password. Please try again.");
         }
     };
 
@@ -88,168 +130,272 @@ export default function Profile() {
         }
     };
 
-    return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-100 min-h-screen">
-            <div className="max-w-[430px] mx-auto min-h-screen bg-background-light dark:bg-background-dark flex flex-col pb-24">
-                {/* Header */}
-                <nav className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b border-emerald-100 dark:border-emerald-900/30">
-                    <button className={`p-2 -ml-2 ${styles.backButton}`} onClick={() => navigate(-1)}>
-                        <span className="material-icons">arrow_back_ios</span>
-                    </button>
-                    <h1 className="text-lg font-bold">Account Profile</h1>
-                    <div className="w-10"></div>
-                </nav>
+    const handleDeleteAccount = async () => {
+        if (!user) return;
+        try {
+            await deleteDoc(doc(db, "users", user.uid));
+            await deleteUser(user);
+            navigate("/login");
+        } catch (error) {
+            console.error("Error deleting account:", error);
+            alert("This action requires a recent login. Please log out and log back in to delete your account.");
+            setShowDeleteModal(false);
+        }
+    };
 
-                <main className="px-5 mt-6 space-y-6">
-                    {/* Profile Section */}
-                    <section className="flex flex-col items-center text-center">
-                        <div className="relative">
-                            <div className="w-32 h-32 rounded-full border-4 border-white dark:border-emerald-900 shadow-xl overflow-hidden">
+    const getJoinYear = () => {
+        if (user?.metadata?.creationTime) {
+            return new Date(user.metadata.creationTime).getFullYear();
+        }
+        return 2026;
+    };
+
+    return (
+        <div className={styles.page}>
+            <div className={styles.container}>
+                {/* Header */}
+                <header className={styles.header}>
+                    <button className={styles.backButton} onClick={() => navigate(-1)}>
+                        <span className="material-icons">arrow_back_ios_new</span>
+                    </button>
+                    <h1 className={styles.headerTitle}>Account Profile</h1>
+                    <div className={styles.spacer}></div>
+                </header>
+
+                <main className={`${styles.main} ${isEditing ? styles.editAnimation : ""}`}>
+                    {/* Hero Section */}
+                    <section className={styles.profileHero}>
+                        <div className={styles.avatarWrapper}>
+                            <div className={styles.avatarContainer}>
                                 {user?.photoURL ? (
-                                    <img src={user.photoURL} alt="Profile" className="w-full h-full object-cover" />
+                                    <img src={user.photoURL} alt="Profile" className={styles.avatarImage} />
                                 ) : (
-                                    <img alt="User P" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtnw14ZMRgbMosy3lhCVdphUba2YOgQnGPXOFXa1hyC7sfs9k_zKiqtM9XixDTtvDgxL24J6d6bLA415KmM6gcecfaeyfxN_qbha6ihL6DARVvCFXGVQQGW5yoFzkARXoaT664w85dDQ0ZPqSHLyhKR5i8HJ2jjDPF62CQOnysObx-N05FYfkHRk7DB9aYyH5H1m_BKOgThnnVAFrg7_pcVBVo-1KYkIKCkvogfNUVc_uRHn-Bv6ewjkI9iovCK4E6vEgjyE-UGng" />
+                                    <div className={styles.avatarPlaceholder}>
+                                        <span className="material-icons" style={{ fontSize: '4.5rem' }}>person</span>
+                                    </div>
                                 )}
                             </div>
-                            <button className="absolute bottom-1 right-1 bg-primary text-white p-2 rounded-full shadow-lg hover:scale-105 transition-transform">
-                                <span className="material-icons text-sm">camera_alt</span>
+                            <button className={styles.cameraButton}>
+                                <span className="material-icons" style={{ fontSize: '1.25rem' }}>camera_alt</span>
                             </button>
                         </div>
-                        <div className="mt-4 flex items-center gap-2">
+
+                        <div className={styles.userNameContainer}>
                             {isEditing ? (
                                 <input
                                     type="text"
                                     name="displayName"
                                     value={formData.displayName}
                                     onChange={handleChange}
-                                    className="text-2xl font-bold text-center bg-transparent border-b border-gray-300 focus:outline-none focus:border-green-500"
+                                    className={styles.userNameInput}
+                                    autoFocus
                                 />
                             ) : (
-                                <h2 className="text-2xl font-bold">{user?.displayName || "User Name"}</h2>
+                                <h2 className={styles.userName}>{user?.displayName || "User Name"}</h2>
                             )}
-                            <span
-                                className="material-icons text-primary text-lg cursor-pointer"
-                                onClick={() => setIsEditing(!isEditing)}
-                            >
-                                {isEditing ? "close" : "edit"}
-                            </span>
-                        </div>
-                        <p className="text-slate-500 dark:text-emerald-400 text-sm font-medium">Environmental Warden since 2026</p>
-                    </section>
-
-                    {/* Stats */}
-                    <section className="grid grid-cols-2 gap-4">
-                        <div className="bg-white dark:bg-emerald-900/20 p-4 rounded-xl shadow-sm border border-emerald-50 dark:border-emerald-900/30">
-                            <span className="text-primary material-icons mb-1">visibility</span>
-                            <div className="text-2xl font-bold">124</div>
-                            <div className="text-xs text-slate-500 dark:text-emerald-300 font-medium">Recent Detections</div>
-                        </div>
-                        <div className="bg-white dark:bg-emerald-900/20 p-4 rounded-xl shadow-sm border border-emerald-50 dark:border-emerald-900/30">
-                            <span className="text-amber-500 material-icons mb-1">warning</span>
-                            <div className="text-2xl font-bold">8</div>
-                            <div className="text-xs text-slate-500 dark:text-emerald-300 font-medium">Alerts Reported</div>
-                        </div>
-                    </section>
-
-                    {/* Personal Info */}
-                    <section className="bg-white dark:bg-emerald-900/10 p-5 rounded-xl shadow-sm border border-emerald-50 dark:border-emerald-900/30">
-                        <h3 className="text-sm font-bold text-slate-400 dark:text-emerald-500 uppercase tracking-wider mb-4">Personal Information</h3>
-                        <div className="space-y-4">
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold px-1">Full Name</label>
-                                <input
-                                    className={`w-full bg-slate-50 dark:bg-emerald-950/50 border-none rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary transition-all ${isEditing ? 'bg-white shadow-sm' : ''}`}
-                                    type="text"
-                                    name="displayName"
-                                    value={formData.displayName}
-                                    onChange={handleChange}
-                                    readOnly={!isEditing}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold px-1">Email Address</label>
-                                <input
-                                    className="w-full bg-slate-50 dark:bg-emerald-950/50 border-none rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary transition-all text-gray-500"
-                                    type="email"
-                                    value={user?.email || ""}
-                                    readOnly
-                                    disabled
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold px-1">Phone Number</label>
-                                <input
-                                    className={`w-full bg-slate-50 dark:bg-emerald-950/50 border-none rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary transition-all ${isEditing ? 'bg-white shadow-sm' : ''}`}
-                                    type="tel"
-                                    name="phoneNumber"
-                                    value={formData.phoneNumber}
-                                    onChange={handleChange}
-                                    placeholder="+1 (555) 000-0000"
-                                    readOnly={!isEditing}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                                <label className="text-xs font-semibold px-1">Location</label>
-                                <input
-                                    className={`w-full bg-slate-50 dark:bg-emerald-950/50 border-none rounded-lg py-3 px-4 focus:ring-2 focus:ring-primary transition-all ${isEditing ? 'bg-white shadow-sm' : ''}`}
-                                    type="text"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    placeholder="City, Country"
-                                    readOnly={!isEditing}
-                                />
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Security */}
-                    <section className="bg-white dark:bg-emerald-900/10 p-5 rounded-xl shadow-sm border border-emerald-50 dark:border-emerald-900/30">
-                        <h3 className="text-sm font-bold text-slate-400 dark:text-emerald-500 uppercase tracking-wider mb-4">Security & Access</h3>
-                        <div className="space-y-2">
-                            <button className={`w-full flex items-center justify-between py-3 px-1 hover:bg-slate-50 dark:hover:bg-emerald-900/20 rounded-lg transition-colors group ${styles.changePasswordButton}`}>
-                                <div className="flex items-center gap-3">
-                                    <span className="material-icons text-slate-400 group-hover:text-primary transition-colors">lock_reset</span>
-                                    <span className="font-medium text-slate-600 dark:text-emerald-100 group-hover:text-green-600">Change Password</span>
-                                </div>
-                                <span className="material-icons text-slate-300">chevron_right</span>
+                            <button onClick={() => setIsEditing(!isEditing)} className={styles.editToggleBtn}>
+                                <span className="material-icons" style={{ fontSize: '1.25rem' }}>
+                                    {isEditing ? "close" : "edit"}
+                                </span>
                             </button>
                         </div>
+                        <span className={styles.roleBadge}>Environmental Warden since {getJoinYear()}</span>
+                    </section>
+
+                    {/* Stats Grid */}
+                    <section className={styles.statsGrid}>
+                        <div className={styles.statCard}>
+                            <span className={`${styles.statIcon} material-icons`} style={{ color: '#14b84b' }}>visibility</span>
+                            <span className={styles.statValue}>{stats.detections}</span>
+                            <span className={styles.statLabel}>Detections</span>
+                        </div>
+                        <div className={styles.statCard}>
+                            <span className={`${styles.statIcon} material-icons`} style={{ color: '#f59e0b' }}>warning</span>
+                            <span className={styles.statValue}>{stats.alerts}</span>
+                            <span className={styles.statLabel}>Alerts</span>
+                        </div>
+                    </section>
+
+                    {/* Info Card */}
+                    <section className={styles.infoSection}>
+                        <h3 className={styles.sectionHeader}>Personal Information</h3>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Full Name</label>
+                            <input
+                                className={`${styles.input} ${!isEditing ? styles.inputReadOnly : styles.inputEditing}`}
+                                type="text"
+                                name="displayName"
+                                value={formData.displayName}
+                                onChange={handleChange}
+                                readOnly={!isEditing}
+                            />
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Email Address</label>
+                            <input
+                                className={`${styles.input} ${styles.inputReadOnly}`}
+                                type="email"
+                                value={user?.email || ""}
+                                readOnly
+                                disabled
+                            />
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Phone Number</label>
+                            <input
+                                className={`${styles.input} ${!isEditing ? styles.inputReadOnly : styles.inputEditing}`}
+                                type="tel"
+                                name="phoneNumber"
+                                value={formData.phoneNumber}
+                                onChange={handleChange}
+                                placeholder="+1 (555) 000-0000"
+                                readOnly={!isEditing}
+                            />
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.label}>Home Location</label>
+                            <input
+                                className={`${styles.input} ${!isEditing ? styles.inputReadOnly : styles.inputEditing}`}
+                                type="text"
+                                name="location"
+                                value={formData.location}
+                                onChange={handleChange}
+                                placeholder="City, Country"
+                                readOnly={!isEditing}
+                            />
+                        </div>
+                    </section>
+
+                    {/* Security Card */}
+                    <section className={styles.infoSection}>
+                        <h3 className={styles.sectionHeader}>Security & Access</h3>
+                        <button className={styles.securityButton} onClick={() => setShowPasswordModal(true)}>
+                            <div className={styles.securityLeft}>
+                                <span className={`${styles.securityIcon} material-icons`}>lock_reset</span>
+                                <span className={styles.securityText}>Update Password</span>
+                            </div>
+                            <span className="material-icons" style={{ color: '#cbd5e1' }}>chevron_right</span>
+                        </button>
                     </section>
 
                     {/* Actions */}
-                    <div className="pt-6 space-y-4">
+                    <div className={styles.actionGroup}>
                         {isEditing ? (
-                            <button
-                                onClick={handleSave}
-                                className="w-full bg-primary hover:bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
-                            >
-                                <span className="material-icons text-lg">save</span>
-                                Save Changes
+                            <button onClick={handleSave} className={styles.primaryButton}>
+                                <span className="material-icons">save</span>
+                                Save Profile Changes
                             </button>
                         ) : (
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="w-full bg-white dark:bg-emerald-900/20 text-primary font-bold py-4 rounded-xl border border-primary/20 shadow-sm transition-all flex items-center justify-center gap-2"
-                            >
-                                <span className="material-icons text-lg">edit</span>
-                                Edit Profile
+                            <button onClick={() => setIsEditing(true)} className={styles.secondaryButton}>
+                                <span className="material-icons">edit</span>
+                                Edit Account Details
                             </button>
                         )}
-                        <button onClick={handleLogout} className="w-full bg-white dark:bg-transparent border border-emerald-100 dark:border-emerald-900 text-slate-500 dark:text-emerald-400 font-semibold py-4 rounded-xl hover:bg-slate-50 dark:hover:bg-emerald-900/10 transition-colors">
-                            Log Out
-                        </button>
+                        <button onClick={handleLogout} className={styles.logoutButton}>Sign Out from Device</button>
                     </div>
 
-                    <div className="text-center pt-4 pb-8">
-                        <button className="text-slate-400 dark:text-emerald-900 text-xs font-medium hover:text-red-500 transition-colors">
-                            Permanently Delete Account
-                        </button>
-                    </div>
+                    <button onClick={() => setShowDeleteModal(true)} className={styles.deleteAccountBtn}>
+                        Permanently Delete Account
+                    </button>
                 </main>
 
-                {/* Note: Bottom Nav is handled by App.jsx globally now */}
+                {/* Password Update Modal */}
+                {showPasswordModal && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modalContent} style={{ maxWidth: '380px' }}>
+                            <div className={styles.warningIconWrapper} style={{ backgroundColor: '#ecfdf5', color: '#14b84b' }}>
+                                <span className="material-icons" style={{ fontSize: '2rem' }}>lock</span>
+                            </div>
+                            <h3 className={styles.modalTitle}>Update Password</h3>
+                            <p className={styles.modalText}>
+                                Please enter your current password to authorize this change.
+                            </p>
+
+                            <form onSubmit={handlePasswordUpdate} className={styles.modalActions} style={{ gap: '1rem' }}>
+                                <div className={styles.inputGroup} style={{ textAlign: 'left' }}>
+                                    <label className={styles.label}>Current Password</label>
+                                    <input
+                                        type="password"
+                                        name="currentPassword"
+                                        value={passwordData.currentPassword}
+                                        onChange={handlePasswordChange}
+                                        className={styles.input}
+                                        placeholder="••••••••"
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup} style={{ textAlign: 'left' }}>
+                                    <label className={styles.label}>New Password</label>
+                                    <input
+                                        type="password"
+                                        name="newPassword"
+                                        value={passwordData.newPassword}
+                                        onChange={handlePasswordChange}
+                                        className={styles.input}
+                                        placeholder="••••••••"
+                                        minLength="6"
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.inputGroup} style={{ textAlign: 'left' }}>
+                                    <label className={styles.label}>Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                        className={styles.input}
+                                        placeholder="••••••••"
+                                        minLength="6"
+                                        required
+                                    />
+                                </div>
+
+                                <div className={styles.modalActions} style={{ marginTop: '0.5rem' }}>
+                                    <button type="submit" className={styles.primaryButton} style={{ borderRadius: '0.75rem', padding: '0.75rem' }}>
+                                        Confirm Update
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPasswordModal(false)}
+                                        className={styles.cancelBtn}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                )}
+
+                {/* Delete Modal */}
+                {showDeleteModal && (
+                    <div className={styles.modalOverlay}>
+                        <div className={styles.modalContent}>
+                            <div className={styles.warningIconWrapper}>
+                                <span className="material-icons" style={{ fontSize: '2rem' }}>priority_high</span>
+                            </div>
+                            <h3 className={styles.modalTitle}>Are you absolutely sure?</h3>
+                            <p className={styles.modalText}>
+                                This action is permanent. Deleting your account will erase all your detection history and personal settings.
+                            </p>
+                            <div className={styles.modalActions}>
+                                <button onClick={handleDeleteAccount} className={styles.confirmDeleteBtn}>
+                                    Yes, Delete Account
+                                </button>
+                                <button onClick={() => setShowDeleteModal(false)} className={styles.cancelBtn}>
+                                    Maybe later
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 }
+
