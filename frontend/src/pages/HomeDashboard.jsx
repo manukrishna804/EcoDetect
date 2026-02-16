@@ -204,30 +204,7 @@ export default function HomeDashboard() {
         />
       </section>
 
-      {/* BOTTOM NAVIGATION */}
-      <nav className="eco-bottom-nav">
-        <div className="nav-item active" onClick={() => navigate('/home')}>
-          <span>🏠</span>
-          <label>Home</label>
-        </div>
-        <div className="nav-item" onClick={() => navigate('/hotspots')}>
-          <span>🗺️</span>
-          <label>Map</label>
-        </div>
-        <div className="nav-fab-container">
-          <button className="nav-fab" onClick={() => navigate('/detect')}>
-            📷
-          </button>
-        </div>
-        <div className="nav-item" onClick={() => navigate('/alerts')}>
-          <span>🔔</span>
-          <label>Alerts</label>
-        </div>
-        <div className="nav-item" onClick={() => navigate('/profile')}>
-          <span>👤</span>
-          <label>Profile</label>
-        </div>
-      </nav>
+
     </div>
   );
 }
