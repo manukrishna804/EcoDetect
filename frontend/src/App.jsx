@@ -27,8 +27,8 @@ import PublicRoute from "./components/PublicRoute";
 function AppContent() {
   const location = useLocation();
 
-  // Hide chatbot on these routes
-  const hideChatbotRoutes = ['/', '/login', '/signup'];
+  // Hide chatbot and bottom navbar on these routes
+  const hideChatbotRoutes = ['/', '/login', '/signup', '/detect', '/result'];
   const shouldShowChatbot = !hideChatbotRoutes.includes(location.pathname);
 
   return (
