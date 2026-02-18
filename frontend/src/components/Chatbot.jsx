@@ -1,11 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Chatbot.css';
 
+// Lightweight markdown → HTML converter for bot messages
+function formatMessage(text) {
+    if (!text) return '';
+    let html = text
+        // Escape HTML entities first
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        // Bold: **text**
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Bullet lines starting with * or •
+        .replace(/^[\*•]\s+(.+)$/gm, '<li>$1</li>')
+        // Newlines to <br>
+        .replace(/\n/g, '<br/>');
+    // Wrap consecutive <li> items in a <ul>
+    html = html.replace(/(<li>.*?<\/li>)(<br\/>)*/g, '$1');
+    html = html.replace(/(<li>[\s\S]*?<\/li>)+/g, (match) => `<ul>${match}</ul>`);
+    return html;
+}
+
 export default function Chatbot() {
     // State management
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'bot', text: 'Hi there! 👋 How can I help you today?' }
+        { sender: 'bot', text: '🌿 Hi! I am the EcoDetect Assistant.\n\nI can help you with:\n• Harmful insects & venomous animals\n• First aid for bites & stings\n• Safety precautions\n\nHow can I help you today?' }
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -27,11 +47,20 @@ export default function Chatbot() {
         setIsOpen(!isOpen);
     };
 
-    // Send message to backend
-    const handleSendMessage = async () => {
-        if (!inputText.trim() || isLoading) return;
+    const quickSuggestions = [
+        "First aid for snake bite 🐍",
+        "Identify insect 🐜",
+        "Venomous spider check 🕷️",
+        "Emergency help 🚑"
+    ];
 
-        const userMessage = inputText.trim();
+    // Send message to backend
+    const handleSendMessage = async (text) => {
+        const messageToSend = typeof text === 'string' ? text : inputText;
+
+        if (!messageToSend.trim() || isLoading) return;
+
+        const userMessage = messageToSend.trim();
         setInputText('');
 
         // Add user message immediately
@@ -76,20 +105,8 @@ export default function Chatbot() {
             {/* Floating Button */}
             {!isOpen && (
                 <button className="chatbot-button" onClick={toggleChat}>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span className="chatbot-badge">1</span>
+                    <span style={{ fontSize: '1.5rem' }}>🌿</span>
+                    <span className="chatbot-badge">!</span>
                 </button>
             )}
 
@@ -99,41 +116,14 @@ export default function Chatbot() {
                     {/* Header */}
                     <div className="chatbot-header">
                         <div className="chatbot-header-content">
-                            <div className="chatbot-avatar">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                </svg>
-                            </div>
+                            <div className="chatbot-avatar">🌿</div>
                             <div>
-                                <h3>Chat with us</h3>
-                                <p>We typically reply in few minutes</p>
+                                <h3>EcoDetect Assistant</h3>
+                                <p>Wildlife safety & first aid</p>
                             </div>
                         </div>
                         <button className="chatbot-close" onClick={toggleChat}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
+                            ✕
                         </button>
                     </div>
 
@@ -145,23 +135,16 @@ export default function Chatbot() {
                                 className={`chatbot-message ${msg.sender === 'user' ? 'user-message' : 'bot-message'}`}
                             >
                                 {msg.sender === 'bot' && (
-                                    <div className="message-avatar">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        >
-                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                                        </svg>
-                                    </div>
+                                    <div className="message-avatar">🌿</div>
                                 )}
-                                <div className="message-bubble">{msg.text}</div>
+                                {msg.sender === 'bot' ? (
+                                    <div
+                                        className="message-bubble"
+                                        dangerouslySetInnerHTML={{ __html: formatMessage(msg.text) }}
+                                    />
+                                ) : (
+                                    <div className="message-bubble">{msg.text}</div>
+                                )}
                             </div>
                         ))}
 
@@ -192,6 +175,19 @@ export default function Chatbot() {
                         )}
 
                         <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Quick Suggestions */}
+                    <div className="chatbot-suggestions">
+                        {quickSuggestions.map((suggestion, index) => (
+                            <button
+                                key={index}
+                                className="suggestion-chip"
+                                onClick={() => handleSendMessage(suggestion)}
+                            >
+                                {suggestion}
+                            </button>
+                        ))}
                     </div>
 
                     {/* Input Area */}
