@@ -4,5 +4,6 @@ ultralytics
 Pillow
 google-genai
 python-dotenv
-
 firebase-admin
+gunicorn
+torch

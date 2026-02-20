@@ -206,7 +206,7 @@ export default function DetectSpecies() {
     formData.append('image', selectedFile);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/detect', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/detect`, {
         method: 'POST',
         body: formData,
       });
