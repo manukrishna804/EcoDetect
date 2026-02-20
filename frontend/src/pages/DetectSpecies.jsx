@@ -319,7 +319,7 @@ export default function DetectSpecies() {
       {/* Header */}
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <button className={styles.iconButton} onClick={() => navigate(-1)}>
+          <button className={styles.iconButton} onClick={() => navigate('/home')}>
             <span className="material-symbols-outlined" style={{ fontSize: '1.5rem' }}>arrow_back_ios_new</span>
           </button>
           <h1 className={styles.title}>Detect Species</h1>
