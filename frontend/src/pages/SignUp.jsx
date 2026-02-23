@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
 
@@ -39,7 +40,17 @@ export default function SignUp() {
                 displayName: formData.fullName
             });
 
-            // Note: In a real app, we'd also save phone, location to Firestore here.
+            // Create user document in Firestore
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+                displayName: formData.fullName,
+                email: formData.email,
+                phoneNumber: formData.phone || "",
+                location: formData.location || "",
+                totalDetections: 0,
+                totalAlerts: 0,
+                createdAt: new Date().toISOString()
+            });
+
             navigate('/home');
         } catch (err) {
             setError(err.message);

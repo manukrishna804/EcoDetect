@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
-import { onAuthStateChanged, signOut, updateProfile, deleteUser, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
+import { onAuthStateChanged, signOut, deleteUser, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { fetchUserProfile, saveUserProfile } from "../services/profileService";
 import styles from "../styles/Profile.module.css";
 
 export default function Profile() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -31,29 +33,17 @@ export default function Profile() {
             if (currentUser) {
                 setUser(currentUser);
                 try {
-                    const docRef = doc(db, "users", currentUser.uid);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        setFormData({
-                            displayName: currentUser.displayName || data.displayName || "",
-                            phoneNumber: data.phoneNumber || "",
-                            location: data.location || ""
-                        });
-                        setStats({
-                            detections: data.totalDetections || 124,
-                            alerts: data.totalAlerts || 8
-                        });
-                    } else {
-                        setFormData({
-                            displayName: currentUser.displayName || "",
-                            phoneNumber: "",
-                            location: ""
-                        });
-                    }
+                    const profileData = await fetchUserProfile(currentUser);
+                    setFormData({
+                        displayName: profileData.displayName,
+                        phoneNumber: profileData.phoneNumber,
+                        location: profileData.location
+                    });
+                    setStats(profileData.stats);
                 } catch (error) {
                     console.error("Error fetching user data:", error);
+                } finally {
+                    setIsLoading(false);
                 }
             } else {
                 navigate("/login");
@@ -81,14 +71,7 @@ export default function Profile() {
     const handleSave = async () => {
         if (!user) return;
         try {
-            await updateProfile(user, { displayName: formData.displayName });
-            await setDoc(doc(db, "users", user.uid), {
-                displayName: formData.displayName,
-                email: user.email,
-                phoneNumber: formData.phoneNumber,
-                location: formData.location
-            }, { merge: true });
-            setUser({ ...user, displayName: formData.displayName });
+            await saveUserProfile(user, formData);
             setIsEditing(false);
             alert("Profile updated successfully!");
         } catch (error) {
@@ -99,6 +82,7 @@ export default function Profile() {
 
     const handlePasswordUpdate = async (e) => {
         e.preventDefault();
+        // ... (remaining code remains the same as viewed before)
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             alert("New passwords do not match!");
             return;
@@ -150,6 +134,15 @@ export default function Profile() {
         return 2026;
     };
 
+    if (isLoading) {
+        return (
+            <div className={styles.loadingContainer}>
+                <div className={styles.spinner}></div>
+                <p style={{ color: '#64748b', fontWeight: '600' }}>Loading your profile...</p>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.page}>
             <div className={styles.container}>
@@ -191,7 +184,7 @@ export default function Profile() {
                                     autoFocus
                                 />
                             ) : (
-                                <h2 className={styles.userName}>{user?.displayName || "User Name"}</h2>
+                                <h2 className={styles.userName}>{formData.displayName || "User Name"}</h2>
                             )}
                             <button onClick={() => setIsEditing(!isEditing)} className={styles.editToggleBtn}>
                                 <span className="material-icons" style={{ fontSize: '1.25rem' }}>
@@ -257,7 +250,7 @@ export default function Profile() {
                         </div>
 
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Home Location</label>
+                            <label className={styles.label}>City / Location</label>
                             <input
                                 className={`${styles.input} ${!isEditing ? styles.inputReadOnly : styles.inputEditing}`}
                                 type="text"

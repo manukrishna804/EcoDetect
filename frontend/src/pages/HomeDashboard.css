@@ -309,6 +309,19 @@
   gap: 4px;
 }
 
+.loading-state,
+.empty-state {
+  width: 100%;
+  padding: 40px 20px;
+  background: white;
+  border-radius: var(--radius-md);
+  text-align: center;
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px dashed #e2e8f0;
+}
+
 
 
 /* SOS MODAL */
