@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { fetchRecentSightings } from "../services/detectionService";
 import "./HomeDashboard.css";
 
 // Updated features list to match the 3x2 grid in the mockup
@@ -35,58 +35,108 @@ function Sighting({ name, time, location, img, badge }) {
 
 export default function HomeDashboard() {
   const [userName, setUserName] = useState("User");
+  const [recentSightings, setRecentSightings] = useState([]);
+  const [loadingSightings, setLoadingSightings] = useState(true);
+  const [userLocation, setUserLocation] = useState(null);
   const navigate = useNavigate();
 
   // SOS Modal State
   const [showSOSModal, setShowSOSModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
-  const [copySuccess, setCopySuccess] = useState("");
 
   useEffect(() => {
-    // Listen for auth state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    // 1. Get User Location (similar to alerts.jsx)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => console.warn("Geolocation error:", err.message)
+      );
+    }
+
+    // 2. Listen for auth state changes
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       if (user && user.displayName) {
         setUserName(user.displayName);
       } else if (user && user.email) {
-        // Fallback to email username if no display name
         setUserName(user.email.split('@')[0]);
       }
     });
 
-    // Cleanup subscription on unmount
-    return () => unsubscribe();
+    // 3. Load recent sightings
+    const loadSightings = async () => {
+      setLoadingSightings(true);
+      const sightings = await fetchRecentSightings(5);
+      setRecentSightings(sightings);
+      setLoadingSightings(false);
+    };
+
+    loadSightings();
+
+    return () => unsubscribeAuth();
   }, []);
+
+  // Helper: Calculate Distance (Haversine)
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const toRad = (v) => (v * Math.PI) / 180;
+    const R = 3958.8; // Miles
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(1);
+  };
+
+  // Helper: Format timestamp to "X ago"
+  const getTimeAgo = (timestamp) => {
+    if (!timestamp) return "Just now";
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const seconds = Math.floor((new Date() - date) / 1000);
+
+    if (seconds < 60) return "Just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  // Helper: Get image for species
+  const getImageUrl = (sighting) => {
+    if (sighting.image_url) return sighting.image_url;
+
+    // Use the same asset logic as alerts.jsx if possible
+    const species = (sighting.detected_class || sighting.detected_species || "").toLowerCase().trim().replace(/\s+/g, '_');
+    if (!species) return "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=80";
+
+    try {
+      // Attempt to load local asset if it exists (matching alerts.jsx logic)
+      return new URL(`../assets/species/${species}.jpg`, import.meta.url).href;
+    } catch (e) {
+      // Fallback Unsplash images
+      if (species.includes("cobra") || species.includes("snake"))
+        return "https://images.unsplash.com/photo-1531386816431-984525eb880b?auto=format&fit=crop&w=300&q=80";
+      if (species.includes("spider"))
+        return "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=300&q=80";
+      return "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=80";
+    }
+  };
 
   // SOS Handlers
   const handleSOSClick = () => {
     setShowSOSModal(true);
     setSelectedService(null);
-    setCopySuccess("");
   };
 
   const handleCloseModal = () => {
     setShowSOSModal(false);
     setSelectedService(null);
-    setCopySuccess("");
   };
 
   const handleServiceSelect = (service) => {
     setSelectedService(service);
-    setCopySuccess("");
-  };
-
-  const handleCopyNumber = async () => {
-    if (selectedService) {
-      try {
-        await navigator.clipboard.writeText(selectedService.number);
-        setCopySuccess("Emergency number copied successfully.");
-
-        // Auto-clear success message after 3 seconds
-        setTimeout(() => setCopySuccess(""), 3000);
-      } catch (err) {
-        setCopySuccess("Failed to copy. Please type manually.");
-      }
-    }
   };
 
   return (
@@ -97,7 +147,12 @@ export default function HomeDashboard() {
           <div className="logo-icon">🛡️</div>
           <h1>Ecodetect</h1>
         </div>
-        <div className="user-profile">
+        <div
+          className="user-profile"
+          onClick={() => navigate('/profile')}
+          role="button"
+          title="View your profile"
+        >
           <span>Hello, {userName}</span>
           <div className="profile-avatar">👤</div>
         </div>
@@ -167,11 +222,13 @@ export default function HomeDashboard() {
                   Please call this number immediately from your mobile phone.
                 </p>
 
-                <button className="sos-action-btn" onClick={handleCopyNumber}>
-                  📋 Copy Number
-                </button>
-
-                {copySuccess && <p className="sos-success-msg">✅ {copySuccess}</p>}
+                <a
+                  href={`tel:${selectedService.number.replace(/\s/g, '')}`}
+                  className="sos-action-btn"
+                  style={{ textDecoration: 'none' }}
+                >
+                  📞 Call Now
+                </a>
 
                 <button className="sos-back-btn" onClick={() => setSelectedService(null)}>
                   ← Back to options
@@ -189,22 +246,36 @@ export default function HomeDashboard() {
       </section>
 
       <section className="eco-sightings-scroller">
-        <Sighting
-          name="King Cobra"
-          time="2h ago"
-          location="North Reserve, Sector 4"
-          img="https://images.unsplash.com/photo-1531386816431-984525eb880b?auto=format&fit=crop&w=300&q=80"
-          badge="DANGER"
-        />
-        <Sighting
-          name="Funnel Web"
-          time="5h ago"
-          location="Backyard, Oak Street"
-          img="https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=300&q=80"
-        />
+        {loadingSightings ? (
+          <div className="loading-state">Loading sightings...</div>
+        ) : recentSightings.length > 0 ? (
+          recentSightings.map((sighting) => {
+            let distanceLabel = "Distance unknown";
+            if (userLocation && sighting.location?.lat && sighting.location?.lng) {
+              const dist = calculateDistance(
+                userLocation.lat,
+                userLocation.lng,
+                sighting.location.lat,
+                sighting.location.lng
+              );
+              distanceLabel = dist ? `${dist} miles away` : "Nearby";
+            }
+
+            return (
+              <Sighting
+                key={sighting.id}
+                name={sighting.detected_class || sighting.detected_species || "Unknown Species"}
+                time={getTimeAgo(sighting.timestamp)}
+                location={distanceLabel}
+                img={getImageUrl(sighting)}
+                badge={(sighting.danger_level === "extreme" ? "High" : sighting.danger_level || "").toUpperCase()}
+              />
+            );
+          })
+        ) : (
+          <div className="empty-state">No recent sightings found. Start scanning!</div>
+        )}
       </section>
-
-
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
 import styles from '../styles/DetectSpecies.module.css';
 import { saveDetection } from "../services/detectionService";
 
@@ -177,7 +178,7 @@ export default function DetectSpecies() {
           // Return null/false on error so we still proceed with detection
           resolve({ lat: null, lng: null, allowed: false });
         },
-        { timeout: 10000, enableHighAccuracy: true, maximumAge: 0 } 
+        { timeout: 10000, enableHighAccuracy: true, maximumAge: 0 }
       );
     });
   };
@@ -186,20 +187,20 @@ export default function DetectSpecies() {
     if (!image || !selectedFile) return;
 
     setIsProcessing(true);
-    
+
     // 1. Fetch fresh location (waits for browser prompt/gps)
     // We do this BEFORE the backend call so we have accurate coords
     let freshLocation = { lat: null, lng: null, allowed: false };
     try {
-        // If allowed previously or permission state provides it
-        freshLocation = await getCurrentLocation();
-        
-        // Update local state just for UI consistency (optional but good)
-        if (freshLocation.allowed) {
-            setLocationData(freshLocation);
-        }
+      // If allowed previously or permission state provides it
+      freshLocation = await getCurrentLocation();
+
+      // Update local state just for UI consistency (optional but good)
+      if (freshLocation.allowed) {
+        setLocationData(freshLocation);
+      }
     } catch (e) {
-        console.warn("Could not fetch location:", e);
+      console.warn("Could not fetch location:", e);
     }
 
     const formData = new FormData();
@@ -220,7 +221,7 @@ export default function DetectSpecies() {
 
       const detectionData = {
         tempUserId: localStorage.getItem("tempUserId"),
-        
+
         // Use the FRESH location
         location: {
           lat: freshLocation.lat ?? null,
@@ -241,7 +242,7 @@ export default function DetectSpecies() {
         confidence: result.confidence_score ?? 0
       };
 
-      saveDetection(detectionData);
+      saveDetection(detectionData, auth.currentUser?.uid);
       navigate('/result', { state: { result: result, image: image } });
     } catch (error) {
       console.error('Error detecting species:', error);
@@ -403,7 +404,7 @@ export default function DetectSpecies() {
                 <p className={styles.fileMeta}>Ready to process</p>
               </div>
             </div>
-            
+
             <button className={styles.uploadAnotherButton} onClick={() => { setImage(null); setSelectedFile(null); }} style={{
               marginTop: '1rem',
               background: 'rgba(255, 255, 255, 0.1)',
