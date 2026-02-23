@@ -1,23 +1,59 @@
 import { db } from "../firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 
 const API_BASE_URL = "http://127.0.0.1:5000";
 
-export async function saveDetection(data) {
+/**
+ * Fetch the latest detection records from the global detections collection.
+ * @param {number} count Number of records to fetch
+ * @returns {Promise<Array>} List of detection objects
+ */
+export async function fetchRecentSightings(count = 5) {
+  try {
+    const q = query(
+      collection(db, "detections"),
+      orderBy("timestamp", "desc"),
+      limit(count)
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error("❌ Failed to fetch recent sightings:", error);
+    return [];
+  }
+}
+
+export async function saveDetection(data, userId = null) {
   try {
     await addDoc(collection(db, "detections"), {
       ...data,
+      userId: userId,
       timestamp: serverTimestamp()
     });
     console.log("✅ Detection saved");
-    
+
+    // Atomic increment for user statistics
+    if (userId) {
+      const userRef = doc(db, "users", userId);
+      const isHighRisk = (data.danger_level || "").toLowerCase() === "high" ||
+        (data.danger_level || "").toLowerCase() === "extreme";
+
+      await updateDoc(userRef, {
+        totalDetections: increment(1),
+        totalAlerts: isHighRisk ? increment(1) : increment(0)
+      }).catch(err => console.warn("⚠️ Could not update user stats:", err));
+    }
+
     // Automatically trigger hotspot analysis if it's a high/extreme risk detection
     const dangerLevel = (data.danger_level || "").toLowerCase();
     const category = (data.category || "").toLowerCase();
-    
+
     // Only trigger for high/extreme risk, non-insect detections
-    if ((dangerLevel === "high" || dangerLevel === "extreme") && 
-        category !== "mosquito" && category !== "insect") {
+    if ((dangerLevel === "high" || dangerLevel === "extreme") &&
+      category !== "mosquito" && category !== "insect") {
       console.log("🔄 Auto-triggering hotspot analysis...");
       // Trigger in background (don't wait for it)
       triggerHotspotAnalysisBackground().catch(err => {
