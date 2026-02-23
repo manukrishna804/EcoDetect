@@ -554,7 +554,7 @@
             "hotspot_risk": true,
             "ai_note": "Highly venomous snake common in India."
         },
-        "Pit viper": {
+        "pit_viper": {
             "scientific_name": "Trimeresurus species",
             "category": "snake",
             "venomous": true,
