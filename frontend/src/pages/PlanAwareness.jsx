@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './PlanAwareness.css'; // Import the new CSS
+import './PlanAwareness.css';
 
 // Local assets
 import snakeImg from '../assets/plan-awareness/snake.jpg';
