@@ -105,23 +105,44 @@ export default function HomeDashboard() {
 
   // Helper: Get image for species
   const getImageUrl = (sighting) => {
+    if (sighting.image_path) return sighting.image_path;
     if (sighting.image_url) return sighting.image_url;
 
-    // Use the same asset logic as alerts.jsx if possible
-    const species = (sighting.detected_class || sighting.detected_species || "").toLowerCase().trim().replace(/\s+/g, '_');
-    if (!species) return "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=80";
+    const species = (sighting.detected_class || sighting.detected_species || "").toLowerCase().trim();
 
-    try {
-      // Attempt to load local asset if it exists (matching alerts.jsx logic)
-      return new URL(`../assets/species/${species}.jpg`, import.meta.url).href;
-    } catch (e) {
-      // Fallback Unsplash images
-      if (species.includes("cobra") || species.includes("snake"))
-        return "https://images.unsplash.com/photo-1531386816431-984525eb880b?auto=format&fit=crop&w=300&q=80";
-      if (species.includes("spider"))
-        return "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=300&q=80";
-      return "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=80";
-    }
+    const nameMap = {
+      "ades": "/Images/Aedes.jpg",
+      "culex": "/Images/Culex.jpg",
+      "bubble frog": "/Images/Bubble frog.jpg",
+      "cane toad": "/Images/Cane toad.jpg",
+      "chinese edible frog": "/Images/Chinese edible frog.jpg",
+      "common green frog": "/Images/Common green frog.jpg",
+      "common tree frog": "/Images/Common tree frog.jpg",
+      "pacman frog": "/Images/Pacman frog.jpg",
+      "pignose frog": "/Images/pignose frog.jpg",
+      "poison dart frog": "/Images/poison dart frog.jpg",
+      "smoky jungle frog": "/Images/smoky jungle frog.jpg",
+      "spotted litter frog": "/Images/spotted litter frog.jpg",
+      "white-s tree frog": "/Images/White's Tree Frog.jpg",
+      "check_keel-back": "/Images/checkered keelback.jpg",
+      "indian_python": "/Images/Indian python.jpg",
+      "ratsnakes": "/Images/Rat snake.webp",
+      "sandboa": "/Images/Sand boa.webp",
+      "king cobra": "/Images/King cobra.jpg",
+      "russels_viper": "/Images/Russell's viper.jpg",
+      "common-kraits": "/Images/Common krait.webp",
+      "indian_cobra": "/Images/Indian cobra.webp",
+      "pit_viper": "/Images/Pit viper.jpg",
+      "golden orb weaver": "/Images/Golden orb weaver.jpg",
+      "huntsman spider": "/Images/Huntsman spider.jpg",
+      "peacock spider": "/Images/Peacock spider.webp",
+      "yellow garden spider": "/Images/Yellow Garden Spider.jpg",
+      "red-eyed tree frog": "/Images/red-eyed-treefrog.jpg",
+      "red_eyed_tree_frog": "/Images/red-eyed-treefrog.jpg",
+      "red-eyed-treefrog": "/Images/red-eyed-treefrog.jpg"
+    };
+
+    return nameMap[species] || "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=300&q=80";
   };
 
   // SOS Handlers

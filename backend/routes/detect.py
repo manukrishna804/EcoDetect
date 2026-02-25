@@ -68,7 +68,9 @@ def get_species_info(class_name):
                 "risk_info": info.get("risk_info", {}),
                 "ai_note": info.get("ai_note", ""),
                 "emergency": info.get("emergency", {}),
-                "scientific_name": info.get("scientific_name", "")
+                "scientific_name": info.get("scientific_name", ""),
+                "media": info.get("media", {}),
+                "category": info.get("category", "unknown")
             }
                 
         # Fallback: Return a generic template with the detected name

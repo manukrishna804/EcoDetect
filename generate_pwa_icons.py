@@ -1,28 +1,100 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 import os
 
-def create_icon(size, filename, color="#2ecc71"):
-    # Create a square image with the theme color
-    image = Image.new("RGBA", (size, size), color)
-    draw = ImageDraw.Draw(image)
+def draw_logo(draw, size, colors):
+    """Draws a modern leaf + scanner logo."""
+    center = size // 2
+    margin = size // 10
     
-    # Try to draw a simple 'E' in the center
-    try:
-        # Simplified 'E' drawing or just a white circle for now if fonts are tricky
-        margin = size // 4
-        draw.ellipse([margin, margin, size - margin, size - margin], outline="white", width=size//20)
-        # Draw a leaf-like shape (simplified)
-        draw.polygon([(size//2, margin), (size-margin, size//2), (size//2, size-margin), (margin, size//2)], fill="white")
-    except Exception as e:
-        print(f"Drawing error: {e}")
+    # 1. Background (Optional, here transparent)
+    
+    # 2. Scanner Ring (Circular)
+    ring_width = size // 20
+    draw.ellipse(
+        [margin, margin, size - margin, size - margin],
+        outline=colors['primary'],
+        width=ring_width
+    )
+    
+    # 3. Leaf Shape (Stylized)
+    # Main leaf body
+    leaf_margin = size // 4
+    leaf_coords = [
+        (center, leaf_margin), # Top
+        (size - leaf_margin, center), # Right
+        (center, size - leaf_margin), # Bottom
+        (leaf_margin, center) # Left
+    ]
+    
+    # Draw a leaf using two arcs/curves simulation
+    # Let's use a simpler but elegant petal shape
+    draw.chord(
+        [leaf_margin, leaf_margin, size - leaf_margin, size - leaf_margin],
+        start=45, end=225,
+        fill=colors['primary']
+    )
+    draw.chord(
+        [leaf_margin, leaf_margin, size - leaf_margin, size - leaf_margin],
+        start=225, end=45,
+        fill=colors['secondary']
+    )
+    
+    # Central vein
+    draw.line(
+        [(center, leaf_margin), (center, size - leaf_margin)],
+        fill="white",
+        width=size // 40
+    )
 
-    image.save(filename)
-    print(f"Saved {filename}")
+def create_pwa_assets(public_path):
+    colors = {
+        'primary': '#2ecc71',
+        'secondary': '#16a34a',
+        'bg': '#ffffff'
+    }
+    
+    # Icon sizes and names
+    icons = [
+        (192, "pwa-192x192.png", 0),
+        (512, "pwa-512x512.png", 0),
+        (512, "maskable-icon.png", 40), # Extra padding for maskable
+        (180, "apple-touch-icon.png", 10)
+    ]
+    
+    for size, name, padding in icons:
+        # Create image with transparent background
+        img = Image.new("RGBA", (size, size), (255, 255, 255, 0))
+        draw = ImageDraw.Draw(img)
+        
+        # If it's maskable, it usually needs a solid background
+        if "maskable" in name:
+            draw.rectangle([0, 0, size, size], fill=colors['primary'])
+            # Draw a white version of logo on green background
+            draw_logo_color(draw, size, {'primary': 'white', 'secondary': '#d1fae5'})
+        else:
+            draw_logo_color(draw, size, colors)
+            
+        filename = os.path.join(public_path, name)
+        img.save(filename)
+        print(f"Generated {filename}")
 
-# Ensure directory exists
-public_path = r"d:\MINI PROJ main\EcoDetect\frontend\public"
+def draw_logo_color(draw, size, colors):
+    center = size // 2
+    margin = size // 6
+    # Outer ring
+    draw.ellipse([margin, margin, size - margin, size - margin], outline=colors['primary'], width=size//25)
+    
+    # Stylized Leaf
+    leaf_box = [center - size//4, center - size//4, center + size//4, center + size//4]
+    draw.pieslice(leaf_box, start=135, end=315, fill=colors['primary'])
+    draw.pieslice(leaf_box, start=315, end=135, fill=colors['secondary'])
+    
+    # Central vein
+    draw.line([center, center - size//4, center, center + size//4], fill="white", width=size//50)
+
+# Execution
+base_dir = r"d:\MINI PROJ main\EcoDetect"
+public_path = os.path.join(base_dir, "frontend", "public")
 os.makedirs(public_path, exist_ok=True)
 
-create_icon(192, os.path.join(public_path, "pwa-192x192.png"))
-create_icon(512, os.path.join(public_path, "pwa-512x512.png"))
-create_icon(512, os.path.join(public_path, "maskable-icon.png"), color="#16a34a") # Darker green for maskable
+create_pwa_assets(public_path)

@@ -1,6 +1,6 @@
 {
     "species": {
-        "Aedes aegypti": {
+        "ades": {
             "scientific_name": "Aedes aegypti",
             "category": "mosquito",
             "venomous": false,
@@ -19,7 +19,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/insects/aedes.jpg",
+                "image": "/Images/Aedes.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -29,7 +29,7 @@
             "hotspot_risk": true,
             "ai_note": "Disease-carrying mosquito. Avoid stagnant water."
         },
-        "Culex": {
+        "culex": {
             "scientific_name": "Culex mosquito",
             "category": "mosquito",
             "venomous": false,
@@ -47,7 +47,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/insects/culex.jpg",
+                "image": "/Images/Culex.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -57,7 +57,7 @@
             "hotspot_risk": true,
             "ai_note": "Common night-biting mosquito."
         },
-        "Banded bullfrog": {
+        "Bubble Frog": {
             "scientific_name": "Uperodon globulosus",
             "category": "frog",
             "venomous": false,
@@ -72,7 +72,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/bubble_frog.jpg",
+                "image": "/Images/Bubble frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -99,7 +99,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/cane_toad.jpg",
+                "image": "/Images/Cane toad.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -124,7 +124,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/chinese_edible.jpg",
+                "image": "/Images/Chinese edible frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -149,7 +149,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/common_green.jpg",
+                "image": "/Images/Common green frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -174,7 +174,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/tree_frog.jpg",
+                "image": "/Images/Common tree frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -201,7 +201,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/pacman.jpg",
+                "image": "/Images/Pacman frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -226,7 +226,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/pignose.jpg",
+                "image": "/Images/pignose frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -254,7 +254,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/poison_dart.jpg",
+                "image": "/Images/poison dart frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -279,7 +279,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/smoky_jungle.jpg",
+                "image": "/Images/smoky jungle frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -304,7 +304,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/spotted_litter.jpg",
+                "image": "/Images/spotted litter frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -314,7 +314,7 @@
             "hotspot_risk": false,
             "ai_note": "Common ground-dwelling frog."
         },
-        "White's Tree Frog": {
+        "White-s Tree Frog": {
             "scientific_name": "Litoria caerulea",
             "category": "frog",
             "venomous": false,
@@ -329,7 +329,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/frogs/whites_tree.jpg",
+                "image": "/Images/White's Tree Frog.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -339,7 +339,7 @@
             "hotspot_risk": false,
             "ai_note": "Calm, non-toxic tree frog."
         },
-        "Checkered keelback": {
+        "check_keel-back": {
             "scientific_name": "Xenochrophis piscator",
             "category": "snake",
             "venomous": false,
@@ -356,7 +356,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/snakes/checkered_keelback.jpg",
+                "image": "/Images/checkered keelback.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -366,7 +366,7 @@
             "hotspot_risk": true,
             "ai_note": "Often confused with venomous snakes."
         },
-        "Indian python": {
+        "indian_python": {
             "scientific_name": "Python molurus",
             "category": "snake",
             "venomous": false,
@@ -383,7 +383,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/indian_python.jpg",
+                "image": "/Images/Indian python.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -410,7 +410,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/snakes/ratsnake.jpg",
+                "image": "/Images/Rat snake.webp",
                 "offline_video_supported": true
             },
             "ui": {
@@ -435,7 +435,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/snakes/sand_boa.jpg",
+                "image": "/Images/Sand boa.webp",
                 "offline_video_supported": true
             },
             "ui": {
@@ -462,7 +462,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/king_cobra.jpg",
+                "image": "/Images/King cobra.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -472,7 +472,7 @@
             "hotspot_risk": true,
             "ai_note": "Highly venomous apex predator."
         },
-        "Russell's viper": {
+        "Russels_viper": {
             "scientific_name": "Daboia russelii",
             "category": "snake",
             "venomous": true,
@@ -490,7 +490,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/russells_viper.jpg",
+                "image": "/Images/Russell's viper.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -500,7 +500,7 @@
             "hotspot_risk": true,
             "ai_note": "One of the deadliest snakes in India."
         },
-        "Common krait": {
+        "common-kraits": {
             "scientific_name": "Bungarus caeruleus",
             "category": "snake",
             "venomous": true,
@@ -517,7 +517,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/common_krait.jpg",
+                "image": "/Images/Common krait.webp",
                 "offline_video_supported": true
             },
             "ui": {
@@ -544,7 +544,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/indian_cobra.jpg",
+                "image": "/Images/Indian cobra.webp",
                 "offline_video_supported": true
             },
             "ui": {
@@ -554,7 +554,7 @@
             "hotspot_risk": true,
             "ai_note": "Highly venomous snake common in India."
         },
-        "Pit_viper": {
+        "pit_viper": {
             "scientific_name": "Trimeresurus species",
             "category": "snake",
             "venomous": true,
@@ -572,7 +572,7 @@
                 "seek_medical_help": true
             },
             "media": {
-                "image": "/images/snakes/pit_viper.jpg",
+                "image": "/Images/Pit viper.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -600,7 +600,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/spiders/golden_orb.jpg",
+                "image": "/Images/Golden orb weaver.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -627,7 +627,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/spiders/huntsman.jpg",
+                "image": "/Images/Huntsman spider.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -652,7 +652,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/spiders/peacock.jpg",
+                "image": "/Images/Peacock spider.webp",
                 "offline_video_supported": true
             },
             "ui": {
@@ -679,7 +679,7 @@
                 "seek_medical_help": false
             },
             "media": {
-                "image": "/images/spiders/yellow_garden.jpg",
+                "image": "/Images/Yellow Garden Spider.jpg",
                 "offline_video_supported": true
             },
             "ui": {
@@ -688,6 +688,31 @@
             },
             "hotspot_risk": false,
             "ai_note": "Non-aggressive garden spider."
+        },
+        "Red-eyed Tree Frog": {
+            "scientific_name": "Agalychnis callidryas",
+            "category": "frog",
+            "venomous": false,
+            "danger_level": "low",
+            "risk_group": "harmless_frog",
+            "firstaid_protocol": "wash_contact_area",
+            "precaution_protocol": "avoid_unnecessary_handling",
+            "risk_info": {
+                "possible_effects": []
+            },
+            "emergency": {
+                "seek_medical_help": false
+            },
+            "media": {
+                "image": "/Images/red-eyed-treefrog.jpg",
+                "offline_video_supported": true
+            },
+            "ui": {
+                "alert_color": "green",
+                "show_emergency_banner": false
+            },
+            "hotspot_risk": false,
+            "ai_note": "Iconic, non-toxic tree frog."
         }
     }
 }

@@ -239,7 +239,8 @@ export default function DetectSpecies() {
         scientific_name: result.scientific_name || "unknown",
         venomous: result.venomous ?? false,
         danger_level: result.danger_level || "unknown",
-        confidence: result.confidence_score ?? 0
+        confidence: result.confidence_score ?? 0,
+        image_path: result.media?.image || null
       };
 
       saveDetection(detectionData, auth.currentUser?.uid);

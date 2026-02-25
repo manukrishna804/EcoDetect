@@ -179,8 +179,8 @@ const Alerts = () => {
                         detectionLocation: {
                             lat: raw.location?.lat,
                             lng: raw.location?.lng
-                        }
-                        // Debug fields removed
+                        },
+                        image_path: raw.image_path || null
                     };
                 });
 
@@ -243,16 +243,46 @@ const Alerts = () => {
         }
     };
 
-    const getImageUrl = (speciesName) => {
+    const getImageUrl = (alert) => {
+        if (alert.image_path) return alert.image_path;
+        const speciesName = alert.speciesName;
         if (!speciesName) return null;
-        try {
-            // Convert "King Cobra" -> "king_cobra"
-            const fileName = speciesName.toLowerCase().trim().replace(/\s+/g, '_');
-            // Using logic safe for Vite if assets exist
-            return new URL(`../assets/species/${fileName}.jpg`, import.meta.url).href;
-        } catch (e) {
-            return null;
-        }
+
+        // Fallback mapping for older records without image_path
+        const nameMap = {
+            "ades": "/Images/Aedes.jpg",
+            "culex": "/Images/Culex.jpg",
+            "bubble frog": "/Images/Bubble frog.jpg",
+            "cane toad": "/Images/Cane toad.jpg",
+            "chinese edible frog": "/Images/Chinese edible frog.jpg",
+            "common green frog": "/Images/Common green frog.jpg",
+            "common tree frog": "/Images/Common tree frog.jpg",
+            "pacman frog": "/Images/Pacman frog.jpg",
+            "pignose frog": "/Images/pignose frog.jpg",
+            "poison dart frog": "/Images/poison dart frog.jpg",
+            "smoky jungle frog": "/Images/smoky jungle frog.jpg",
+            "spotted litter frog": "/Images/spotted litter frog.jpg",
+            "white-s tree frog": "/Images/White's Tree Frog.jpg",
+            "check_keel-back": "/Images/checkered keelback.jpg",
+            "indian_python": "/Images/Indian python.jpg",
+            "ratsnakes": "/Images/Rat snake.webp",
+            "sandboa": "/Images/Sand boa.webp",
+            "king cobra": "/Images/King cobra.jpg",
+            "russels_viper": "/Images/Russell's viper.jpg",
+            "common-kraits": "/Images/Common krait.webp",
+            "indian_cobra": "/Images/Indian cobra.webp",
+            "pit_viper": "/Images/Pit viper.jpg",
+            "golden orb weaver": "/Images/Golden orb weaver.jpg",
+            "huntsman spider": "/Images/Huntsman spider.jpg",
+            "peacock spider": "/Images/Peacock spider.webp",
+            "yellow garden spider": "/Images/Yellow Garden Spider.jpg",
+            "red-eyed tree frog": "/Images/red-eyed-treefrog.jpg",
+            "red_eyed_tree_frog": "/Images/red-eyed-treefrog.jpg",
+            "red-eyed-treefrog": "/Images/red-eyed-treefrog.jpg"
+        };
+
+        const lowerName = speciesName.toLowerCase().trim();
+        return nameMap[lowerName] || "https://via.placeholder.com/70?text=IMG";
     };
 
     // --- 4. Process & Render Logic ---
@@ -295,16 +325,18 @@ const Alerts = () => {
         });
     }
 
-    // Sort
+    // Sort: Latest to Oldest first, then Risk, then Distance
     displayList.sort((a, b) => {
-        // 1. Risk
+        // 1. Time (Latest first)
+        const tA = a.detectedAt?.seconds || (a.detectedAt instanceof Date ? a.detectedAt.getTime() / 1000 : 0);
+        const tB = b.detectedAt?.seconds || (b.detectedAt instanceof Date ? b.detectedAt.getTime() / 1000 : 0);
+        if (tB !== tA) return tB - tA;
+
+        // 2. Risk (High first)
         if (b.riskValue !== a.riskValue) return b.riskValue - a.riskValue;
-        // 2. Distance
-        if (a.distanceMiles !== b.distanceMiles) return a.distanceMiles - b.distanceMiles;
-        // 3. Time
-        const tA = a.detectedAt?.seconds || 0;
-        const tB = b.detectedAt?.seconds || 0;
-        return tB - tA;
+
+        // 3. Distance (Nearest first)
+        return a.distanceMiles - b.distanceMiles;
     });
 
 
@@ -343,7 +375,7 @@ const Alerts = () => {
                         <div key={alert.id} style={styles.card}>
                             {/* Safe Image Rendering */}
                             <img
-                                src={getImageUrl(alert.speciesName) || "https://via.placeholder.com/70?text=IMG"}
+                                src={getImageUrl(alert)}
                                 alt={alert.speciesName}
                                 style={styles.image}
                                 onError={(e) => {
