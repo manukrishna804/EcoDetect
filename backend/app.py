@@ -69,6 +69,75 @@ def get_hotspots():
         traceback.print_exc()
         return {"status": "error", "message": str(e)}, 500
 
+@app.route("/species", methods=["GET"])
+def get_species():
+    """Get all species from the local species.json file"""
+    try:
+        import json
+        import os
+        
+        # Get absolute path to species.json
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        species_path = os.path.join(current_dir, "data", "species.json")
+        
+        with open(species_path, "r") as f:
+            data = json.load(f)
+            
+        species_dict = data.get("species", {})
+        species_list = []
+        
+        for slug, info in species_dict.items():
+            # Use the slug (class name) as the primary name as requested
+            # Format it nicely: ades -> Ades, common-kraits -> Common Kraits
+            display_name = slug.replace("_", " ").replace("-", " ").title()
+            
+            species_item = {
+                "id": slug,
+                "name": display_name,
+                "scientific_name": info.get("scientific_name", ""),
+                "category": info.get("category", "Unknown"),
+                "danger_level": info.get("danger_level", "low"),
+                "description": info.get("ai_note", ""),
+                "image_url": info.get("media", {}).get("image", ""),
+            }
+            species_list.append(species_item)
+            
+        return species_list
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}, 500
+
+@app.route("/species/<slug>", methods=["GET"])
+def get_species_detail(slug):
+    """Get full details for a specific species by its slug"""
+    try:
+        import json
+        import os
+        
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        species_path = os.path.join(current_dir, "data", "species.json")
+        
+        with open(species_path, "r") as f:
+            data = json.load(f)
+            
+        species_dict = data.get("species", {})
+        if slug not in species_dict:
+            return {"status": "error", "message": "Species not found"}, 404
+            
+        info = species_dict[slug]
+        # Format the detail object
+        detail = {
+            "id": slug,
+            "name": slug.replace("_", " ").replace("-", " ").title(),
+            **info
+        }
+        return detail
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e)}, 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -52,7 +52,7 @@ export default function PlanAwareness() {
                 <div className="pa-grid">
 
                     {/* Card 1 */}
-                    <div className="pa-card">
+                    <Link to="/learn/species-library" className="pa-card">
                         <div className="pa-card-img-container" style={{ backgroundImage: `url(${speciesImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">pets</span>
@@ -62,7 +62,7 @@ export default function PlanAwareness() {
                             <h3>Species Library</h3>
                             <p>Identify local wildlife</p>
                         </div>
-                    </div>
+                    </Link>
 
                     {/* Card 2 */}
                     <Link to="/learn/safety-tips" className="pa-card">
