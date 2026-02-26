@@ -340,6 +340,8 @@ const Alerts = () => {
     });
 
 
+    const navigate = useNavigate();
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -400,7 +402,10 @@ const Alerts = () => {
                                 </div>
                             </div>
 
-                            <button style={styles.button} onClick={() => console.log("View", alert)}>
+                            <button
+                                style={styles.button}
+                                onClick={() => navigate(`/learn/species/${encodeURIComponent(alert.speciesName)}`)}
+                            >
                                 View
                             </button>
                         </div>
