@@ -164,25 +164,30 @@ const Alerts = () => {
 
                 console.log(`Fetched ${querySnapshot.size} documents.`);
 
-                const mappedData = querySnapshot.docs.map((doc) => {
-                    const raw = doc.data();
-                    console.log(`Raw Doc [${doc.id}]:`, raw);
+                const mappedData = querySnapshot.docs
+                    .map((doc) => {
+                        const raw = doc.data();
+                        console.log(`Raw Doc [${doc.id}]:`, raw);
 
-                    // --- 2. EXPLICIT FIELD MAPPING ---
-                    return {
-                        id: doc.id,
-                        speciesName: raw.detected_class || "Unknown Species",
-                        // Map "extreme" -> "High", and capitalize others
-                        risk: (raw.danger_level === "extreme" ? "High" :
-                            (raw.danger_level?.charAt(0).toUpperCase() + raw.danger_level?.slice(1))) || "Unknown",
-                        detectedAt: raw.timestamp, // Timestamp object
-                        detectionLocation: {
-                            lat: raw.location?.lat,
-                            lng: raw.location?.lng
-                        },
-                        image_path: raw.image_path || null
-                    };
-                });
+                        // --- 2. EXPLICIT FIELD MAPPING ---
+                        return {
+                            id: doc.id,
+                            speciesName: raw.detected_class || "Unknown Species",
+                            // Map "extreme" -> "High", and capitalize others
+                            risk: (raw.danger_level === "extreme" ? "High" :
+                                (raw.danger_level?.charAt(0).toUpperCase() + raw.danger_level?.slice(1))) || "Unknown",
+                            detectedAt: raw.timestamp, // Timestamp object
+                            detectionLocation: {
+                                lat: raw.location?.lat,
+                                lng: raw.location?.lng
+                            },
+                            image_path: raw.image_path || null
+                        };
+                    })
+                    .filter(item =>
+                        item.speciesName.toLowerCase() !== "unknown" &&
+                        item.speciesName.toLowerCase() !== "unknown species"
+                    );
 
                 console.log("Mapped Alerts Data:", mappedData);
                 setAlerts(mappedData);
@@ -204,7 +209,7 @@ const Alerts = () => {
         if (!lat1 || !lon1 || !lat2 || !lon2) return null;
         try {
             const toRad = (value) => (value * Math.PI) / 180;
-            const R = 3958.8; // Radius of Earth in Miles
+            const R = 6371; // Radius of Earth in KM (formerly 3958.8 miles)
             const dLat = toRad(lat2 - lat1);
             const dLon = toRad(lon2 - lon1);
             const a =
@@ -215,7 +220,7 @@ const Alerts = () => {
                 Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const dist = (R * c).toFixed(1);
-            // console.log(`Distance calc: ${lat1},${lon1} to ${lat2},${lon2} = ${dist} miles`);
+            // console.log(`Distance calc: ${lat1},${lon1} to ${lat2},${lon2} = ${dist} km`);
             return dist;
         } catch (e) {
             console.error("Error calculating distance:", e);
@@ -301,8 +306,8 @@ const Alerts = () => {
 
         return {
             ...alertItem,
-            distanceMiles: dist ? parseFloat(dist) : Infinity,
-            distanceLabel: dist ? `${dist} miles away` : "Distance unknown",
+            distanceKm: dist ? parseFloat(dist) : Infinity,
+            distanceLabel: dist ? `${dist} km away` : "Distance unknown",
             timeLabel: getTimeAgo(alertItem.detectedAt),
             riskValue: alertItem.risk === "High" ? 3 : alertItem.risk === "Medium" ? 2 : 1
         };
@@ -315,7 +320,7 @@ const Alerts = () => {
     if (filter === "high") {
         displayList = displayList.filter(a => a.risk === "High");
     } else if (filter === "near") {
-        displayList = displayList.filter(a => a.distanceMiles < 2);
+        displayList = displayList.filter(a => a.distanceKm < 3.2); // approx 2 miles in km
     } else if (filter === "recent") {
         // Last 48 hours
         const cutoff = Date.now() - (48 * 60 * 60 * 1000);
