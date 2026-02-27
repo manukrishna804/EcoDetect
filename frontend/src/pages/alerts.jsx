@@ -243,9 +243,9 @@ const Alerts = () => {
         }
     };
 
-    const getImageUrl = (alert) => {
-        if (alert.image_path) return alert.image_path;
-        const speciesName = alert.speciesName;
+    const getImageUrl = (alertItem) => {
+        if (alertItem.image_path) return alertItem.image_path;
+        const speciesName = alertItem.speciesName;
         if (!speciesName) return null;
 
         // Fallback mapping for older records without image_path
@@ -288,23 +288,23 @@ const Alerts = () => {
     // --- 4. Process & Render Logic ---
 
     // Merge State with Calculations
-    const finalAlerts = alerts.map(alert => {
+    const finalAlerts = alerts.map(alertItem => {
         let dist = null;
-        if (userLocation && alert.detectionLocation?.lat && alert.detectionLocation?.lng) {
+        if (userLocation && alertItem.detectionLocation?.lat && alertItem.detectionLocation?.lng) {
             dist = calculateDistance(
                 userLocation.lat,
                 userLocation.lng,
-                alert.detectionLocation.lat,
-                alert.detectionLocation.lng
+                alertItem.detectionLocation.lat,
+                alertItem.detectionLocation.lng
             );
         }
 
         return {
-            ...alert,
+            ...alertItem,
             distanceMiles: dist ? parseFloat(dist) : Infinity,
             distanceLabel: dist ? `${dist} miles away` : "Distance unknown",
-            timeLabel: getTimeAgo(alert.detectedAt),
-            riskValue: alert.risk === "High" ? 3 : alert.risk === "Medium" ? 2 : 1
+            timeLabel: getTimeAgo(alertItem.detectedAt),
+            riskValue: alertItem.risk === "High" ? 3 : alertItem.risk === "Medium" ? 2 : 1
         };
     });
 
@@ -340,6 +340,10 @@ const Alerts = () => {
     });
 
 
+
+    const navigate = useNavigate();
+
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -371,12 +375,12 @@ const Alerts = () => {
                 <div style={styles.loading}>No alerts found.</div>
             ) : (
                 <div>
-                    {displayList.map((alert) => (
-                        <div key={alert.id} style={styles.card}>
+                    {displayList.map((alertItem) => (
+                        <div key={alertItem.id} style={styles.card}>
                             {/* Safe Image Rendering */}
                             <img
-                                src={getImageUrl(alert)}
-                                alt={alert.speciesName}
+                                src={getImageUrl(alertItem)}
+                                alt={alertItem.speciesName}
                                 style={styles.image}
                                 onError={(e) => {
                                     e.target.onerror = null;
@@ -386,22 +390,26 @@ const Alerts = () => {
 
                             <div style={styles.info}>
                                 {/* Risk Badge */}
-                                <div style={styles.badge(alert.risk)}>
-                                    {alert.risk} Risk
+                                <div style={styles.badge(alertItem.risk)}>
+                                    {alertItem.risk} Risk
                                 </div>
 
                                 {/* Species Name */}
-                                <h3 style={styles.speciesName}>{alert.speciesName}</h3>
+                                <h3 style={styles.speciesName}>{alertItem.speciesName}</h3>
 
                                 {/* Details */}
                                 <div style={styles.details}>
-                                    <span>📍 {alert.distanceLabel}</span>
-                                    <span>🕒 {alert.timeLabel}</span>
+                                    <span>📍 {alertItem.distanceLabel}</span>
+                                    <span>🕒 {alertItem.timeLabel}</span>
                                 </div>
                             </div>
 
-                            <button style={styles.button} onClick={() => console.log("View", alert)}>
-                                View
+
+                            <button
+                                style={styles.button}
+                                onClick={() => navigate(`/learn/species/${encodeURIComponent(alertItem.speciesName)}`)}
+                            >
+                                View Details
                             </button>
                         </div>
                     ))}

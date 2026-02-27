@@ -10,6 +10,8 @@ import Prevention from "./pages/Learn&Awareness/prevention";
 import FirstAidBasics from "./pages/Learn&Awareness/firstaid_basics";
 import SeasonalAlerts from "./pages/Learn&Awareness/seasonal_alerts";
 import Community from "./pages/Learn&Awareness/community";
+import SpeciesLibrary from "./pages/Learn&Awareness/species_library";
+import SpeciesDetail from "./pages/Learn&Awareness/SpeciesDetail";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
@@ -48,6 +50,8 @@ function AppContent() {
         <Route path="/learn/first-aid-basics" element={<ProtectedRoute><FirstAidBasics /></ProtectedRoute>} />
         <Route path="/learn/seasonal-alerts" element={<ProtectedRoute><SeasonalAlerts /></ProtectedRoute>} />
         <Route path="/learn/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+        <Route path="/learn/species-library" element={<ProtectedRoute><SpeciesLibrary /></ProtectedRoute>} />
+        <Route path="/learn/species/:id" element={<ProtectedRoute><SpeciesDetail /></ProtectedRoute>} />
         <Route path="/hotspots" element={<ProtectedRoute><HotspotPage /></ProtectedRoute>} />
         <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
         <Route path="/mosquito-safety" element={<ProtectedRoute><MosquitoSafety /></ProtectedRoute>} />
@@ -67,7 +71,7 @@ function App() {
   return (
     <BrowserRouter>
       <AppContent />
-    </BrowserRouter >
+    </BrowserRouter>
   );
 }
 
