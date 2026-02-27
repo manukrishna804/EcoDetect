@@ -79,7 +79,7 @@ export default function HomeDashboard() {
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     if (!lat1 || !lon1 || !lat2 || !lon2) return null;
     const toRad = (v) => (v * Math.PI) / 180;
-    const R = 3958.8; // Miles
+    const R = 6371; // KM (formerly 3958.8 miles)
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -279,7 +279,7 @@ export default function HomeDashboard() {
                 sighting.location.lat,
                 sighting.location.lng
               );
-              distanceLabel = dist ? `${dist} miles away` : "Nearby";
+              distanceLabel = dist ? `${dist} km away` : "Nearby";
             }
 
             return (

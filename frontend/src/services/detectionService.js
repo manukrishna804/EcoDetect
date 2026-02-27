@@ -13,13 +13,21 @@ export async function fetchRecentSightings(count = 5) {
     const q = query(
       collection(db, "detections"),
       orderBy("timestamp", "desc"),
-      limit(count)
+      limit(20) // Fetch more to allow for filtering unknown
     );
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
+    const sightings = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));
+
+    // Filter out unknown species
+    return sightings
+      .filter(s => {
+        const species = (s.detected_class || s.detected_species || "").toLowerCase().trim();
+        return species !== "unknown" && species !== "unknown species" && species !== "";
+      })
+      .slice(0, count);
   } catch (error) {
     console.error("❌ Failed to fetch recent sightings:", error);
     return [];
