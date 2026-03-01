@@ -42,8 +42,18 @@ function SpeciesDetail() {
         </div>
     );
 
-    // Match detailed protocol from protocols.js
-    const protocolData = protocols[species.firstaid_protocol] || null;
+    // Helper to resolve protocol data (handling aliases)
+    const resolveProtocol = (id) => {
+        if (!id) return null;
+        let data = protocols[id];
+        if (data && data.alias) {
+            return protocols[data.alias] || null;
+        }
+        return data || null;
+    };
+
+    // Match detailed protocol from protocols.js (try first aid then precaution)
+    const protocolData = resolveProtocol(species.firstaid_protocol) || resolveProtocol(species.precaution_protocol);
 
     const dangerColor =
         species.danger_level?.toLowerCase() === "high" || species.danger_level?.toLowerCase() === "extreme"
@@ -96,9 +106,9 @@ function SpeciesDetail() {
                     </div>
 
                     {/* Protocol Details */}
-                    {protocolData && (
+                    {protocolData ? (
                         <div style={styles.protocolBox}>
-                            <h2 style={styles.mainProtocolTitle}>🚑 Emergency Protocol: {protocolData.title}</h2>
+                            <h2 style={styles.mainProtocolTitle}>🚑 Safety Protocol: {protocolData.title}</h2>
 
                             <div style={styles.dosDontsRow}>
                                 <div style={styles.dosSection}>
@@ -120,22 +130,24 @@ function SpeciesDetail() {
                                 </div>
                             </div>
 
-                            <div style={styles.section}>
-                                <h4 style={styles.subTitle}>🔢 First-Aid Steps</h4>
-                                <div style={styles.timeline}>
-                                    {protocolData.steps.map((step, idx) => (
-                                        <div key={idx} style={styles.timelineItem}>
-                                            <div style={styles.timelineCircle}>{idx + 1}</div>
-                                            <div style={styles.timelineContent}>
-                                                <h5 style={styles.timelineTitle}>{step.title}</h5>
-                                                <p style={styles.timelineDesc}>{step.description}</p>
+                            {protocolData.steps && protocolData.steps.length > 0 && (
+                                <div style={styles.section}>
+                                    <h4 style={styles.subTitle}>🔢 Steps to Follow</h4>
+                                    <div style={styles.timeline}>
+                                        {protocolData.steps.map((step, idx) => (
+                                            <div key={idx} style={styles.timelineItem}>
+                                                <div style={styles.timelineCircle}>{idx + 1}</div>
+                                                <div style={styles.timelineContent}>
+                                                    <h5 style={styles.timelineTitle}>{step.title}</h5>
+                                                    <p style={styles.timelineDesc}>{step.description}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            {protocolData.symptoms && (
+                            {protocolData.symptoms && protocolData.symptoms.length > 0 && (
                                 <div style={styles.section}>
                                     <h4 style={styles.subTitle}>⚠️ Symptoms</h4>
                                     <div style={styles.symptomsGrid}>
@@ -146,9 +158,7 @@ function SpeciesDetail() {
                                 </div>
                             )}
                         </div>
-                    )}
-
-                    {!protocolData && (
+                    ) : (
                         <div style={styles.protocolGrid}>
                             <div style={styles.protocolItem}>
                                 <h3 style={styles.sectionTitle}>First Aid</h3>

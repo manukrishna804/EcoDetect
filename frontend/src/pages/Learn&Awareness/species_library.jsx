@@ -220,6 +220,18 @@ function SpeciesLibrary() {
                               : item.description}
                           </p>
                         )}
+                        <div style={styles.cardFooter}>
+                          <button
+                            style={styles.viewButton}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/learn/species/${item.id}`);
+                            }}
+                          >
+                            <span>View Details</span>
+                            <span className="material-symbols-outlined" style={styles.viewButtonIcon}>arrow_forward</span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -434,10 +446,37 @@ const styles = {
   },
 
   description: {
-    margin: 0,
+    margin: "0 0 16px 0",
     color: "#4b5563",
     fontSize: "13px",
     lineHeight: "1.5",
+  },
+
+  cardFooter: {
+    marginTop: "auto",
+    borderTop: "1px solid #f1f5f9",
+    paddingTop: "12px",
+    display: "flex",
+    justifyContent: "flex-end",
+  },
+
+  viewButton: {
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
+    padding: "8px 16px",
+    backgroundColor: "#f0fdf4",
+    color: "#16a34a",
+    border: "1px solid #dcfce7",
+    borderRadius: "10px",
+    fontSize: "13px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+  },
+
+  viewButtonIcon: {
+    fontSize: "16px",
   },
 
   statusContainer: {

@@ -269,5 +269,93 @@ export const protocols = {
             "Minor Pain",
             "Small scratches"
         ]
-    }
+    },
+
+    // --- NEW PROTOCOLS & PREVENTION ---
+    "mosquito_disease_prevention": {
+        "title": "Mosquito Disease Prevention",
+        "what_to_do": [
+            "Use mosquito nets while sleeping.",
+            "Apply effective insect repellents.",
+            "Wear long-sleeved clothing.",
+            "Eliminate stagnant water around your home."
+        ],
+        "what_not_to_do": [
+            "Do NOT leave water containers open.",
+            "Do NOT ignore symptoms like high fever or rash."
+        ],
+        "steps": [
+            {
+                "title": "Clear Water",
+                "description": "Empty, drain, or cover all containers that can hold water."
+            },
+            {
+                "title": "Protection",
+                "description": "Install screens on windows and doors."
+            }
+        ],
+        "symptoms": [
+            "Fever",
+            "Headache",
+            "Joint pain"
+        ]
+    },
+    "avoid_snake_encounter": {
+        "title": "Avoiding Snake Encounters",
+        "what_to_do": [
+            "Keep distance from any snake you encounter.",
+            "Watch where you step, especially in tall grass or rocky areas.",
+            "Wear boots and long pants in wilderness.",
+            "Use a flashlight at night in active areas."
+        ],
+        "what_not_to_do": [
+            "Do NOT try to handle or kill the snake.",
+            "Do NOT corner the snake; always leave it an escape route."
+        ],
+        "steps": [
+            {
+                "title": "Freeze and Retreat",
+                "description": "If you see a snake, stop moving and slowly back away."
+            },
+            {
+                "title": "Alert Others",
+                "description": "Warn others in the area without causing panic."
+            }
+        ],
+        "symptoms": []
+    },
+    "maintain_distance": {
+        "title": "Safe Distancing Protocol",
+        "what_to_do": [
+            "Remain at least 15 feet away from the animal.",
+            "Observe from a distance using binoculars if needed.",
+            "Keep pets and children away."
+        ],
+        "what_not_to_do": [
+            "Do NOT approach the animal for photos or selfies.",
+            "Do NOT make sudden movements or loud noises."
+        ],
+        "steps": [
+            {
+                "title": "Observe",
+                "description": "Stay quiet and still to avoid stressing the animal."
+            },
+            {
+                "title": "Exit Slowly",
+                "description": "Move away calmly if the animal shows signs of agitation."
+            }
+        ],
+        "symptoms": []
+    },
+
+    // --- ALIASES FOR CONSISTENCY ---
+    "frog_toxin_exposure": { "alias": "frog_toxic" },
+    "avoid_frog_handling": { "alias": "frog_toxic" },
+    "wash_contact_area": { "alias": "harmless_frog" },
+    "avoid_unnecessary_handling": { "alias": "harmless_frog" },
+    "clean_minor_wound": { "alias": "frog_bite" },
+    "avoid_handling": { "alias": "frog_bite" },
+    "avoid_web_contact": { "alias": "spider_bite_mild" },
+    "avoid_direct_contact": { "alias": "spider_bite_mild" },
+    "non_venomous_snake": { "alias": "snakebite_non_venomous" }
 };
