@@ -244,7 +244,7 @@ export default function Profile() {
                                 name="phoneNumber"
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
-                                placeholder="+1 (555) 000-0000"
+                                placeholder="+91 1234567890"
                                 readOnly={!isEditing}
                             />
                         </div>
