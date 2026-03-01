@@ -1,275 +1,305 @@
-/* FirstAidBasics.css */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+/* FirstAidBasics.css — Emergency Redesign */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-:root {
-    --fa-primary-blue: #3b82f6;
-    --fa-primary-green: #10b981;
-    --fa-bg-light-blue: #eff6ff;
-    --fa-bg-light-green: #d1fae5;
-    --fa-text-dark: #1f2937;
-    --fa-text-gray: #4b5563;
-    --fa-bg-white: #ffffff;
-    --fa-border-radius: 16px;
-    --fa-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    --fa-warning-bg: #fef3c7;
-    --fa-warning-text: #92400e;
-    --fa-danger-bg: #fee2e2;
-    --fa-danger-text: #991b1b;
-}
-
-.fa-container {
+.fab-container {
     background-color: #f8fafc;
     min-height: 100vh;
-    padding-bottom: 80px;
+    padding-bottom: 40px;
     font-family: 'Inter', sans-serif;
-    color: var(--fa-text-dark);
-    width: 100%;
+    color: #1e293b;
 }
 
-.fa-content-wrapper {
-    max-width: 800px;
+.fab-content {
+    max-width: 600px;
     margin: 0 auto;
-    padding: 24px 16px;
 }
 
-/* Header */
-.fa-header {
+/* 1. Emergency Bar */
+.fab-emergency-bar {
+    background: #dc2626;
+    color: white;
+    padding: 24px 20px;
     text-align: center;
-    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+    position: relative;
+    border-radius: 0 0 20px 20px;
 }
 
-.fa-title {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--fa-primary-blue);
-    margin: 0 0 8px 0;
-}
-
-.fa-subtitle {
-    font-size: 16px;
-    color: var(--fa-text-gray);
-    margin: 0;
-}
-
-.fa-disclaimer-badge {
-    font-size: 13px;
-    background-color: #e0f2fe;
-    color: #0369a1;
-    display: inline-block;
-    padding: 6px 16px;
-    border-radius: 20px;
-    margin-top: 16px;
-    font-weight: 500;
-}
-
-/* Sections */
-.fa-section {
-    margin-bottom: 24px;
-}
-
-.fa-section-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--fa-text-dark);
+.fab-emergency-header {
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.fab-emergency-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.fab-contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.fab-contact-item {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 4px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.fab-contact-item label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    opacity: 0.9;
+}
+
+.fab-contact-item strong {
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* Body wrap */
+.fab-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.fab-section-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #0f172a;
+}
+
+/* 2. Immediate Steps */
+.fab-steps-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f5f9;
+}
+
+.fab-step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.fab-step-icon {
+    font-size: 24px;
+    color: #3b82f6;
+}
+
+.fab-step-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.fab-step-critical {
+    background: #fef2f2;
+    border: 1.5px dashed #fca5a5;
+}
+
+.fab-step-critical .fab-step-icon {
+    color: #dc2626;
+}
+
+.fab-step-critical .fab-step-text {
+    color: #991b1b;
+    font-weight: 700;
+}
+
+/* 3. Warning Box */
+.fab-warning-box {
+    background: #fffbeb;
+    border: 2px solid #fcd34d;
+    border-radius: 20px;
+    padding: 20px;
+    color: #92400e;
+}
+
+.fab-warning-title {
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 12px 0;
+    text-align: center;
+}
+
+.fab-warning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
     gap: 8px;
 }
 
-/* Expandable Card */
-.fa-card {
-    background: var(--fa-bg-white);
-    border-radius: var(--fa-border-radius);
-    padding: 16px;
-    margin-bottom: 12px;
-    box-shadow: var(--fa-shadow);
-    border: 1px solid #e5e7eb;
-    transition: all 0.2s ease;
+.fab-warning-list li {
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
 }
 
-.fa-expand-header {
+.fab-warning-list li::before {
+    content: "•";
+    font-weight: 800;
+}
+
+/* 4. Incident Types (Expandable) */
+.fab-incident-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fab-incident-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.fab-incident-header {
+    padding: 18px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 16px;
-    color: #374151;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 1rem;
 }
 
-.fa-expand-icon {
-    transition: transform 0.3s ease;
-    color: var(--fa-text-gray);
+.fab-incident-content {
+    padding: 0 20px 20px;
+    border-top: 1px solid #f1f5f9;
+    background: #fcfcfc;
 }
 
-.fa-expand-icon.open {
-    transform: rotate(180deg);
+.fab-incident-inner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
 }
 
-.fa-expand-content {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #f3f4f6;
-    color: var(--fa-text-gray);
-    font-size: 14px;
-    line-height: 1.6;
-    animation: fadeIn 0.3s ease-in-out;
+.fab-incident-inner-grid h4 {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0 0 8px 0;
+    letter-spacing: 0.5px;
 }
 
-.fa-expand-content ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-.fa-expand-content li {
-    margin-bottom: 6px;
-}
-
-/* Footer Hint in Cards */
-.fa-card-footer-note {
-    font-size: 12px;
-    font-style: italic;
-    color: #6b7280;
-    margin-top: 12px;
-    display: block;
-    background: #f3f4f6;
-    padding: 8px;
-    border-radius: 8px;
-}
-
-/* Warnings */
-.fa-warning-card {
-    background-color: var(--fa-warning-bg);
-    border: 1px solid #fcd34d;
-    border-radius: var(--fa-border-radius);
-    padding: 16px;
-    color: var(--fa-warning-text);
-}
-
-.fa-warning-list {
-    list-style: none;
+.fab-incident-inner-grid ul {
     padding: 0;
     margin: 0;
+    list-style: none;
 }
 
-.fa-warning-list li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+.fab-incident-inner-grid li {
+    font-size: 0.85rem;
     font-weight: 500;
+    color: #475569;
+    margin-bottom: 4px;
+    line-height: 1.4;
 }
 
-/* Emergency Box */
-.fa-emergency-box {
-    background-color: #fee2e2;
-    border: 1px solid #fca5a5;
-    border-radius: var(--fa-border-radius);
-    padding: 24px;
+/* 5. Danger Card */
+.fab-danger-card {
+    background: #fee2e2;
+    border: 2px solid #fca5a5;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.fab-danger-title {
+    color: #991b1b;
+    font-size: 1rem;
+    font-weight: 800;
+    margin: 0 0 16px 0;
     text-align: center;
 }
 
-.fa-emergency-title {
-    color: #991b1b;
-    font-weight: 700;
-    margin-bottom: 16px;
-    display: block;
-    font-size: 18px;
-}
-
-.fa-emergency-numbers {
+.fab-danger-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-@media (min-width: 640px) {
-    .fa-emergency-numbers {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-.fa-number-item {
+.fab-danger-item {
     background: white;
     padding: 12px;
     border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.fa-number-label {
-    display: block;
-    font-size: 12px;
-    color: #6b7280;
-    margin-bottom: 4px;
-}
-
-.fa-number-value {
-    display: block;
-    font-size: 20px;
-    font-weight: 800;
-    color: #dc2626;
-}
-
-/* Seeking Help */
-.fa-help-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-}
-
-@media (min-width: 640px) {
-    .fa-help-list {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-.fa-help-item {
-    background: white;
-    border: 1px solid #e5e7eb;
-    padding: 12px;
-    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #b91c1c;
+    text-align: center;
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-weight: 500;
-    color: #374151;
-}
-
-/* Footer Nav */
-.fa-footer-nav {
-    margin-top: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
     justify-content: center;
+    line-height: 1.3;
 }
 
-.fa-nav-pill {
-    background-color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    color: var(--fa-text-gray);
-    border: 1px solid #e5e7eb;
+/* 6. Footer Disclaimer */
+.fab-disclaimer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: #64748b;
+    font-style: italic;
+    line-height: 1.5;
+    padding: 0 20px;
+}
+
+.fab-back-btn {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     cursor: pointer;
-    transition: all 0.2s;
+    color: #16a34a;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
-.fa-nav-pill:hover {
-    border-color: var(--fa-primary-blue);
-    color: var(--fa-primary-blue);
+.fab-back-top {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    margin: 0;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
+.fab-back-btn:hover {
+    background-color: #f8fafc;
+    transform: translateY(-1px);
+}
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+@media (max-width: 480px) {
+    .fab-danger-grid {
+        grid-template-columns: 1fr;
     }
 }

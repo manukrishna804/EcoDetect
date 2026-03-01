@@ -64,8 +64,8 @@ export default function PrecautionFirstAid() {
       <div className={styles.container}>
         {/* Header */}
         <header className={styles.header}>
-          <button className={styles.backButton} onClick={() => navigate(-1)}>
-            <span className="material-symbols-outlined">arrow_back_ios_new</span>
+          <button className="eco-back-btn" onClick={() => navigate(-1)}>
+            <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <h1 className={styles.title}>Precaution & First-Aid</h1>
           <span className="material-symbols-outlined" style={{ color: '#1f2937' }}>share</span>

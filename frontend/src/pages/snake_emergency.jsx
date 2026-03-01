@@ -105,8 +105,8 @@ const SnakeEmergency = () => {
       {/* ===== STICKY HEADER ===== */}
       <header className="emergency-header">
         <div className="header-left">
-          <button className="back-button" onClick={() => window.history.back()}>
-            ←
+          <button className="eco-back-btn" onClick={() => window.history.back()}>
+            <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="header-title-wrapper">
             <h1 className="header-title">Snake Emergency</h1>

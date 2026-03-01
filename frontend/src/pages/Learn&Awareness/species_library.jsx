@@ -91,7 +91,7 @@ function SpeciesLibrary() {
       {/* Header */}
       <div style={styles.header}>
         <div style={styles.headerTop}>
-          <button style={styles.backButton} onClick={handleBack}>
+          <button className="eco-back-btn" onClick={handleBack}>
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
         </div>

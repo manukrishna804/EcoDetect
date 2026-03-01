@@ -148,8 +148,8 @@ export default function Profile() {
             <div className={styles.container}>
                 {/* Header */}
                 <header className={styles.header}>
-                    <button className={styles.backButton} onClick={() => navigate(-1)}>
-                        <span className="material-icons">arrow_back_ios_new</span>
+                    <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                        <span className="material-symbols-outlined">arrow_back</span>
                     </button>
                     <h1 className={styles.headerTitle}>Account Profile</h1>
                     <div className={styles.spacer}></div>

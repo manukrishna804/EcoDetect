@@ -1,207 +1,307 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './SeasonalAlerts.css';
 
+// ─── Static seasonal data (Kerala / India context) ───────────────────────────
+const MONTHLY_DATA = [
+    {
+        month: 'January',
+        risk: 'Low',
+        reason: 'Cooler weather reduces snake movement and activity.',
+        details:
+            'In January, lower temperatures cause snakes to become sluggish and they rarely venture far from their shelters. Human encounters are uncommon. Ideal time to clear overgrown vegetation safely.',
+        tips: [
+            'Clear dead leaves and debris from around your home.',
+            'Inspect storage areas and sheds before reaching inside.',
+            'Stay alert near rocks and stone walls during warmer afternoons.',
+        ],
+    },
+    {
+        month: 'February',
+        risk: 'Low',
+        reason: 'Cool conditions keep snakes mostly inactive.',
+        details:
+            'February remains cool across Kerala. Snakes are largely inactive, sheltering underground or in crevices. However, isolated warming spells can trigger brief activity, especially near midday.',
+        tips: [
+            'Wear boots or closed footwear when walking on trails.',
+            'Check corners and dark areas before gardening.',
+            'Keep the area around your home clear of clutter.',
+        ],
+    },
+    {
+        month: 'March',
+        risk: 'Moderate',
+        reason: 'Rising heat increases snake movement toward water sources.',
+        details:
+            'As temperatures climb in March, snakes become more active searching for food and water. Encounters increase near irrigation canals, ponds, and paddy fields. Evening and early morning hours see the most activity.',
+        tips: [
+            'Be cautious near water bodies and farmland edges.',
+            'Avoid walking barefoot in grass or on muddy paths.',
+            'Use a torch when moving after dark.',
+        ],
+    },
+    {
+        month: 'April',
+        risk: 'Moderate',
+        reason: 'Peak summer warmth drives snakes to seek cool, shaded areas.',
+        details:
+            'April marks peak summer in Kerala. Snakes seek shade near homes, under vehicles, and inside godowns. Activity is highest during early morning and late evening. Viper and cobra sightings increase near residential areas.',
+        tips: [
+            'Check under vehicles and inside sheds before entering.',
+            'Seal gaps in walls and doors to prevent entry.',
+            'Keep children away from overgrown or cluttered areas.',
+        ],
+    },
+    {
+        month: 'May',
+        risk: 'Moderate',
+        reason: 'Pre-monsoon heat keeps snakes active; mating season peaks.',
+        details:
+            'May sees continued high temperatures. It is also the mating season for several species, making snakes more territorial and defensive. Pre-monsoon rain showers begin to drive snakes to higher, drier ground near human habitation.',
+        tips: [
+            'Do not provoke or corner any snake; back away slowly.',
+            'Wear gumboots when working in fields or gardens.',
+            'Educate children to never approach or touch unknown animals.',
+        ],
+    },
+    {
+        month: 'June',
+        risk: 'High',
+        reason: 'Monsoon onset displaces snakes from flooded burrows into homes.',
+        details:
+            'June marks the official monsoon onset in Kerala. Heavy rainfall floods snake burrows and ground shelters, forcing them into homes, roads, and elevated areas. This is statistically the highest-risk month for snake encounters across the state.',
+        tips: [
+            'Keep all ground-level openings of your home sealed.',
+            'Do not reach into piles of debris or waterlogged vegetation.',
+            'Save the local snake rescue helpline number for emergencies.',
+        ],
+    },
+    {
+        month: 'July',
+        risk: 'High',
+        reason: 'Continuous flooding keeps snakes displaced; visibility is poor.',
+        details:
+            'July experiences the heaviest rainfall in Kerala. Flooding continues to displace large numbers of snakes. Poor visibility due to rain and overgrown vegetation makes encounters unpredictable. Night movement is especially dangerous near paddy fields.',
+        tips: [
+            'Always use a torch at night; never step in puddles without looking.',
+            'Wear rubber boots when outdoors during rain.',
+            'Do not walk through flooded fields or roads unnecessarily.',
+        ],
+    },
+    {
+        month: 'August',
+        risk: 'High',
+        reason: 'Flood-displaced snakes remain active; high humidity sustains movement.',
+        details:
+            'August continues to pose high risk as flood effects persist. High humidity keeps snakes active throughout the day and night. Rescue teams report the greatest number of calls during July–August in Kerala.',
+        tips: [
+            'Check your toilet, bathroom corners, and kitchen before use in flood-prone areas.',
+            'Cooperate with local snake rescue volunteers.',
+            'Avoid storing water containers near entrances — they attract prey and snakes.',
+        ],
+    },
+    {
+        month: 'September',
+        risk: 'High',
+        reason: 'Late monsoon continues to sustain displacement and encounters.',
+        details:
+            'September sees gradually reducing but still significant rainfall. Snake activity remains elevated. As waters recede, snakes begin returning to natural habitats but may still shelter in homes and outbuildings during the transition.',
+        tips: [
+            'Inspect all rooms and storage areas after floodwater recedes.',
+            'Wear boots when clearing post-flood debris.',
+            'Report sightings to local forest department rather than attempting removal.',
+        ],
+    },
+    {
+        month: 'October',
+        risk: 'Moderate',
+        reason: 'Post-monsoon vegetation growth increases prey and predator activity.',
+        details:
+            'October marks the end of the southwest monsoon. Lush vegetation fuels a surge in rodent populations, which in turn attracts snakes. Encounters in farmland and forest edges are common as snakes actively hunt.',
+        tips: [
+            'Keep rice fields and plantation edges clear of dense vegetation closest to homes.',
+            'Use gloves and boots when harvesting or clearing post-monsoon growth.',
+            'Stay vigilant during evening walks near paddy fields.',
+        ],
+    },
+    {
+        month: 'November',
+        risk: 'Moderate',
+        reason: 'Prey abundance sustains snake activity; northeast monsoon begins.',
+        details:
+            'November brings the northeast monsoon to parts of Kerala. Snake activity remains elevated due to abundant prey. Cooler evenings start encouraging snakes to bask during daytime. Cobra activity in particular remains notable.',
+        tips: [
+            'Keep footpaths around homes well-lit in the evenings.',
+            'Do not leave food scraps outside — rodent control reduces snake attraction.',
+            'Be cautious near compost heaps and woodpiles.',
+        ],
+    },
+    {
+        month: 'December',
+        risk: 'Low',
+        reason: 'Cooler temperatures reduce activity; snakes return to shelters.',
+        details:
+            'December brings lower temperatures across Kerala. Snake activity reduces significantly. Most species retreat to sheltered microclimates. The risk of chance encounters drops to its annual minimum, though complete vigilance should be maintained year-round.',
+        tips: [
+            'Even in low-risk months, always wear footwear outdoors.',
+            'Inspect stored items and firewood before handling.',
+            'Use this quieter period to clear overgrown areas around your property.',
+        ],
+    },
+];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const RISK_CONFIG = {
+    Low: {
+        color: '#16a34a',
+        bg: '#dcfce7',
+        border: '#bbf7d0',
+        heroBg: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+        emoji: '🟢',
+        label: 'Low Risk',
+    },
+    Moderate: {
+        color: '#b45309',
+        bg: '#fef9c3',
+        border: '#fde68a',
+        heroBg: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
+        emoji: '🟡',
+        label: 'Moderate Risk',
+    },
+    High: {
+        color: '#b91c1c',
+        bg: '#fee2e2',
+        border: '#fca5a5',
+        heroBg: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+        emoji: '🔴',
+        label: 'High Risk',
+    },
+};
+
 export default function SeasonalAlerts() {
-    const [isWhyMattersExpanded, setIsWhyMattersExpanded] = useState(false);
-    const [activeTab, setActiveTab] = useState('monsoon');
+    const navigate = useNavigate();
+    const currentMonthIndex = new Date().getMonth(); // 0-based
+    const currentData = MONTHLY_DATA[currentMonthIndex];
+    const riskCfg = (risk) => RISK_CONFIG[risk] || RISK_CONFIG.Low;
 
-    const toggleWhyMatters = () => {
-        setIsWhyMattersExpanded(!isWhyMattersExpanded);
-    };
+    const [expandedMonth, setExpandedMonth] = useState(null);
 
-    const seasons = {
-        monsoon: {
-            title: 'Rainy / Monsoon',
-            risks: [
-                'Increase in mosquitoes due to stagnant water',
-                'Higher chance of snakes near homes'
-            ],
-            tips: [
-                'Remove stagnant water regularly',
-                'Keep surroundings clean and dry',
-                'Use protective measures like nets where needed'
-            ]
-        },
-        summer: {
-            title: 'Summer',
-            risks: [
-                'Snakes and animals seek cool, shaded areas',
-                'Increased encounters near water sources'
-            ],
-            tips: [
-                'Be cautious near shaded and cool places',
-                'Avoid walking barefoot',
-                'Stay alert during early morning and evening'
-            ]
-        },
-        winter: {
-            title: 'Winter',
-            risks: [
-                'Insects hiding indoors',
-                'Reduced visibility in foggy conditions'
-            ],
-            tips: [
-                'Check stored clothes and bedding',
-                'Keep homes clean and ventilated',
-                'Maintain proper lighting'
-            ]
-        },
-        flood: {
-            title: 'Flood / Post-Flood',
-            risks: [
-                'Animals displaced from natural habitats',
-                'Increased mixed-species encounters',
-                'Unsanitary surroundings'
-            ],
-            tips: [
-                'Avoid walking through floodwater',
-                'Maintain hygiene and cleanliness',
-                'Stay alert around homes and shelters'
-            ]
-        }
+    const toggleMonth = (monthName) => {
+        setExpandedMonth(prev => (prev === monthName ? null : monthName));
     };
 
     return (
-        <div className="sa-container">
-            <div className="sa-content-wrapper">
+        <div className="sa2-page">
+            {/* ── Header ── */}
+            <header className="sa2-header">
+                <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                    <span className="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div>
+                    <h1 className="sa2-title">Seasonal Alerts</h1>
+                    <span className="sa2-subtitle">Snake activity risk · Kerala, India</span>
+                </div>
+            </header>
 
-                {/* Header */}
-                <header className="sa-header">
-                    <h1 className="sa-title">Seasonal Alerts</h1>
-                    <h2 className="sa-subtitle">Understand how seasons affect insect and animal risks</h2>
-                    <div className="sa-info-text">
-                        “Nature changes with seasons — awareness helps you adapt safely.”
-                    </div>
-                </header>
+            <div className="sa2-body">
 
-                {/* SECTION 1: Why Seasonal Awareness Matters */}
-                <section className="sa-section">
-                    <div className="sa-card">
-                        <div className="sa-expand-header" onClick={toggleWhyMatters}>
-                            <span>Why Seasonal Awareness Matters</span>
-                            <span className={`material-symbols-outlined sa-expand-icon ${isWhyMattersExpanded ? 'open' : ''}`}>
-                                expand_more
-                            </span>
+                {/* ── Current Risk Hero Card ── */}
+                <section
+                    className="sa2-hero-card"
+                    style={{ background: riskCfg(currentData.risk).heroBg }}
+                >
+                    <div className="sa2-hero-top">
+                        <div>
+                            <div className="sa2-hero-label">CURRENT MONTH</div>
+                            <div className="sa2-hero-month">{currentData.month}</div>
                         </div>
-                        {isWhyMattersExpanded && (
-                            <div className="sa-expand-content">
-                                <ul className="sa-list-basic" style={{ listStyle: 'disc', paddingLeft: '20px' }}>
-                                    <li>Weather conditions affect insect and animal behavior</li>
-                                    <li>Many species are active only during specific seasons</li>
-                                    <li>Human movement and routines also change with seasons</li>
-                                </ul>
-                            </div>
-                        )}
+                        <span className="sa2-hero-badge">{riskCfg(currentData.risk).label}</span>
+                    </div>
+                    <p className="sa2-hero-reason">📋 {currentData.reason}</p>
+                    <div className="sa2-hero-tip">
+                        <span className="sa2-hero-tip-icon">💡</span>
+                        <span className="sa2-hero-tip-text">{currentData.tips[0]}</span>
                     </div>
                 </section>
 
-                {/* SECTION 2: Season-Wise Awareness */}
-                <section className="sa-section">
-                    <h3 className="sa-section-title">Season-Wise Awareness</h3>
-                    <div className="sa-tabs-container">
-                        <div className="sa-tabs-header">
-                            {Object.keys(seasons).map((key) => (
-                                <button
-                                    key={key}
-                                    className={`sa-tab-btn ${activeTab === key ? 'active' : ''}`}
-                                    onClick={() => setActiveTab(key)}
+                {/* ── Legend ── */}
+                <div className="sa2-legend">
+                    {Object.entries(RISK_CONFIG).map(([level, cfg]) => (
+                        <span key={level} className="sa2-legend-item" style={{ color: cfg.color }}>
+                            {cfg.emoji} {level}
+                        </span>
+                    ))}
+                </div>
+
+                {/* ── All 12 Months ── */}
+                <section>
+                    <h2 className="sa2-section-title">Monthly Risk Overview</h2>
+                    <div className="sa2-month-list">
+                        {MONTHLY_DATA.map((item) => {
+                            const cfg = riskCfg(item.risk);
+                            const isExpanded = expandedMonth === item.month;
+                            const isCurrent = item.month === currentData.month;
+
+                            return (
+                                <div
+                                    key={item.month}
+                                    className={`sa2-month-card ${isCurrent ? 'sa2-month-card--current' : ''}`}
+                                    onClick={() => toggleMonth(item.month)}
                                 >
-                                    {seasons[key].title}
-                                </button>
-                            ))}
-                        </div>
-                        <div className="sa-tab-content">
-                            <div className="sa-risk-group">
-                                <div className="sa-risk-title">
-                                    <span className="material-symbols-outlined" style={{ color: '#eab308' }}>warning</span>
-                                    Common Risks
+                                    {/* Card Header Row */}
+                                    <div className="sa2-month-row">
+                                        <div className="sa2-month-left">
+                                            <span className="sa2-month-name">
+                                                {item.month}
+                                                {isCurrent && <span className="sa2-now-chip">NOW</span>}
+                                            </span>
+                                            {!isExpanded && (
+                                                <span className="sa2-month-reason">{item.reason}</span>
+                                            )}
+                                        </div>
+                                        <div className="sa2-month-right">
+                                            <span
+                                                className="sa2-risk-badge"
+                                                style={{ color: cfg.color, background: cfg.bg, borderColor: cfg.border }}
+                                            >
+                                                {cfg.emoji} {item.risk}
+                                            </span>
+                                            <span className="sa2-chevron">{isExpanded ? '▲' : '▼'}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Expanded Details */}
+                                    {isExpanded && (
+                                        <div className="sa2-expand-body">
+                                            <p className="sa2-expand-details">{item.details}</p>
+                                            <div className="sa2-tips-label">Safety Recommendations</div>
+                                            <ul className="sa2-tips-list">
+                                                {item.tips.map((tip, i) => (
+                                                    <li key={i} className="sa2-tip-item">
+                                                        <span
+                                                            className="sa2-tip-dot"
+                                                            style={{ background: cfg.color }}
+                                                        />
+                                                        {tip}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
-                                <ul className="sa-list-basic">
-                                    {seasons[activeTab].risks.map((risk, index) => (
-                                        <li key={index}>{risk}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                            <br />
-                            <div className="sa-risk-group">
-                                <div className="sa-risk-title">
-                                    <span className="material-symbols-outlined" style={{ color: 'var(--sa-primary-green)' }}>check_circle</span>
-                                    Awareness Tips
-                                </div>
-                                <ul className="sa-list-basic">
-                                    {seasons[activeTab].tips.map((tip, index) => (
-                                        <li key={index}>{tip}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </div>
+                            );
+                        })}
                     </div>
                 </section>
 
-                {/* SECTION 3: Seasonal Risk Pattern Summary */}
-                <section className="sa-section">
-                    <h3 className="sa-section-title">Seasonal Risk Patterns</h3>
-                    <div className="sa-card">
-                        <div className="sa-summary-list">
-                            <div className="sa-summary-item">
-                                <span>Rainy season</span>
-                                <strong>Highest mosquito activity</strong>
-                            </div>
-                            <div className="sa-summary-item">
-                                <span>Summer</span>
-                                <strong>Higher snake encounters</strong>
-                            </div>
-                            <div className="sa-summary-item">
-                                <span>Floods</span>
-                                <strong>Sudden animal displacement</strong>
-                            </div>
-                            <div className="sa-summary-item">
-                                <span>Winter</span>
-                                <strong>Indoor hiding behavior of insects</strong>
-                            </div>
-                        </div>
-                        <div className="sa-footer-hint">
-                            “Seasonal patterns help predict risk before it occurs.”
-                        </div>
-                    </div>
-                </section>
+                {/* ── Disclaimer ── */}
+                <div className="sa2-disclaimer">
+                    <span className="sa2-disclaimer-icon">ℹ️</span>
+                    <p>
+                        This is a seasonal awareness guide. Always exercise caution regardless of risk level.
+                    </p>
+                </div>
 
-                {/* SECTION 4: Preparedness Checklist */}
-                <section className="sa-section">
-                    <h3 className="sa-section-title">Be Prepared in Any Season</h3>
-                    <div className="sa-card">
-                        {[
-                            'Keep surroundings clean',
-                            'Save emergency contact numbers',
-                            'Know the nearest medical facility',
-                            'Stay informed about local conditions'
-                        ].map((item, index) => (
-                            <div key={index} className="sa-checklist-item">
-                                <span className="sa-check-circle">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>check</span>
-                                </span>
-                                <span style={{ color: '#4b5563', fontWeight: 500 }}>{item}</span>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-
-                {/* SECTION 5: Important Clarification */}
-                <section className="sa-section">
-                    <div className="sa-clarification-box">
-                        <span className="material-symbols-outlined" style={{ verticalAlign: 'middle', marginRight: '8px' }}>info</span>
-                        <strong>Note:</strong> This page provides seasonal awareness only. It does not provide real-time alerts or warnings.
-                    </div>
-                </section>
-
-                {/* Footer Navigation */}
-                <footer className="sa-footer-nav">
-                    <Link to="/learn/safety-tips" className="sa-nav-btn">Safety Tips</Link>
-                    <Link to="/learn/prevention" className="sa-nav-btn">Prevention</Link>
-                    <Link to="/learn/first-aid-basics" className="sa-nav-btn">First Aid Basics</Link>
-                    <Link to="/learn/community" className="sa-nav-btn">Community Awareness</Link>
-                </footer>
             </div>
         </div>
     );

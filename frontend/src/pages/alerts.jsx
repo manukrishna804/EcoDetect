@@ -351,7 +351,10 @@ const Alerts = () => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.header}>
+            <div style={{ ...styles.header, justifyContent: 'flex-start', gap: '12px' }}>
+                <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                    <span className="material-symbols-outlined">arrow_back</span>
+                </button>
                 <h1 style={styles.title}>Community Alerts</h1>
             </div>
 

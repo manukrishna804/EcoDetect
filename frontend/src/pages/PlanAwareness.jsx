@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import snakeFacts from '../data/snakeFacts';
 import './PlanAwareness.css';
 
 // Local assets
 
 import speciesImg from '../assets/plan-awareness/species-library.jpg';
-import safetyImg from '../assets/plan-awareness/safety-tips.jpg';
-import preventionImg from '../assets/plan-awareness/prevention.jpg';
+import safetyPreventionImg from '../assets/plan-awareness/prevention.jpg';
 import firstAidImg from '../assets/plan-awareness/first-aid.jpg';
 import seasonalImg from '../assets/plan-awareness/seasonal-alerts.jpg';
-import communityImg from '../assets/plan-awareness/community.jpg';
 
 export default function PlanAwareness() {
+    const navigate = useNavigate();
     const [currentFact, setCurrentFact] = useState(null);
 
     useEffect(() => {
@@ -37,11 +36,11 @@ export default function PlanAwareness() {
             <header className="pa-header">
                 <div className="pa-content">
                     <div className="pa-header-top">
-                        <button className="pa-search-btn">
-                            <span className="material-symbols-outlined">search</span>
+                        <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                            <span className="material-symbols-outlined">arrow_back</span>
                         </button>
+                        <h1 className="pa-title">Learn & Awareness</h1>
                     </div>
-                    <h1 className="pa-title">Learn & Awareness</h1>
                 </div>
             </header>
 
@@ -84,29 +83,16 @@ export default function PlanAwareness() {
                         </div>
                     </Link>
 
-                    {/* Card 2 */}
-                    <Link to="/learn/safety-tips" className="pa-card">
-                        <div className="pa-card-img-container" style={{ backgroundImage: `url(${safetyImg})` }}>
+                    {/* Card 2 & 3 Merged */}
+                    <Link to="/learn/prevention-safety" className="pa-card">
+                        <div className="pa-card-img-container" style={{ backgroundImage: `url(${safetyPreventionImg})` }}>
                             <div className="pa-card-icon-badge">
                                 <span className="material-symbols-outlined">shield</span>
                             </div>
                         </div>
                         <div className="pa-card-info">
-                            <h3>Safety Tips</h3>
-                            <p>Immediate actions</p>
-                        </div>
-                    </Link>
-
-                    {/* Card 3 */}
-                    <Link to="/learn/prevention" className="pa-card">
-                        <div className="pa-card-img-container" style={{ backgroundImage: `url(${preventionImg})` }}>
-                            <div className="pa-card-icon-badge">
-                                <span className="material-symbols-outlined">home_health</span>
-                            </div>
-                        </div>
-                        <div className="pa-card-info">
-                            <h3>Prevention</h3>
-                            <p>Home safety guides</p>
+                            <h3>Prevention & Safety</h3>
+                            <p>Guides & quick tips</p>
                         </div>
                     </Link>
 
@@ -133,19 +119,6 @@ export default function PlanAwareness() {
                         <div className="pa-card-info">
                             <h3>Seasonal Alerts</h3>
                             <p>Monthly watch</p>
-                        </div>
-                    </Link>
-
-                    {/* Card 6 */}
-                    <Link to="/learn/community" className="pa-card">
-                        <div className="pa-card-img-container" style={{ backgroundImage: `url(${communityImg})` }}>
-                            <div className="pa-card-icon-badge">
-                                <span className="material-symbols-outlined">forum</span>
-                            </div>
-                        </div>
-                        <div className="pa-card-info">
-                            <h3>Community</h3>
-                            <p>Local stories</p>
                         </div>
                     </Link>
 

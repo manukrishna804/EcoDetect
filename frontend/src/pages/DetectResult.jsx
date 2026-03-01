@@ -61,8 +61,8 @@ export default function DetectResult() {
       <div className={styles.container}>
         {/* Header */}
         <header className={styles.header}>
-          <button className={styles.backButton} onClick={() => navigate('/detect')}>
-            <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>arrow_back</span>
+          <button className="eco-back-btn" onClick={() => navigate('/detect')}>
+            <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <h2 className={styles.title}>Detection Result</h2>
           <div style={{ width: '2.5rem' }}></div> {/* Spacer for alignment */}

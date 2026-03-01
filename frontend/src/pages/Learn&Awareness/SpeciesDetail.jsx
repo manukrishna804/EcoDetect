@@ -38,7 +38,9 @@ function SpeciesDetail() {
     if (error || !species) return (
         <div style={styles.statusContainer}>
             <p style={styles.errorText}>{error || "Species not found."}</p>
-            <button style={styles.backButton} onClick={() => navigate(-1)}>Go Back</button>
+            <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                <span className="material-symbols-outlined">arrow_back</span>
+            </button>
         </div>
     );
 
@@ -64,7 +66,7 @@ function SpeciesDetail() {
 
     return (
         <div style={styles.container}>
-            <button style={styles.backIconBtn} onClick={() => navigate(-1)}>
+            <button className="eco-back-btn" onClick={() => navigate(-1)}>
                 <span className="material-symbols-outlined">arrow_back</span>
             </button>
 

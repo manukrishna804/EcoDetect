@@ -36,12 +36,9 @@ a:hover {
 
 body {
   margin: 0;
-  /* display: flex; REMOVED to allow full width */
-  /* place-items: center; REMOVED */
   min-width: 320px;
   min-height: 100vh;
   width: 100%;
-  /* ADDED */
 }
 
 #root {
@@ -52,7 +49,6 @@ body {
   background-color: var(--bg-color);
   position: relative;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-  /* Optional: adds subtle shadow on desktop */
 }
 
 h1 {
@@ -94,4 +90,35 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* GLOBAL BACK BUTTON */
+.eco-back-btn {
+  background: white;
+  border: none;
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  color: #16a34a !important;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s ease;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+.eco-back-btn:hover {
+  background-color: #f8fafc;
+  transform: translateY(-2px);
+}
+
+.eco-back-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.eco-back-btn .material-symbols-outlined {
+  font-size: 24px;
 }

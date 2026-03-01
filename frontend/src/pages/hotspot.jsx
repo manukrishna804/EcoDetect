@@ -164,8 +164,8 @@ const HotspotPage = () => {
     <div className="hotspot-page">
       {/* Header */}
       <header className="hotspot-header">
-        <button className="hotspot-back-button" onClick={() => window.history.back()}>
-          ←
+        <button className="eco-back-btn" onClick={() => window.history.back()}>
+          <span className="material-symbols-outlined">arrow_back</span>
         </button>
         <div className="hotspot-title-wrapper">
           <h1 className="hotspot-title">Wildlife Hotspots</h1>

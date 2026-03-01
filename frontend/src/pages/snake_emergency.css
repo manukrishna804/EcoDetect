@@ -85,22 +85,23 @@ body {
 }
 
 .back-button {
-  background: var(--app-bg);
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: var(--primary-dark);
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
+    background: white;
+    border: none;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+    color: #16a34a;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .back-button:hover {
-  background: var(--border-subtle);
+  background-color: #f8fafc;
+  transform: translateY(-1px);
 }
 
 .header-title-wrapper {

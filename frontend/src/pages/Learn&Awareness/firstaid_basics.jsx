@@ -1,234 +1,164 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './FirstAidBasics.css';
 
 const FirstAidBasics = () => {
-    // Section 1: Core Principles (Expandable, default true)
-    const [coreExpanded, setCoreExpanded] = useState(true);
+    const navigate = useNavigate();
+    const [openIncident, setOpenIncident] = useState(null);
 
-    // Section 2: Situations (Accordion)
-    const [openSituation, setOpenSituation] = useState(null);
-
-    const toggleSituation = (key) => {
-        setOpenSituation(prev => (prev === key ? null : key));
+    const toggleIncident = (key) => {
+        setOpenIncident(prev => (prev === key ? null : key));
     };
 
-    // Section 6: Preparedness (Expandable, default false)
-    const [preparednessExpanded, setPreparednessExpanded] = useState(false);
+    const incidentData = {
+        snake: {
+            title: "Snake Bite",
+            symptoms: ["Fang marks", "Swelling/Pain", "Blurred vision"],
+            actions: ["Keep limb still", "Remove jewelry", "Get to ICU fast"]
+        },
+        mosquito: {
+            title: "Mosquito Bite",
+            symptoms: ["Itchy bump", "Redness", "Swelling"],
+            actions: ["Wash with soap", "Apply cool pack", "Don't scratch"]
+        },
+        spider: {
+            title: "Spider Bite",
+            symptoms: ["Redness/Pain", "Skin lesion", "Muscle cramps"],
+            actions: ["Clean wound", "Apply ice", "Monitor breathing"]
+        },
+        frog: {
+            title: "Frog / Toxin Contact",
+            symptoms: ["Skin irritation", "Numbness", "Allergic reaction"],
+            actions: ["Wash skin fast", "Don't touch eyes", "Use lots of water"]
+        }
+    };
 
     return (
-        <div className="fa-container">
-            <div className="fa-content-wrapper">
-
-                {/* Header */}
-                <header className="fa-header">
-                    <h1 className="fa-title">First Aid Basics</h1>
-                    <h2 className="fa-subtitle">Basic first-aid awareness for insect and animal encounters</h2>
-                    <div className="fa-disclaimer-badge">
-                        “This information is for awareness only and does not replace professional medical care.”
+        <div className="fab-container">
+            <div className="fab-content">
+                {/* 1. Emergency Bar */}
+                <header className="fab-emergency-bar">
+                    <button className="eco-back-btn fab-back-top" onClick={() => navigate(-1)}>
+                        <span className="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <div className="fab-emergency-header">
+                        <span className="material-symbols-outlined">emergency</span>
+                        <h3>🚨 Emergency Contacts (India)</h3>
+                    </div>
+                    <div className="fab-contacts-grid">
+                        <div className="fab-contact-item">
+                            <label>Ambulance</label>
+                            <strong>108</strong>
+                        </div>
+                        <div className="fab-contact-item">
+                            <label>Emergency</label>
+                            <strong>112</strong>
+                        </div>
+                        <div className="fab-contact-item">
+                            <label>Health Helpline</label>
+                            <strong>104</strong>
+                        </div>
                     </div>
                 </header>
 
-                {/* SECTION 1: Core First Aid Principles */}
-                <section className="fa-section">
-                    <h3 className="fa-section-title">
-                        <span className="material-symbols-outlined">medical_services</span>
-                        General First Aid Awareness
-                    </h3>
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => setCoreExpanded(!coreExpanded)}>
-                            Core Principles
-                            <span className={`material-symbols-outlined fa-expand-icon ${coreExpanded ? 'open' : ''}`}>expand_more</span>
-                        </div>
-                        {coreExpanded && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li><strong>Stay Calm:</strong> Panic increases heart rate and stress.</li>
-                                    <li><strong>Ensure Safety:</strong> Make sure you and the victim are safe from further harm.</li>
-                                    <li><strong>Minimize Movement:</strong> Keep the affected person still.</li>
-                                    <li><strong>No Myths:</strong> Do not rely on unverified home remedies.</li>
-                                    <li><strong>Seek Help:</strong> Professional medical attention is always the priority.</li>
-                                </ul>
+                <div className="fab-body">
+                    {/* 2. Immediate Steps */}
+                    <section className="fab-section">
+                        <h2 className="fab-section-title">What To Do Immediately</h2>
+                        <div className="fab-steps-card">
+                            <div className="fab-step">
+                                <span className="material-symbols-outlined fab-step-icon">psychology</span>
+                                <span className="fab-step-text">Stay calm and don't panic</span>
                             </div>
-                        )}
-                    </div>
-                </section>
-
-                {/* SECTION 2: Awareness by Situation */}
-                <section className="fa-section">
-                    <h3 className="fa-section-title">
-                        <span className="material-symbols-outlined">emergency</span>
-                        Situation Awareness
-                    </h3>
-
-                    {/* Card 1: Snake Bite */}
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => toggleSituation('snake')}>
-                            Snake Bite
-                            <span className={`material-symbols-outlined fa-expand-icon ${openSituation === 'snake' ? 'open' : ''}`}>expand_more</span>
-                        </div>
-                        {openSituation === 'snake' && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li>Do not panic or run.</li>
-                                    <li>Do not cut, suck, or tightly tie the limb.</li>
-                                    <li>Keep the affected limb still and below heart level if possible.</li>
-                                    <li>Reach a hospital immediately.</li>
-                                </ul>
-                                <span className="fa-card-footer-note">“Only hospitals can treat snake venom safely.”</span>
+                            <div className="fab-step">
+                                <span className="material-symbols-outlined fab-step-icon">directions_run</span>
+                                <span className="fab-step-text">Move away from danger</span>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Card 2: Mosquito Bite */}
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => toggleSituation('mosquito')}>
-                            Mosquito Bite
-                            <span className={`material-symbols-outlined fa-expand-icon ${openSituation === 'mosquito' ? 'open' : ''}`}>expand_more</span>
-                        </div>
-                        {openSituation === 'mosquito' && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li>Clean the bite area gently with soap and water.</li>
-                                    <li>Avoid scratching to prevent infection.</li>
-                                    <li>Observe for fever or unusual symptoms in the following days.</li>
-                                </ul>
-                                <span className="fa-card-footer-note">“Seek medical help if symptoms worsen.”</span>
+                            <div className="fab-step">
+                                <span className="material-symbols-outlined fab-step-icon">accessibility_new</span>
+                                <span className="fab-step-text">Keep affected area still</span>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Card 3: Spider Bite */}
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => toggleSituation('spider')}>
-                            Spider Bite
-                            <span className={`material-symbols-outlined fa-expand-icon ${openSituation === 'spider' ? 'open' : ''}`}>expand_more</span>
-                        </div>
-                        {openSituation === 'spider' && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li>Wash the affected area with clean water.</li>
-                                    <li>Avoid applying chemicals or unknown substances.</li>
-                                    <li>Observe for swelling, pain, or discoloration.</li>
-                                </ul>
+                            <div className="fab-step">
+                                <span className="material-symbols-outlined fab-step-icon">block</span>
+                                <span className="fab-step-text">Avoid home remedies</span>
                             </div>
-                        )}
-                    </div>
-
-                    {/* Card 4: Frog / Toxin Contact */}
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => toggleSituation('frog')}>
-                            Frog / Toxin Contact
-                            <span className={`material-symbols-outlined fa-expand-icon ${openSituation === 'frog' ? 'open' : ''}`}>expand_more</span>
-                        </div>
-                        {openSituation === 'frog' && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li>Wash skin or hands immediately with soap and water.</li>
-                                    <li>Avoid touching eyes, mouth, or open wounds.</li>
-                                    <li>Seek help if irritation or allergic reaction occurs.</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                {/* SECTION 3: What NOT to Do */}
-                <section className="fa-section">
-                    <h3 className="fa-section-title" style={{ color: '#92400e' }}>
-                        <span className="material-symbols-outlined">warning</span>
-                        Unsafe First Aid Practices
-                    </h3>
-                    <div className="fa-warning-card">
-                        <ul className="fa-warning-list">
-                            <li><span className="material-symbols-outlined">block</span> Cutting or sucking wounds</li>
-                            <li><span className="material-symbols-outlined">block</span> Applying herbs, oils, or chemicals</li>
-                            <li><span className="material-symbols-outlined">block</span> Using tight tourniquets</li>
-                            <li><span className="material-symbols-outlined">block</span> Ignoring symptoms or delaying medical help</li>
-                        </ul>
-                    </div>
-                </section>
-
-                {/* SECTION 4: When to Seek Medical Help */}
-                <section className="fa-section">
-                    <h3 className="fa-section-title">
-                        <span className="material-symbols-outlined">ambulance</span>
-                        When to Seek Medical Help Immediately
-                    </h3>
-                    <div className="fa-help-list">
-                        <div className="fa-help-item"><span className="material-symbols-outlined" style={{ color: '#ef4444' }}>pain_filled</span> Severe pain or swelling</div>
-                        <div className="fa-help-item"><span className="material-symbols-outlined" style={{ color: '#ef4444' }}>lungs</span> Difficulty breathing</div>
-                        <div className="fa-help-item"><span className="material-symbols-outlined" style={{ color: '#ef4444' }}>sick</span> Fever, vomiting, or dizziness</div>
-                        <div className="fa-help-item"><span className="material-symbols-outlined" style={{ color: '#ef4444' }}>visibility_off</span> Loss of consciousness</div>
-                        <div className="fa-help-item"><span className="material-symbols-outlined" style={{ color: '#ef4444' }}>trending_down</span> Rapid worsening of symptoms</div>
-                    </div>
-                </section>
-
-                {/* SECTION 5: Emergency Contact */}
-                <section className="fa-section">
-                    <div className="fa-emergency-box">
-                        <span className="fa-emergency-title">Emergency Contact Numbers (India)</span>
-                        <div className="fa-emergency-numbers">
-                            <div className="fa-number-item">
-                                <span className="fa-number-label">Ambulance</span>
-                                <span className="fa-number-value">108</span>
-                            </div>
-                            <div className="fa-number-item">
-                                <span className="fa-number-label">General Emergency</span>
-                                <span className="fa-number-value">112</span>
-                            </div>
-                            <div className="fa-number-item">
-                                <span className="fa-number-label">Health Helpline</span>
-                                <span className="fa-number-value">104</span>
+                            <div className="fab-step fab-step-critical">
+                                <span className="material-symbols-outlined fab-step-icon">local_hospital</span>
+                                <span className="fab-step-text">Go to hospital immediately</span>
                             </div>
                         </div>
-                        <p className="fa-card-footer-note" style={{ background: 'none', marginBottom: 0 }}>
-                            “Keep these numbers saved on your phone and shared with family members.”
-                        </p>
-                    </div>
-                </section>
+                    </section>
 
-                {/* SECTION 6: Preparedness */}
-                <section className="fa-section">
-                    <h3 className="fa-section-title">
-                        <span className="material-symbols-outlined">backpack</span>
-                        Be Prepared
-                    </h3>
-                    <div className="fa-card">
-                        <div className="fa-expand-header" onClick={() => setPreparednessExpanded(!preparednessExpanded)}>
-                            Preparedness Steps
-                            <span className={`material-symbols-outlined fa-expand-icon ${preparednessExpanded ? 'open' : ''}`}>expand_more</span>
+                    {/* 3. What NOT To Do */}
+                    <section className="fab-section">
+                        <div className="fab-warning-box">
+                            <h2 className="fab-warning-title">❌ WHAT NOT TO DO</h2>
+                            <ul className="fab-warning-list">
+                                <li>Do not cut or suck wounds</li>
+                                <li>Do not apply tourniquet</li>
+                                <li>Do not delay medical help</li>
+                                <li>Do not use chemicals or herbs</li>
+                            </ul>
                         </div>
-                        {preparednessExpanded && (
-                            <div className="fa-expand-content">
-                                <ul>
-                                    <li>Save emergency numbers on your phone.</li>
-                                    <li>Know the location of the nearest hospital or health center.</li>
-                                    <li>Keep a basic first-aid kit at home (bandages, antiseptic, etc.).</li>
-                                    <li>Educate family members about emergency response.</li>
-                                </ul>
+                    </section>
+
+                    {/* 4. Type of Incident */}
+                    <section className="fab-section">
+                        <h2 className="fab-section-title">Select Incident Type</h2>
+                        <div className="fab-incident-list">
+                            {Object.entries(incidentData).map(([key, data]) => (
+                                <div key={key} className={`fab-incident-card ${openIncident === key ? 'open' : ''}`}>
+                                    <div className="fab-incident-header" onClick={() => toggleIncident(key)}>
+                                        <span>{data.title}</span>
+                                        <span className="material-symbols-outlined fab-chevron">
+                                            {openIncident === key ? 'expand_less' : 'expand_more'}
+                                        </span>
+                                    </div>
+                                    {openIncident === key && (
+                                        <div className="fab-incident-content">
+                                            <div className="fab-incident-inner-grid">
+                                                <div>
+                                                    <h4>Symptoms</h4>
+                                                    <ul>
+                                                        {data.symptoms.map((s, i) => <li key={i}>{s}</li>)}
+                                                    </ul>
+                                                </div>
+                                                <div>
+                                                    <h4>First Actions</h4>
+                                                    <ul>
+                                                        {data.actions.map((a, i) => <li key={i}>{a}</li>)}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* 5. When To Seek Immediate Help */}
+                    <section className="fab-section">
+                        <div className="fab-danger-card">
+                            <h2 className="fab-danger-title">🚨 SEEK HELP IMMEDIATELY IF:</h2>
+                            <div className="fab-danger-grid">
+                                <div className="fab-danger-item">Severe pain or swelling</div>
+                                <div className="fab-danger-item">Breathing difficulty</div>
+                                <div className="fab-danger-item">Loss of consciousness</div>
+                                <div className="fab-danger-item">Rapidly worsening symptoms</div>
                             </div>
-                        )}
-                    </div>
-                </section>
+                        </div>
+                    </section>
 
-                {/* SECTION 7: Disclaimer */}
-                <section className="fa-section" style={{ textAlign: 'center', margin: '40px 0' }}>
-                    <div style={{ background: '#f1f5f9', padding: '24px', borderRadius: '16px', fontSize: '14px', color: '#64748b' }}>
-                        <p style={{ margin: '0 0 8px 0' }}>“This section provides general first-aid awareness only.”</p>
-                        <p style={{ margin: '0 0 8px 0' }}>It does not replace professional medical advice or treatment.</p>
-                        <p style={{ margin: 0, fontWeight: '600' }}>Always consult trained healthcare professionals during emergencies.</p>
-                    </div>
-                </section>
+                    {/* 6. Disclaimer */}
+                    <footer className="fab-disclaimer">
+                        This guide provides general first aid awareness only. Always consult trained medical professionals.
+                    </footer>
 
-                {/* Footer Navigation */}
-                <div className="fa-footer-nav">
-                    <Link to="/learn/safety-tips" className="fa-nav-pill">Safety Tips</Link>
-                    <Link to="/learn/prevention" className="fa-nav-pill">Prevention</Link>
-                    <Link to="/learn/seasonal-alerts" className="fa-nav-pill">Seasonal Alerts</Link>
-                    <Link to="/learn/community" className="fa-nav-pill">Community Awareness</Link>
+                    <button className="fab-back-btn" onClick={() => navigate(-1)}>
+                        <span className="material-symbols-outlined">arrow_back</span>
+                    </button>
                 </div>
-
             </div>
         </div>
     );

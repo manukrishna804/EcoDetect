@@ -395,7 +395,9 @@ const MosquitoSafety = () => {
         <div style={styles.container}>
             {/* Header */}
             <header style={styles.header}>
-                <button style={styles.backButton} onClick={() => navigate(-1)}>←</button>
+                <button className="eco-back-btn" onClick={() => navigate(-1)}>
+                    <span className="material-symbols-outlined">arrow_back</span>
+                </button>
                 <h1 style={styles.headerTitle}>Mosquito Safety</h1>
                 <button style={styles.shareButton} onClick={() => alert("Share feature coming soon!")}>🔗</button>
             </header>
