@@ -1,12 +1,3 @@
-from flask import Blueprint
-
-detect_bp = Blueprint("detect", __name__)
-
-import random
-import json
-import os
-from flask import request, jsonify
-
 import random
 import json
 import os
@@ -25,16 +16,27 @@ def load_model():
     if model is None:
         try:
             from ultralytics import YOLO
-            model_path = os.path.join(os.path.dirname(__file__), '..', 'best.pt')
-            if os.path.exists(model_path):
-                model = YOLO(model_path)
-                print(f"Model loaded from {model_path}")
+            import torch
+            
+            # Limit memory/CPU usage on Render
+            torch.set_num_threads(1)
+            
+            # Prefer ONNX for production as it is more stable in memory-limited environments
+            onnx_path = os.path.join(os.path.dirname(__file__), '..', 'best.onnx')
+            pt_path = os.path.join(os.path.dirname(__file__), '..', 'best.pt')
+            
+            if os.path.exists(onnx_path):
+                model = YOLO(onnx_path, task='detect')
+                print(f"ONNX Model loaded from {onnx_path}")
+            elif os.path.exists(pt_path):
+                model = YOLO(pt_path)
+                print(f"PT Model loaded from {pt_path}")
             else:
-                print(f"Model not found at {model_path}")
+                print("Model weights not found (.onnx or .pt)")
         except Exception as e:
             print(f"Error loading model: {e}")
 
-# Load model on start (or first request)
+# Load model on start
 load_model()
 
 
