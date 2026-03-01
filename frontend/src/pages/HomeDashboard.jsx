@@ -233,14 +233,16 @@ export default function HomeDashboard() {
       </section>
 
       {/* EMERGENCY */}
-      <section className="eco-emergency">
-        <div className="emergency-content">
-          <span className="sos-tag">SOS EMERGENCY</span>
-          <h2>Need Immediate Help?</h2>
-          <p>Connect to local wildlife control or ambulance immediately.</p>
-        </div>
-        <button className="call-btn" onClick={handleSOSClick}>📞</button>
-      </section>
+      <div className="eco-emergency-wrapper">
+        <section className="eco-emergency">
+          <div className="emergency-content">
+            <span className="sos-tag">SOS EMERGENCY</span>
+            <h2>Need Immediate Help?</h2>
+            <p>Connect to local wildlife control or ambulance immediately.</p>
+          </div>
+          <button className="call-btn" onClick={handleSOSClick}>📞</button>
+        </section>
+      </div>
 
       {/* LOCATION MODAL */}
       {showLocationModal && (

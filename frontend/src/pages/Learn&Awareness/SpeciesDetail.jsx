@@ -66,7 +66,11 @@ function SpeciesDetail() {
 
     return (
         <div style={styles.container}>
-            <button className="eco-back-btn" onClick={() => navigate(-1)}>
+            <button
+                className="eco-back-btn"
+                onClick={() => navigate(-1)}
+                style={{ alignSelf: 'flex-start', marginBottom: '20px' }}
+            >
                 <span className="material-symbols-outlined">arrow_back</span>
             </button>
 
