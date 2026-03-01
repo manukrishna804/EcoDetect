@@ -8,3 +8,5 @@ firebase-admin
 gunicorn
 requests
 onnxruntime
+onnx
+onnxslim
