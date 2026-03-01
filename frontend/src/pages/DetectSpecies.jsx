@@ -19,11 +19,7 @@ export default function DetectSpecies() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
-  // Location Permission State
-  const [showLocationModal, setShowLocationModal] = useState(false);
-  const [locationData, setLocationData] = useState({ lat: null, lng: null, allowed: false });
-
-  // Check if location permission has been asked this session
+  // Initialize temp ID
   useEffect(() => {
     if (!localStorage.getItem("tempUserId")) {
       localStorage.setItem(
@@ -31,43 +27,8 @@ export default function DetectSpecies() {
         "anon_" + Math.random().toString(36).substring(2, 10)
       );
     }
-
-    const hasAsked = sessionStorage.getItem('hasAskedLocation');
-    if (!hasAsked) {
-      // Small delay for better UX
-      const timer = setTimeout(() => setShowLocationModal(true), 500);
-      return () => clearTimeout(timer);
-    }
   }, []);
 
-  const handleAllowLocation = () => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocationData({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            allowed: true
-          });
-          sessionStorage.setItem('hasAskedLocation', 'true');
-          setShowLocationModal(false);
-        },
-        (error) => {
-          console.error("Location access denied or failed:", error);
-          // Fail silently as requested, treat as skip
-          handleSkipLocation();
-        }
-      );
-    } else {
-      handleSkipLocation();
-    }
-  };
-
-  const handleSkipLocation = () => {
-    setLocationData({ lat: null, lng: null, allowed: false });
-    sessionStorage.setItem('hasAskedLocation', 'true');
-    setShowLocationModal(false);
-  };
 
 
   const fileInputRef = useRef(null);
@@ -194,11 +155,6 @@ export default function DetectSpecies() {
     try {
       // If allowed previously or permission state provides it
       freshLocation = await getCurrentLocation();
-
-      // Update local state just for UI consistency (optional but good)
-      if (freshLocation.allowed) {
-        setLocationData(freshLocation);
-      }
     } catch (e) {
       console.warn("Could not fetch location:", e);
     }
@@ -256,28 +212,6 @@ export default function DetectSpecies() {
   return (
     <div className={styles.page}>
 
-      {/* Location Permission Modal */}
-      {showLocationModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <div className={styles.modalIcon}>
-              <span className="material-symbols-outlined">location_on</span>
-            </div>
-            <h3 className={styles.modalTitle}>Enable Location?</h3>
-            <p className={styles.modalText}>
-              We use your location to provide nearby wildlife safety alerts and hotspots.
-            </p>
-            <div className={styles.modalActions}>
-              <button className={styles.modalAllowBtn} onClick={handleAllowLocation}>
-                Allow Location
-              </button>
-              <button className={styles.modalSkipBtn} onClick={handleSkipLocation}>
-                Skip
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Camera Overlay */}
       {showCamera && (

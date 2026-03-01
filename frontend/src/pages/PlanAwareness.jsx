@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import snakeFacts from '../data/snakeFacts';
 import './PlanAwareness.css';
 
 // Local assets
-import snakeImg from '../assets/plan-awareness/snake.jpg';
+
 import speciesImg from '../assets/plan-awareness/species-library.jpg';
 import safetyImg from '../assets/plan-awareness/safety-tips.jpg';
 import preventionImg from '../assets/plan-awareness/prevention.jpg';
@@ -12,6 +13,23 @@ import seasonalImg from '../assets/plan-awareness/seasonal-alerts.jpg';
 import communityImg from '../assets/plan-awareness/community.jpg';
 
 export default function PlanAwareness() {
+    const [currentFact, setCurrentFact] = useState(null);
+
+    useEffect(() => {
+        // Pick a random fact on mount
+        const randomIndex = Math.floor(Math.random() * snakeFacts.length);
+        setCurrentFact(snakeFacts[randomIndex]);
+    }, []);
+
+    const showAnotherFact = () => {
+        let newFact;
+        do {
+            const randomIndex = Math.floor(Math.random() * snakeFacts.length);
+            newFact = snakeFacts[randomIndex];
+        } while (currentFact && newFact.id === currentFact.id && snakeFacts.length > 1);
+        setCurrentFact(newFact);
+    };
+
     return (
         <div className="pa-container">
             {/* Header */}
@@ -36,15 +54,17 @@ export default function PlanAwareness() {
                             <span className="material-symbols-outlined pa-icon-green">lightbulb</span>
                             <span>Fact of the Day</span>
                         </div>
-                        <p className="pa-fact-text">
-                            Most snake bites occur when people try to capture or kill the snake. Leave them alone!
+                        <p className="pa-fact-headline">
+                            {currentFact ? currentFact.fact : 'Loading fact...'}
                         </p>
-                        <button className="pa-read-more-btn">
-                            Read More
-                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                        {currentFact && (
+                            <p className="pa-fact-explanation">{currentFact.explanation}</p>
+                        )}
+                        <button className="pa-next-fact-btn" onClick={showAnotherFact}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>refresh</span>
+                            Show Another Fact
                         </button>
                     </div>
-                    <div className="pa-fact-image" style={{ backgroundImage: `url(${snakeImg})` }}></div>
                 </div>
 
                 {/* Categories Grid */}

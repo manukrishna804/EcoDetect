@@ -112,32 +112,50 @@
     font-size: 20px;
 }
 
-.pa-fact-text {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #4b5563;
+.pa-fact-headline {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
     margin: 0;
+    line-height: 1.4;
 }
 
-.pa-read-more-btn {
+.pa-fact-explanation {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #4b5563;
+    margin: 0;
+    padding: 10px 12px;
+    background: #f0fdf4;
+    border-left: 3px solid var(--pa-primary-green);
+    border-radius: 0 8px 8px 0;
+}
+
+.pa-fact-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.pa-next-fact-btn {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    background-color: var(--pa-primary-light);
-    color: #15803d;
-    /* Darker green for text */
+    gap: 6px;
+    background-color: var(--pa-primary-green);
+    color: #fff;
     border: none;
-    padding: 8px 16px;
+    padding: 9px 18px;
     border-radius: 8px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     align-self: flex-start;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.15s;
 }
 
-.pa-read-more-btn:hover {
-    background-color: #bbf7d0;
+.pa-next-fact-btn:hover {
+    background-color: #16a34a;
+    transform: translateY(-1px);
 }
 
 .pa-fact-image {

@@ -44,13 +44,23 @@ export default function HomeDashboard() {
   const [showSOSModal, setShowSOSModal] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
 
+  // Location Permission State
+  const [showLocationModal, setShowLocationModal] = useState(false);
+
   useEffect(() => {
-    // 1. Get User Location (similar to alerts.jsx)
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-        (err) => console.warn("Geolocation error:", err.message)
-      );
+    // 1. Check if location permission has been asked this session
+    const hasAsked = sessionStorage.getItem('hasAskedLocation');
+    if (!hasAsked) {
+      const timer = setTimeout(() => setShowLocationModal(true), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      // If already asked, try to get location if we don't have it
+      if (navigator.geolocation && !userLocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          (err) => console.warn("Geolocation error:", err.message)
+        );
+      }
     }
 
     // 2. Listen for auth state changes
@@ -73,7 +83,33 @@ export default function HomeDashboard() {
     loadSightings();
 
     return () => unsubscribeAuth();
-  }, []);
+  }, [userLocation]);
+
+  const handleAllowLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          });
+          sessionStorage.setItem('hasAskedLocation', 'true');
+          setShowLocationModal(false);
+        },
+        (error) => {
+          console.error("Location access denied or failed:", error);
+          handleSkipLocation();
+        }
+      );
+    } else {
+      handleSkipLocation();
+    }
+  };
+
+  const handleSkipLocation = () => {
+    sessionStorage.setItem('hasAskedLocation', 'true');
+    setShowLocationModal(false);
+  };
 
   // Helper: Calculate Distance (Haversine)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -205,6 +241,29 @@ export default function HomeDashboard() {
         </div>
         <button className="call-btn" onClick={handleSOSClick}>📞</button>
       </section>
+
+      {/* LOCATION MODAL */}
+      {showLocationModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-icon">
+              <span className="material-symbols-outlined">location_on</span>
+            </div>
+            <h3 className="modal-title">Enable Location?</h3>
+            <p className="modal-text">
+              We use your location to provide nearby wildlife safety alerts and hotspots.
+            </p>
+            <div className="btn-actions">
+              <button className="modal-allow-btn" onClick={handleAllowLocation}>
+                Allow Location
+              </button>
+              <button className="modal-skip-btn" onClick={handleSkipLocation}>
+                Skip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* SOS MODAL */}
       {showSOSModal && (
