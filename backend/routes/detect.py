@@ -26,9 +26,11 @@ def load_model():
             pt_path = os.path.join(os.path.dirname(__file__), '..', 'best.pt')
             
             if os.path.exists(onnx_path):
+                # Force CPU for ONNX
                 model = YOLO(onnx_path, task='detect')
                 print(f"ONNX Model loaded from {onnx_path}")
             elif os.path.exists(pt_path):
+                # Force CPU for PyTorch
                 model = YOLO(pt_path)
                 print(f"PT Model loaded from {pt_path}")
             else:
@@ -110,8 +112,8 @@ def detect():
         image_bytes = file.read()
         img = Image.open(io.BytesIO(image_bytes))
         
-        # Run inference
-        results = model(img)
+        # Run inference forced to CPU to silence GPU warnings
+        results = model(img, device='cpu')
         
         # Process results
         if not results or len(results) == 0:
