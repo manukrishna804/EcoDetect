@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { API_BASE_URL } from '../config';
 import './Chatbot.css';
 
 // Lightweight markdown → HTML converter for bot messages
@@ -69,7 +70,7 @@ export default function Chatbot() {
 
         try {
             // Call Flask backend
-            const response = await fetch('http://localhost:5000/chat', {
+            const response = await fetch(`${API_BASE_URL}/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import { auth } from '../firebase';
 import styles from '../styles/DetectSpecies.module.css';
 import { saveDetection } from "../services/detectionService";
@@ -163,7 +164,7 @@ export default function DetectSpecies() {
     formData.append('image', selectedFile);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/detect', {
+      const response = await fetch(`${API_BASE_URL}/detect`, {
         method: 'POST',
         body: formData,
       });

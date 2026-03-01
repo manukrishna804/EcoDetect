@@ -1,7 +1,8 @@
 import { db } from "../firebase";
 import { collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs, doc, updateDoc, increment } from "firebase/firestore";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+import { API_BASE_URL } from '../config';
+
 
 /**
  * Fetch the latest detection records from the global detections collection.
