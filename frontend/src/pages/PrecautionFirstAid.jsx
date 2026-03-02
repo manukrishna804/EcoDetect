@@ -132,7 +132,7 @@ export default function PrecautionFirstAid() {
             <button className={styles.sosButton} onClick={() => window.location.href = 'tel:911'}>
               SOS Call <span style={{ fontSize: '0.8em', opacity: 0.8 }}>911</span>
             </button>
-            <button className={styles.hospitalButton} onClick={() => window.open('https://www.google.com/maps/search/hospital+near+me', '_blank')}>
+            <button className={styles.hospitalButton} onClick={() => navigate('/hospitals', { state: { sos: isHighRisk } })}>
               <span className="material-symbols-outlined">local_hospital</span>
               Find Hospital
             </button>

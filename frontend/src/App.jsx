@@ -17,6 +17,7 @@ import Welcome from "./pages/Welcome";
 import HotspotPage from "./pages/hotspot";
 import Alerts from "./pages/alerts";
 import MosquitoSafety from "./pages/MosquitoSafety";
+import NearbyHospitals from "./pages/NearbyHospitals";
 import Chatbot from "./components/Chatbot";
 import BottomNavbar from "./components/BottomNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -53,6 +54,7 @@ function AppContent() {
         <Route path="/hotspots" element={<ProtectedRoute><HotspotPage /></ProtectedRoute>} />
         <Route path="/alerts" element={<ProtectedRoute><Alerts /></ProtectedRoute>} />
         <Route path="/mosquito-safety" element={<ProtectedRoute><MosquitoSafety /></ProtectedRoute>} />
+        <Route path="/hospitals" element={<ProtectedRoute><NearbyHospitals /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
 
