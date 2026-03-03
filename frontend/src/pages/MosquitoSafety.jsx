@@ -46,7 +46,7 @@ const MosquitoSafety = () => {
             name: "Chikungunya",
             tag: "VIRAL",
             tagColor: { bg: '#FFEDD5', text: '#C2410C' },
-            img: '/Images/Aedes.jpg',
+            img: '/Images/Culex.jpg',
             imgBg: '#FFE0CC',
             desc: "Spread by Aedes mosquitoes. Characterized by severe joint pain.",
             symptoms: ["Sudden high fever", "Joint pain/swelling", "Muscle pain", "Headache", "Fatigue", "Skin rash"],
@@ -98,7 +98,7 @@ const MosquitoSafety = () => {
         // Hero
         hero: { background: 'linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 100%)', padding: '28px 20px 24px', position: 'relative', overflow: 'hidden' },
         heroOverline: { fontSize: '11px', fontWeight: '700', color: 'rgba(255,255,255,0.65)', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '6px' },
-        heroTitle: { fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: 1.25, marginBottom: '8px', maxWidth: '65%' },
+        heroTitle: { fontSize: '26px', fontWeight: '900', color: '#fff', lineHeight: 1.25, marginBottom: '8px', maxWidth: '65%', whiteSpace: 'pre-line' },
         heroSub: { fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5, maxWidth: '65%', marginBottom: '20px' },
         heroActions: { display: 'flex', gap: '10px' },
         heroBtn: (primary) => ({
@@ -106,7 +106,7 @@ const MosquitoSafety = () => {
             backgroundColor: primary ? '#fff' : 'rgba(255,255,255,0.18)', color: primary ? '#2E7D32' : '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
         }),
-        heroMosquito: { position: 'absolute', right: '-10px', bottom: '-10px', width: '140px', height: '140px', borderRadius: '50%', background: `rgba(255,255,255,0.08) url(${mosquitoImg}) center/cover`, border: '2px solid rgba(255,255,255,0.1)' },
+        heroMosquito: { position: 'absolute', right: '-25px', top: '50%', transform: 'translateY(-50%)', width: '130px', height: '130px', borderRadius: '50%', background: `rgba(255,255,255,0.08) url(${mosquitoImg}) center/cover`, border: '2px solid rgba(255,255,255,0.1)' },
 
         // Stats row
         statsRow: { display: 'flex', gap: '0', backgroundColor: '#fff', borderBottom: '1px solid #E5EAE6' },
