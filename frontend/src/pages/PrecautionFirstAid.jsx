@@ -68,8 +68,9 @@ export default function PrecautionFirstAid() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <h1 className={styles.title}>Precaution & First-Aid</h1>
-          <span className="material-symbols-outlined" style={{ color: '#1f2937' }}>share</span>
+          <div className={styles.spacer}></div>
         </header>
+
 
         {/* Hero Image */}
         <div

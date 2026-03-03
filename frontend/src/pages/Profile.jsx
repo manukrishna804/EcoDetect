@@ -168,10 +168,8 @@ export default function Profile() {
                                     </div>
                                 )}
                             </div>
-                            <button className={styles.cameraButton}>
-                                <span className="material-icons" style={{ fontSize: '1.25rem' }}>camera_alt</span>
-                            </button>
                         </div>
+
 
                         <div className={styles.userNameContainer}>
                             {isEditing ? (

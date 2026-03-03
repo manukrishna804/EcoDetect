@@ -12,6 +12,7 @@ export default function DetectSpecies() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   // Camera State
   const [showCamera, setShowCamera] = useState(false);
@@ -259,11 +260,35 @@ export default function DetectSpecies() {
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <h1 className={styles.title}>Detect Species</h1>
-          <button className={styles.iconButton}>
+          <button className={styles.iconButton} onClick={() => setShowTutorial(true)}>
             <span className="material-symbols-outlined" style={{ fontSize: '1.5rem' }}>help</span>
           </button>
         </div>
       </header>
+
+      {/* Tutorial Modal */}
+      {showTutorial && (
+        <div className={styles.tutorialOverlay}>
+          <div className={styles.tutorialContent}>
+            <div className={styles.tutorialHeader}>
+              <h3 className={styles.tutorialTitle}>How it Works</h3>
+              <button className={styles.closeTutorialBtn} onClick={() => setShowTutorial(false)}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className={styles.tutorialBody}>
+              <img
+                src="/videos/Tutorial.gif"
+                alt="Tutorial GIF"
+                className={styles.tutorialGif}
+              />
+              <p className={styles.tutorialDescription}>
+                Click the picture of the creature to detect it.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className={styles.main}>
