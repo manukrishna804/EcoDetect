@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { protocols } from "../../data/protocols";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 function SpeciesDetail() {
     const { id } = useParams();

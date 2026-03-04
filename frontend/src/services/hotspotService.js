@@ -1,7 +1,8 @@
 import { db } from "../firebase";
 import { collection, getDocs, query, orderBy, limit, doc, getDoc } from "firebase/firestore";
 
-const API_BASE_URL = "http://127.0.0.1:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 /**
  * Fetch hotspots directly from Firestore
@@ -19,7 +20,7 @@ export async function getHotspotsFromFirestore() {
       q = hotspotsRef;
     }
     const querySnapshot = await getDocs(q);
-    
+
     const hotspots = [];
     querySnapshot.forEach((doc) => {
       hotspots.push({
@@ -27,7 +28,7 @@ export async function getHotspotsFromFirestore() {
         ...doc.data()
       });
     });
-    
+
     console.log(`✅ Fetched ${hotspots.length} hotspot(s) from Firestore`);
     return hotspots;
   } catch (error) {
@@ -84,10 +85,10 @@ export async function triggerHotspotAnalysis() {
 export async function getDetectionsByIds(detectionIds) {
   try {
     if (!detectionIds || detectionIds.length === 0) return [];
-    
+
     const detectionsRef = collection(db, "detections");
     const detections = [];
-    
+
     // Firestore doesn't support IN queries with more than 10 items, so batch them
     const batchSize = 10;
     for (let i = 0; i < detectionIds.length; i += batchSize) {
@@ -106,11 +107,11 @@ export async function getDetectionsByIds(detectionIds) {
           return null;
         }
       });
-      
+
       const results = await Promise.all(promises);
       detections.push(...results.filter(d => d !== null));
     }
-    
+
     console.log(`✅ Fetched ${detections.length} detection(s) by IDs`);
     return detections;
   } catch (error) {
@@ -136,7 +137,7 @@ export async function getAlerts(limitCount = 10) {
       q = query(alertsRef, limit(limitCount));
     }
     const querySnapshot = await getDocs(q);
-    
+
     const alerts = [];
     querySnapshot.forEach((doc) => {
       alerts.push({
@@ -144,7 +145,7 @@ export async function getAlerts(limitCount = 10) {
         ...doc.data()
       });
     });
-    
+
     console.log(`✅ Fetched ${alerts.length} alert(s) from Firestore`);
     return alerts;
   } catch (error) {
