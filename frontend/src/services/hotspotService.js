@@ -43,7 +43,11 @@ export async function getHotspotsFromFirestore() {
  */
 export async function getHotspotsFromAPI() {
   try {
-    const response = await fetch(`${API_BASE_URL}/hotspots`);
+    const response = await fetch(`${API_BASE_URL}/hotspots`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -63,7 +67,10 @@ export async function getHotspotsFromAPI() {
 export async function triggerHotspotAnalysis() {
   try {
     const response = await fetch(`${API_BASE_URL}/run-hotspot`, {
-      method: "POST"
+      method: "POST",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

@@ -80,7 +80,10 @@ export async function saveDetection(data, userId = null) {
 async function triggerHotspotAnalysisBackground() {
   try {
     const response = await fetch(`${API_BASE_URL}/run-hotspot`, {
-      method: "POST"
+      method: "POST",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
     });
     if (response.ok) {
       const data = await response.json();

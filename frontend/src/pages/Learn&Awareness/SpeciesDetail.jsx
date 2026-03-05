@@ -14,7 +14,11 @@ function SpeciesDetail() {
 
     useEffect(() => {
         setLoading(true);
-        fetch(`${API_BASE_URL}/species/${id}`)
+        fetch(`${API_BASE_URL}/species/${id}`, {
+            headers: {
+                "ngrok-skip-browser-warning": "true",
+            },
+        })
             .then((res) => {
                 if (!res.ok) throw new Error("Species not found");
                 return res.json();

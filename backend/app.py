@@ -10,7 +10,7 @@ db = init_firebase()
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*", "allow_headers": ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]}})
 
 from routes.detect import detect_bp
 from hotspot.runner import run_hotspot_analysis

@@ -17,7 +17,11 @@ function SpeciesLibrary() {
   // Fetch species
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_BASE_URL}/species`)
+    fetch(`${API_BASE_URL}/species`, {
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch species data");
         return res.json();

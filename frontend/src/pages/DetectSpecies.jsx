@@ -165,8 +165,10 @@ export default function DetectSpecies() {
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/detect`, {
-
         method: 'POST',
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
         body: formData,
       });
 
