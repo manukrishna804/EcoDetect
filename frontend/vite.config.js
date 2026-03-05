@@ -14,6 +14,9 @@ export default defineConfig({
         short_name: 'EcoDetect',
         description: 'Species detection and wildlife safety app',
         theme_color: '#2ecc71',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -32,6 +35,9 @@ export default defineConfig({
             purpose: 'any maskable'
           }
         ]
+      },
+      devOptions: {
+        enabled: true
       }
     })
   ],

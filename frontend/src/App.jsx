@@ -22,6 +22,7 @@ import Chatbot from "./components/Chatbot";
 import BottomNavbar from "./components/BottomNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 // Wrapper component to conditionally render chatbot
@@ -70,6 +71,7 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppContent />
     </BrowserRouter>
   );
