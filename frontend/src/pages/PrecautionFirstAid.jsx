@@ -130,8 +130,8 @@ export default function PrecautionFirstAid() {
           {/* What Not To Do (High Risk Only or Always?) - Reference shows Red Cross section */}
           {/* SOS Actions Block */}
           <div className={styles.actionButtons} style={{ marginBottom: '1.5rem', marginTop: '0.5rem' }}>
-            <button className={styles.sosButton} onClick={() => window.location.href = 'tel:911'}>
-              SOS Call <span style={{ fontSize: '0.8em', opacity: 0.8 }}>911</span>
+            <button className={styles.sosButton} onClick={() => window.location.href = 'tel:112'}>
+              SOS Call <span style={{ fontSize: '0.8em', opacity: 0.8 }}>112</span>
             </button>
             <button className={styles.hospitalButton} onClick={() => navigate('/hospitals', { state: { sos: isHighRisk } })}>
               <span className="material-symbols-outlined">local_hospital</span>

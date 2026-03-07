@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dengueImg from '../assets/mosquito-awareness/dengue.jpg';
 import malariaImg from '../assets/mosquito-awareness/malaria.jpg';
@@ -10,6 +10,11 @@ const MosquitoSafety = () => {
     const navigate = useNavigate();
     const [selectedDisease, setSelectedDisease] = useState(null);
     const [activeTab, setActiveTab] = useState('diseases');
+
+    // Scroll to top when tab changes
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [activeTab]);
 
     const openModal = (disease) => setSelectedDisease(disease);
     const closeModal = () => setSelectedDisease(null);

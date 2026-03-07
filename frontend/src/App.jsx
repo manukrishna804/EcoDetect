@@ -22,6 +22,7 @@ import Chatbot from "./components/Chatbot";
 import BottomNavbar from "./components/BottomNavbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 // Wrapper component to conditionally render chatbot
@@ -29,7 +30,7 @@ function AppContent() {
   const location = useLocation();
 
   // Hide chatbot and bottom navbar on these routes
-  const hideChatbotRoutes = ['/', '/login', '/signup', '/detect', '/result'];
+  const hideChatbotRoutes = ['/', '/login', '/signup'];
   const shouldShowChatbot = !hideChatbotRoutes.includes(location.pathname);
 
   return (
@@ -70,6 +71,7 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppContent />
     </BrowserRouter>
   );

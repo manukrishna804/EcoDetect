@@ -60,10 +60,10 @@ LOCAL_RESPONSES = {
     "PRECAUTIONS": {
         "message": "**SNAKE SAFETY PRECAUTIONS:**\n\n• Stay at least 6 feet away from any snake.\n• Wear footwear outdoors, especially at night.\n• Use a flashlight to see where you are stepping.\n• Keep your surroundings clean to avoid attracting rodents.",
         "action": "OPEN_PRECAUTIONS",
-        "suggestedActions": ["View Precautions", "Scan with Camera"]
+        "suggestedActions": ["View Precautions"]
     },
     "HOSPITAL": {
-        "message": "I recommend checking our **Nearby Hospitals** map to see the closest facilities with antivenom. I can also help you find specific ones if you share your location.",
+        "message": "You can find all nearby medical facilities, including general hospitals and clinics, on our **Nearby Hospitals** map. If you'd like me to point out the closest antivenom centers specifically, just share your location.",
         "action": "OPEN_HOSPITAL_MAP",
         "suggestedActions": ["Find Nearby Hospitals", "Call SOS"]
     },
@@ -93,8 +93,17 @@ Rules:
 - Do not mention hospitals for general educational questions about snakes.
 - Keep responses concise and relevant.
 - You MUST return a VALID JSON object with:
-   {"message": "string", "action": "ACTION_NAME", "suggestedActions": ["list"]}
-Actions: OPEN_FIRST_AID, OPEN_PRECAUTIONS, OPEN_HOSPITAL_MAP, OPEN_CAMERA_DETECTION, CALL_EMERGENCY, NONE."""
+   {"message": "string", "action": "ACTION_NAME", "suggestedActions": ["Human Readable Label"]}
+
+Valid ACTIONS: OPEN_FIRST_AID, OPEN_PRECAUTIONS, OPEN_HOSPITAL_MAP, OPEN_CAMERA_DETECTION, CALL_EMERGENCY, NONE.
+Valid LABELS for suggestedActions: "First Aid Guide", "Find Hospitals", "Call SOS", "Scan Snake", "View Precautions".
+
+CRITICAL RULES:
+1. DO NOT invent labels. Use ONLY the valid labels above.
+2. For purely educational or conversational questions (e.g. "Do snakes fly?", "Are snakes gods?"), suggestedActions MUST be empty: [].
+3. Only use suggestedActions if they are HIGHLY relevant to the user's safety or the app's features.
+Example: {"message": "...", "action": "NONE", "suggestedActions": []}
+"""
 
 def calculate_distance(lat1, lon1, lat2, lon2):
     """Haversine formula to calculate distance"""
@@ -109,15 +118,15 @@ def route_intent(message):
     """Refined keyword-based intent router"""
     msg = message.lower()
     
-    if re.search(r"help|emergency|urgent|sos|call|ambulance", msg):
+    if re.search(r"\b(help|emergency|urgent|sos|call|ambulance|police|fire)\b", msg):
         return "EMERGENCY"
-    if re.search(r"bite|bitten|biting|venom|poison|suck|tourniquet", msg):
-        return "FIRST_AID"
-    if re.search(r"hospital|doctor|clinic|treatment|antivenom|medical", msg):
+    if re.search(r"\b(hospital|doctor|clinic|treatment|antivenom|medical|nearest)\b", msg):
         return "HOSPITAL"
-    if re.search(r"identify|what snake|which snake|kind of snake|detection|camera|scan", msg):
+    if re.search(r"\b(bite|bitten|biting|venom|poison|suck|tourniquet)\b", msg):
+        return "FIRST_AID"
+    if re.search(r"\b(identify|what snake|which snake|kind of snake|detection|camera|scan)\b", msg):
         return "SNAKE_IDENTIFICATION"
-    if re.search(r"prevent|avoid|precaution|safety|safe|habit|footwear|flashlight", msg):
+    if re.search(r"\b(prevent|avoid|precaution|safety|safe|habit|footwear|flashlight)\b", msg):
         return "PRECAUTIONS"
     
     # Check Wildlife KB keywords
@@ -159,7 +168,7 @@ def chat():
                     lat, lon = map(float, user_location.split(','))
                     nearby = sorted(HOSPITALS, key=lambda h: calculate_distance(lat, lon, h['lat'], h['lon']))[:3]
                     hosp_names = ", ".join([h['name'] for h in nearby])
-                    resp["message"] = f"Based on your location, the nearest antivenom centers are: {hosp_names}. You can see them on our full map."
+                    resp["message"] = f"I've updated the map to show all general hospitals and clinics near you. For snake emergencies, the nearest specialized **antivenom centers** are: {hosp_names}."
                 except: pass
                 
             CHAT_CACHE[cache_key] = resp
@@ -172,7 +181,7 @@ def chat():
                     resp = {
                         "message": val,
                         "action": "NONE",
-                        "suggestedActions": ["First Aid Guide", "View Precautions"]
+                        "suggestedActions": []
                     }
                     CHAT_CACHE[cache_key] = resp
                     return jsonify(resp), 200

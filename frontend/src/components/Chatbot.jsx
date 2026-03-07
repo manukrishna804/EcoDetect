@@ -96,36 +96,55 @@ export default function Chatbot() {
         }
     };
 
-    // Map suggested actions to routes (User-clicked buttons)
     const handleActionClick = (action) => {
+        // Normalization: AI might return raw strings, OR human-readable ones
         switch (action) {
+            case "OPEN_CAMERA_DETECTION":
             case "Scan with Camera":
             case "Scan Snake with Camera":
                 navigate('/detect');
                 setIsOpen(false);
                 break;
+            case "OPEN_FIRST_AID":
             case "First Aid Guide":
             case "Open First Aid Guide":
                 navigate('/snake', { state: { activeTab: 'firstaid' } });
                 setIsOpen(false);
                 break;
+            case "OPEN_HOSPITAL_MAP":
             case "Find Nearby Hospitals":
             case "Nearest Hospitals":
                 navigate('/hospitals');
                 setIsOpen(false);
                 break;
+            case "CALL_EMERGENCY":
             case "Call SOS":
             case "Call Emergency":
                 navigate('/snake', { state: { openSOS: true } });
                 setIsOpen(false);
                 break;
+            case "OPEN_PRECAUTIONS":
             case "View Precautions":
+            case "Snake Bite Precautions":
                 navigate('/snake', { state: { activeTab: 'precautions' } });
                 setIsOpen(false);
                 break;
             default:
+                console.warn('Unknown action:', action);
                 break;
         }
+    };
+
+    // Helper to get nice label for buttons
+    const getActionLabel = (action) => {
+        const labels = {
+            "OPEN_FIRST_AID": "First Aid Guide",
+            "OPEN_PRECAUTIONS": "Precautions",
+            "OPEN_HOSPITAL_MAP": "Find Hospitals",
+            "OPEN_CAMERA_DETECTION": "Scan Snake",
+            "CALL_EMERGENCY": "Call SOS"
+        };
+        return labels[action] || action;
     };
 
     // Send message to backend
@@ -263,7 +282,7 @@ export default function Chatbot() {
                                                     onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
                                                     onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                                                 >
-                                                    {action} →
+                                                    {getActionLabel(action)} →
                                                 </button>
                                             ))}
                                         </div>

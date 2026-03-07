@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './snake_emergency.css';
 import biteImage from '../assets/snake_emergency/bite.png';
 import AntivenomMap from '../components/AntivenomMap';
@@ -7,6 +7,7 @@ import { hospitals } from '../data/hospitals';
 
 const SnakeEmergency = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('firstaid');
 
   // Load state from navigation if available
@@ -18,6 +19,11 @@ const SnakeEmergency = () => {
       setShowSOSModal(true);
     }
   }, [location.state]);
+
+  // Scroll to top when tab changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activeTab]);
 
   // --- Geolocation & Hospital Data State ---
   const [userLocation, setUserLocation] = useState(null);
@@ -90,11 +96,7 @@ const SnakeEmergency = () => {
   }, []);
 
   const handleNearestHospitalClick = () => {
-    if (sortedHospitals.length > 0 && sortedHospitals[0].latitude && sortedHospitals[0].longitude) {
-      openGoogleMaps(sortedHospitals[0].latitude, sortedHospitals[0].longitude);
-    } else {
-      alert("Unable to locate nearest hospital. Please ensure location services are enabled.");
-    }
+    navigate('/hospitals', { state: { sos: true } });
   };
 
   // --- SOS Handlers ---
@@ -117,7 +119,7 @@ const SnakeEmergency = () => {
       {/* ===== STICKY HEADER ===== */}
       <header className="emergency-header">
         <div className="header-left">
-          <button className="eco-back-btn" onClick={() => window.history.back()}>
+          <button className="eco-back-btn" onClick={() => navigate('/home')}>
             <span className="material-symbols-outlined">arrow_back</span>
           </button>
           <div className="header-title-wrapper">
