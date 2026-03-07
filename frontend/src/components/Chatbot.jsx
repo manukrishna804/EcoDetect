@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Chatbot.css';
 
 // Lightweight markdown → HTML converter for bot messages
@@ -22,13 +23,19 @@ function formatMessage(text) {
 }
 
 export default function Chatbot() {
+    const navigate = useNavigate();
     // State management
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { sender: 'bot', text: '🌿 Hi! I am the EcoDetect Assistant.\n\nI can help you with:\n• Harmful insects & venomous animals\n• First aid for bites & stings\n• Safety precautions\n\nHow can I help you today?' }
+        {
+            sender: 'bot',
+            text: '🌿 Hi! I am your EcoDetect Assistant.\n\nI can help you with:\n• Snake safety & first aid\n• Identifying snakes with your camera\n• Finding nearby antivenom hospitals\n\nHow can I help you today?',
+            actions: []
+        }
     ]);
     const [inputText, setInputText] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [userLocContext, setUserLocContext] = useState(null);
 
     // Ref for auto-scrolling
     const messagesEndRef = useRef(null);
@@ -42,17 +49,84 @@ export default function Chatbot() {
         scrollToBottom();
     }, [messages]);
 
+    // Fetch location context
+    useEffect(() => {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                setUserLocContext(`${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`);
+            }, (error) => {
+                console.log("Location access denied", error);
+            });
+        }
+    }, []);
+
     // Toggle chat window
     const toggleChat = () => {
         setIsOpen(!isOpen);
     };
 
     const quickSuggestions = [
-        "First aid for snake bite 🐍",
-        "Identify insect 🐜",
-        "Venomous spider check 🕷️",
-        "Emergency help 🚑"
+        "Snake bite first aid 🐍",
+        "Nearest hospital 🏥",
+        "Identify a snake 🔍",
+        "Safety precautions 🛡️"
     ];
+
+    // Handle structural actions from backend (e.g. OPEN_MAP, CALL_SOS)
+    const handleTriggeredAction = (action) => {
+        switch (action) {
+            case "OPEN_FIRST_AID":
+                navigate('/snake', { state: { activeTab: 'firstaid' } });
+                break;
+            case "OPEN_PRECAUTIONS":
+                navigate('/snake', { state: { activeTab: 'precautions' } });
+                break;
+            case "OPEN_HOSPITAL_MAP":
+                navigate('/hospitals');
+                break;
+            case "OPEN_CAMERA_DETECTION":
+                navigate('/detect');
+                break;
+            case "CALL_EMERGENCY":
+                // Deep link to snake emergency with SOS trigger
+                navigate('/snake', { state: { openSOS: true } });
+                break;
+            default:
+                break;
+        }
+    };
+
+    // Map suggested actions to routes (User-clicked buttons)
+    const handleActionClick = (action) => {
+        switch (action) {
+            case "Scan with Camera":
+            case "Scan Snake with Camera":
+                navigate('/detect');
+                setIsOpen(false);
+                break;
+            case "First Aid Guide":
+            case "Open First Aid Guide":
+                navigate('/snake', { state: { activeTab: 'firstaid' } });
+                setIsOpen(false);
+                break;
+            case "Find Nearby Hospitals":
+            case "Nearest Hospitals":
+                navigate('/hospitals');
+                setIsOpen(false);
+                break;
+            case "Call SOS":
+            case "Call Emergency":
+                navigate('/snake', { state: { openSOS: true } });
+                setIsOpen(false);
+                break;
+            case "View Precautions":
+                navigate('/snake', { state: { activeTab: 'precautions' } });
+                setIsOpen(false);
+                break;
+            default:
+                break;
+        }
+    };
 
     // Send message to backend
     const handleSendMessage = async (text) => {
@@ -74,13 +148,26 @@ export default function Chatbot() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: userMessage }),
+                body: JSON.stringify({
+                    message: userMessage,
+                    location: userLocContext
+                }),
             });
 
             const data = await response.json();
 
-            // Add bot response
-            setMessages(prev => [...prev, { sender: 'bot', text: data.reply }]);
+            // Support new standardized action system
+            const botText = data.message || data.reply || "I didn't quite catch that.";
+            const botActions = data.suggestedActions || [];
+            const triggerAction = data.action || "NONE";
+
+            setMessages(prev => [...prev, {
+                sender: 'bot',
+                text: botText,
+                actions: botActions,
+                triggeredAction: triggerAction
+            }]);
+
         } catch (error) {
             console.error('Error sending message:', error);
             setMessages(prev => [
@@ -137,14 +224,51 @@ export default function Chatbot() {
                                 {msg.sender === 'bot' && (
                                     <div className="message-avatar">🌿</div>
                                 )}
-                                {msg.sender === 'bot' ? (
-                                    <div
-                                        className="message-bubble"
-                                        dangerouslySetInnerHTML={{ __html: formatMessage(msg.text) }}
-                                    />
-                                ) : (
-                                    <div className="message-bubble">{msg.text}</div>
-                                )}
+                                <div className="message-wrapper" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: msg.sender === 'user' ? 'flex-end' : 'flex-start' }}>
+                                    {msg.sender === 'bot' ? (
+                                        <div
+                                            className="message-bubble"
+                                            dangerouslySetInnerHTML={{ __html: formatMessage(msg.text) }}
+                                        />
+                                    ) : (
+                                        <div className="message-bubble">{msg.text}</div>
+                                    )}
+
+                                    {/* Action Buttons for Bot Messages */}
+                                    {msg.sender === 'bot' && msg.actions && msg.actions.length > 0 && (
+                                        <div className="bot-actions" style={{
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
+                                            gap: '8px',
+                                            marginTop: '8px',
+                                            paddingLeft: '4px'
+                                        }}>
+                                            {msg.actions.map((action, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    className="action-link-btn"
+                                                    onClick={() => handleActionClick(action)}
+                                                    style={{
+                                                        backgroundColor: '#16a34a',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '12px',
+                                                        padding: '6px 12px',
+                                                        fontSize: '11px',
+                                                        fontWeight: '600',
+                                                        cursor: 'pointer',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                                        transition: 'transform 0.2s'
+                                                    }}
+                                                    onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
+                                                    onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
+                                                >
+                                                    {action} →
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
 
@@ -195,7 +319,7 @@ export default function Chatbot() {
                         <input
                             type="text"
                             className="chatbot-input"
-                            placeholder="Type your message..."
+                            placeholder="Type a message..."
                             value={inputText}
                             onChange={(e) => setInputText(e.target.value)}
                             onKeyPress={handleKeyPress}

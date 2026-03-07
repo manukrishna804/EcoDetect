@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './snake_emergency.css';
 import biteImage from '../assets/snake_emergency/bite.png';
 import AntivenomMap from '../components/AntivenomMap';
 import { hospitals } from '../data/hospitals';
 
 const SnakeEmergency = () => {
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('firstaid');
+
+  // Load state from navigation if available
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+    }
+    if (location.state?.openSOS) {
+      setShowSOSModal(true);
+    }
+  }, [location.state]);
 
   // --- Geolocation & Hospital Data State ---
   const [userLocation, setUserLocation] = useState(null);

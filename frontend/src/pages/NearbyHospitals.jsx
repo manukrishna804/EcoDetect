@@ -155,10 +155,11 @@ export default function NearbyHospitals() {
                     const lat2 = el.lat ?? el.center?.lat;
                     const lon2 = el.lon ?? el.center?.lon;
                     if (!lat2 || !lon2) return null;
+                    if (!el.tags?.name) return null;
                     return {
                         id: `osm-${el.id}`,
-                        name: el.tags?.name || 'Unnamed Facility',
-                        amenity: el.tags?.amenity, // 'hospital' | 'clinic'
+                        name: el.tags.name,
+                        amenity: el.tags?.amenity,
                         phone: el.tags?.phone || el.tags?.['contact:phone'] || null,
                         latitude: lat2,
                         longitude: lon2,
@@ -167,15 +168,30 @@ export default function NearbyHospitals() {
                 })
                 .filter(Boolean);
 
-            // Dedup: remove OSM entries within 100 m of a verified hospital
-            const filtered = parsed.filter((osm) => {
+            // 1. Dedup OSM against Verified (Existing)
+            let filtered = parsed.filter((osm) => {
                 return !verifiedHospitals.some(
                     (v) => haversine(v.latitude, v.longitude, osm.latitude, osm.longitude) < DEDUP_THRESHOLD_KM
                 );
             });
 
-            setOsmMarkers(filtered);
-        } catch {
+            // 2. Internal OSM Dedup (handle Same Hospital in Node and Way)
+            // If name is same and distance < 200m, keep only one
+            const INTERNAL_DEDUP_KM = 0.2;
+            const finalDeduped = [];
+            filtered.forEach(item => {
+                const isDuplicate = finalDeduped.some(existing =>
+                    existing.name.toLowerCase() === item.name.toLowerCase() &&
+                    haversine(existing.latitude, existing.longitude, item.latitude, item.longitude) < INTERNAL_DEDUP_KM
+                );
+                if (!isDuplicate) {
+                    finalDeduped.push(item);
+                }
+            });
+
+            setOsmMarkers(finalDeduped);
+        } catch (error) {
+            console.error("OSM Fetch Error:", error);
             setOsmError(true);
         } finally {
             setOsmLoading(false);

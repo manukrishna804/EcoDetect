@@ -2,8 +2,8 @@ Flask
 flask-cors
 ultralytics
 Pillow
-google-genai
 python-dotenv
 firebase-admin
 gunicorn
 requests
+groq
