@@ -30,7 +30,7 @@ function AppContent() {
   const location = useLocation();
 
   // Hide chatbot and bottom navbar on these routes
-  const hideChatbotRoutes = ['/', '/login', '/signup'];
+  const hideChatbotRoutes = ['/', '/login', '/signup', '/detect'];
   const shouldShowChatbot = !hideChatbotRoutes.includes(location.pathname);
 
   return (
