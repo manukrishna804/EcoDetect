@@ -1,6 +1,6 @@
 {
     "species": {
-        "ades": {
+        "Aedes aegypti": {
             "scientific_name": "Aedes aegypti",
             "category": "mosquito",
             "venomous": false,
@@ -29,7 +29,7 @@
             "hotspot_risk": true,
             "ai_note": "Disease-carrying mosquito. Avoid stagnant water."
         },
-        "culex": {
+        "Culex": {
             "scientific_name": "Culex mosquito",
             "category": "mosquito",
             "venomous": false,
@@ -57,7 +57,7 @@
             "hotspot_risk": true,
             "ai_note": "Common night-biting mosquito."
         },
-        "Bubble Frog": {
+        "Banded bullfrog": {
             "scientific_name": "Uperodon globulosus",
             "category": "frog",
             "venomous": false,
@@ -339,7 +339,7 @@
             "hotspot_risk": false,
             "ai_note": "Calm, non-toxic tree frog."
         },
-        "check_keel-back": {
+        "Checkered keelback": {
             "scientific_name": "Xenochrophis piscator",
             "category": "snake",
             "venomous": false,
@@ -366,7 +366,7 @@
             "hotspot_risk": true,
             "ai_note": "Often confused with venomous snakes."
         },
-        "indian_python": {
+        "Indian python": {
             "scientific_name": "Python molurus",
             "category": "snake",
             "venomous": false,
@@ -472,7 +472,7 @@
             "hotspot_risk": true,
             "ai_note": "Highly venomous apex predator."
         },
-        "Russels_viper": {
+        "Russell-s viper": {
             "scientific_name": "Daboia russelii",
             "category": "snake",
             "venomous": true,
@@ -500,7 +500,7 @@
             "hotspot_risk": true,
             "ai_note": "One of the deadliest snakes in India."
         },
-        "common-kraits": {
+        "Common krait": {
             "scientific_name": "Bungarus caeruleus",
             "category": "snake",
             "venomous": true,
@@ -527,7 +527,7 @@
             "hotspot_risk": true,
             "ai_note": "Bites often occur at night."
         },
-        "indian_cobra": {
+        "Indian Cobra": {
             "scientific_name": "Naja naja",
             "category": "snake",
             "venomous": true,

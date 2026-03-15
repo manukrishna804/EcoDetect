@@ -11,14 +11,14 @@ function formatMessage(text) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         // Bold: **text**
-        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        // Bullet lines starting with * or •
-        .replace(/^[\*•]\s+(.+)$/gm, '<li>$1</li>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Bullet lines starting with *, -, •, or numbers (1., 2.)
+        .replace(/^(\d+\.|[\*\-•])\s+(.+)$/gm, '<li>$2</li>')
         // Newlines to <br>
         .replace(/\n/g, '<br/>');
     // Wrap consecutive <li> items in a <ul>
     html = html.replace(/(<li>.*?<\/li>)(<br\/>)*/g, '$1');
-    html = html.replace(/(<li>[\s\S]*?<\/li>)+/g, (match) => `<ul>${match}</ul>`);
+    html = html.replace(/(<li>[\s\S]*?<\/li>)+/g, (match) => `<ul style="margin: 4px 0; padding-left: 20px;">${match}</ul>`);
     return html;
 }
 
@@ -48,6 +48,14 @@ export default function Chatbot() {
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
+
+    // Auto-scroll when chat window is opened
+    useEffect(() => {
+        if (isOpen) {
+            // Small timeout to allow the window DOM to render before scrolling
+            setTimeout(scrollToBottom, 50);
+        }
+    }, [isOpen]);
 
     // Fetch location context
     useEffect(() => {
@@ -112,6 +120,7 @@ export default function Chatbot() {
                 setIsOpen(false);
                 break;
             case "OPEN_HOSPITAL_MAP":
+            case "Find Hospitals":
             case "Find Nearby Hospitals":
             case "Nearest Hospitals":
                 navigate('/hospitals');

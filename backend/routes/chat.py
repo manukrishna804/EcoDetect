@@ -80,29 +80,67 @@ LOCAL_RESPONSES = {
 }
 
 # --- SYSTEM PROMPT FOR GROQ ---
-SYSTEM_PROMPT = """You are a snake safety assistant inside a wildlife emergency app.
+SYSTEM_PROMPT = """You are a wildlife safety assistant for the EcoDetect app.
 
-Your responsibilities:
-- Explain snake behavior and wildlife safety
-- Provide snake bite first aid instructions
-- Guide users to nearby hospitals only when medical help is required
-- Suggest using the snake detection feature when identification is requested
+APP FEATURE RULE
+If a user's problem can be solved using an app feature, guide them to that feature instead of explaining everything.
+Examples:
+- Snake identification → suggest the AI camera detection feature
+- Snake bite → suggest the First Aid Guide
+- Medical help → suggest Hospital Map or SOS call
 
-Rules:
-- Only mention hospitals if the user asks about a snake bite, injury, or medical help.
-- Do not mention hospitals for general educational questions about snakes.
-- Keep responses concise and relevant.
-- You MUST return a VALID JSON object with:
-   {"message": "string", "action": "ACTION_NAME", "suggestedActions": ["Human Readable Label"]}
+MEDICAL SAFETY RULE
+Only provide basic first aid steps that are widely accepted.
+Do not invent medical treatments.
+Always recommend professional medical help for bites or severe symptoms.
+
+LOCATION RULE
+Location context may be included.
+Only reference location or nearby hospitals when the user asks about bites, injuries, treatment, or emergencies.
+Do NOT mention hospitals for educational wildlife questions.
+
+COMMUNICATION STYLE
+Responses must be calm, educational, and practical.
+Avoid fear-based language.
+
+FORMATTING RULE
+Make answers scannable:
+- You MUST use literal markdown bullet points (`- `, `* `, or `1. `) for lists and steps. Do not just separate sentences with newlines.
+- Use **bold text** for key safety warnings
+- Keep responses concise
+
+UNCERTAINTY RULE
+If you are unsure about a wildlife fact, say so instead of guessing.
+
+EDUCATION RULE
+When answering wildlife questions, include a short safety or conservation tip if relevant.
+
+LENGTH RULE
+Keep responses under 80 words unless giving first aid instructions.
+
+ACTION SELECTION RULE
+Use actions only when they help the user take the next step.
+Examples:
+Snake bite → OPEN_FIRST_AID
+Snake nearby → OPEN_PRECAUTIONS
+Medical help → OPEN_HOSPITAL_MAP
+Snake identification → OPEN_CAMERA_DETECTION
+
+EMERGENCY ESCALATION RULE
+If a user reports a snake bite, dangerous encounter, or severe symptoms:
+1. Provide immediate safety instructions
+2. Suggest emergency numbers (112 or 1800 425 4733, NEVER 911)
+3. Suggest nearby hospitals
+
+You MUST return a VALID JSON object in the format:
+{
+  "message": "string",
+  "action": "ACTION_NAME",
+  "suggestedActions": ["Human Readable Label"]
+}
 
 Valid ACTIONS: OPEN_FIRST_AID, OPEN_PRECAUTIONS, OPEN_HOSPITAL_MAP, OPEN_CAMERA_DETECTION, CALL_EMERGENCY, NONE.
 Valid LABELS for suggestedActions: "First Aid Guide", "Find Hospitals", "Call SOS", "Scan Snake", "View Precautions".
-
-CRITICAL RULES:
-1. DO NOT invent labels. Use ONLY the valid labels above.
-2. For purely educational or conversational questions (e.g. "Do snakes fly?", "Are snakes gods?"), suggestedActions MUST be empty: [].
-3. Only use suggestedActions if they are HIGHLY relevant to the user's safety or the app's features.
-Example: {"message": "...", "action": "NONE", "suggestedActions": []}
 """
 
 def calculate_distance(lat1, lon1, lat2, lon2):
@@ -120,9 +158,9 @@ def route_intent(message):
     
     if re.search(r"\b(help|emergency|urgent|sos|call|ambulance|police|fire)\b", msg):
         return "EMERGENCY"
-    if re.search(r"\b(hospital|doctor|clinic|treatment|antivenom|medical|nearest)\b", msg):
+    if re.search(r"\b(hospital|doctor|clinic|treatment|antivenom|medical|nearest)\b", msg) and not re.search(r"\b(why|how|what|is made|where does|is it)\b", msg):
         return "HOSPITAL"
-    if re.search(r"\b(bite|bitten|biting|venom|poison|suck|tourniquet)\b", msg):
+    if re.search(r"\b(bite|bit|bitten|biting|venom|poison|suck|tourniquet)\b", msg) and not re.search(r"\b(why|how do|what makes|do they|can they)\b", msg):
         return "FIRST_AID"
     if re.search(r"\b(identify|what snake|which snake|kind of snake|detection|camera|scan)\b", msg):
         return "SNAKE_IDENTIFICATION"
@@ -131,8 +169,8 @@ def route_intent(message):
     
     # Check Wildlife KB keywords
     for key in WILDLIFE_KB:
-        pattern = key.replace('_', ' ')
-        if re.search(r'\b' + re.escape(pattern) + r'\b', msg):
+        keywords = key.split('_')
+        if all(kw.lower() in msg for kw in keywords):
             return "WILDLIFE_EDUCATION"
             
     return "GENERAL_AI"
@@ -150,13 +188,16 @@ def chat():
         if not user_message:
             return jsonify({'error': 'Message is required'}), 400
 
+        # Normalization
+        normalized_msg = re.sub(r'[^\w\s]', '', user_message.lower()).strip()
+
         # 1. CACHE CHECK
-        cache_key = f"{user_message.lower()}_{user_location}"
+        cache_key = f"{normalized_msg}_{user_location}"
         if cache_key in CHAT_CACHE:
             return jsonify(CHAT_CACHE[cache_key]), 200
 
         # 2. INTENT ROUTING
-        intent = route_intent(user_message)
+        intent = route_intent(normalized_msg)
         
         # 3. LOCAL RESPONSES
         if intent in LOCAL_RESPONSES:
@@ -175,9 +216,10 @@ def chat():
             return jsonify(resp), 200
 
         # 4. WILDLIFE KB CHECK
-        if intent == "WILDLIFE_EDUCATION":
+        if intent == "WILDLIFE_EDUCATION" or intent == "GENERAL_AI":
             for key, val in WILDLIFE_KB.items():
-                if key.replace('_', ' ') in user_message.lower():
+                keywords = key.split('_')
+                if all(kw.lower() in normalized_msg for kw in keywords):
                     resp = {
                         "message": val,
                         "action": "NONE",
@@ -190,7 +232,7 @@ def chat():
         groq_api_key = os.getenv('GROQ_API_KEY')
         if not groq_api_key:
             return jsonify({
-                "message": "I can help with snake safety. Try asking about first aid or nearby hospitals.",
+                "message": "I can help with wildlife and insect safety. Try asking about first aid or nearby hospitals.",
                 "action": "NONE",
                 "suggestedActions": ["First Aid Guide"]
             }), 200
