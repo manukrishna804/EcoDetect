@@ -82,7 +82,7 @@
             "hotspot_risk": false,
             "ai_note": "Harmless burrowing frog."
         },
-        "Cane Toad": {
+        "Cane toad": {
             "scientific_name": "Rhinella marina",
             "category": "frog",
             "venomous": true,
@@ -159,7 +159,7 @@
             "hotspot_risk": false,
             "ai_note": "Harmless amphibian."
         },
-        "Common Tree Frog": {
+        "Common tree frog": {
             "scientific_name": "Polypedates maculatus",
             "category": "frog",
             "venomous": false,
@@ -393,7 +393,7 @@
             "hotspot_risk": true,
             "ai_note": "Large constrictor snake."
         },
-        "ratsnakes": {
+        "Rat snake": {
             "scientific_name": "Ptyas mucosa",
             "category": "snake",
             "venomous": false,
@@ -420,7 +420,7 @@
             "hotspot_risk": true,
             "ai_note": "Commonly mistaken for cobras."
         },
-        "sandboa": {
+        "Sand boa": {
             "scientific_name": "Eryx johnii",
             "category": "snake",
             "venomous": false,
@@ -527,7 +527,7 @@
             "hotspot_risk": true,
             "ai_note": "Bites often occur at night."
         },
-        "Indian Cobra": {
+        "Indian cobra": {
             "scientific_name": "Naja naja",
             "category": "snake",
             "venomous": true,
@@ -554,7 +554,7 @@
             "hotspot_risk": true,
             "ai_note": "Highly venomous snake common in India."
         },
-        "pit_viper": {
+        "Pit viper": {
             "scientific_name": "Trimeresurus species",
             "category": "snake",
             "venomous": true,
