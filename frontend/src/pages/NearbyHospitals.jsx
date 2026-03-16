@@ -113,6 +113,7 @@ export default function NearbyHospitals() {
     const [activeRoute, setActiveRoute] = useState(null);   // [[lat,lng], ...]
     const [routeLoading, setRouteLoading] = useState(false);
     const [routeInfo, setRouteInfo] = useState(null);       // { name, distKm, durationMin }
+    const [showMapPopup, setShowMapPopup] = useState(false);
 
     const [filters, setFilters] = useState({
         antivenom: true,
@@ -266,7 +267,10 @@ export default function NearbyHospitals() {
                     name: destName,
                     distKm: (route.distance / 1000).toFixed(1),
                     durationMin: Math.round(route.duration / 60),
+                    lat: destLat,
+                    lng: destLng
                 });
+                setShowMapPopup(true);
             }
         } catch {
             alert('Could not fetch route. Please check your connection.');
@@ -275,14 +279,14 @@ export default function NearbyHospitals() {
         }
     }, [userLocation]);
 
-    const clearRoute = () => { setActiveRoute(null); setRouteInfo(null); };
+    const clearRoute = () => { setActiveRoute(null); setRouteInfo(null); setShowMapPopup(false); };
 
     // ── Helpers ───────────────────────────────────────────────────────────────────
-    const openMaps = (lat, lng) => {
+    const openGoogleMaps = (lat, lng) => {
         const from = userLocation ? `${userLocation.lat},${userLocation.lng}` : '';
         const url = from
-            ? `https://www.openstreetmap.org/directions?from=${from}&to=${lat},${lng}`
-            : `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}`;
+            ? `https://www.google.com/maps/dir/?api=1&origin=${from}&destination=${lat},${lng}&travelmode=driving`
+            : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
         window.open(url, '_blank');
     };
 
@@ -496,6 +500,25 @@ export default function NearbyHospitals() {
                     {activeRoute && <MapFitBounds coords={activeRoute} />}
                 </MapContainer>
             </div>
+
+            {/* ── GOOGLE MAPS POPUP ── */}
+            {showMapPopup && routeInfo && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3 className={styles.modalTitle}>Open in Google Maps?</h3>
+                        <p className={styles.modalText}>
+                            Would you like to open Google Maps for driving directions to <strong>{routeInfo.name}</strong>?
+                        </p>
+                        <div className={styles.modalActions}>
+                            <button className={styles.modalCancel} onClick={() => setShowMapPopup(false)}>Cancel</button>
+                            <button className={styles.modalOk} onClick={() => {
+                                setShowMapPopup(false);
+                                openGoogleMaps(routeInfo.lat, routeInfo.lng);
+                            }}>OK</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ── ROUTE LOADING ── */}
             {routeLoading && (
