@@ -12,6 +12,8 @@ function formatMessage(text) {
         .replace(/>/g, '&gt;')
         // Bold: **text**
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Italic: *text*
+        .replace(/\*([^\*]+)\*/g, '<em>$1</em>')
         // Bullet lines starting with *, -, •, or numbers (1., 2.)
         .replace(/^(\d+\.|[\*\-•])\s+(.+)$/gm, '<li>$2</li>')
         // Newlines to <br>
@@ -110,6 +112,7 @@ export default function Chatbot() {
             case "OPEN_CAMERA_DETECTION":
             case "Scan with Camera":
             case "Scan Snake with Camera":
+            case "Scan Snake":
                 navigate('/detect');
                 setIsOpen(false);
                 break;
@@ -139,7 +142,8 @@ export default function Chatbot() {
                 setIsOpen(false);
                 break;
             default:
-                console.warn('Unknown action:', action);
+                // If it's not a predefined app routing action, treat it as a conversational option
+                handleSendMessage(action);
                 break;
         }
     };

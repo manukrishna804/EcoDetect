@@ -14,6 +14,8 @@ import math
 from groq import Groq
 from dotenv import load_dotenv
 
+from data.snake_db import SNAKE_DB
+
 # Load environment variables
 load_dotenv()
 
@@ -22,24 +24,27 @@ chat_bp = Blueprint('chat', __name__)
 # --- IN-MEMORY CACHE ---
 CHAT_CACHE = {}
 
-# --- HOSPITAL DATA (Simplified for Backend logic) ---
-# Extracted from hospitals.js
-HOSPITALS = [
-    {"name": "Government Medical College, Thiruvananthapuram", "lat": 8.5234, "lon": 76.9284, "district": "Thiruvananthapuram"},
-    {"name": "District Hospital, Kollam", "lat": 8.8872, "lon": 76.5891, "district": "Kollam"},
-    {"name": "General Hospital, Pathanamthitta", "lat": 9.2648, "lon": 76.7870, "district": "Pathanamthitta"},
-    {"name": "Government Medical College, Alappuzha", "lat": 9.4292, "lon": 76.3533, "district": "Alappuzha"},
-    {"name": "Government Medical College, Kottayam", "lat": 9.6264, "lon": 76.5244, "district": "Kottayam"},
-    {"name": "District Hospital, Painavu", "lat": 9.8492, "lon": 76.9452, "district": "Idukki"},
-    {"name": "Government Medical College, Kochi", "lat": 10.0543, "lon": 76.3524, "district": "Ernakulam"},
-    {"name": "Government Medical College, Thrissur", "lat": 10.6124, "lon": 76.2081, "district": "Thrissur"},
-    {"name": "Government District Hospital, Palakkad", "lat": 10.7781, "lon": 76.6512, "district": "Palakkad"},
-    {"name": "Manjeri Medical College", "lat": 11.1214, "lon": 76.1212, "district": "Malappuram"},
-    {"name": "District Hospital, Mananthavady", "lat": 11.8012, "lon": 76.0052, "district": "Wayanad"},
-    {"name": "Government Medical College, Kozhikode", "lat": 11.2724, "lon": 75.8361, "district": "Kozhikode"},
-    {"name": "Government Medical College, Pariyaram", "lat": 12.0652, "lon": 75.2952, "district": "Kannur"},
-    {"name": "General Hospital, Kasaragod", "lat": 12.5052, "lon": 74.9912, "district": "Kasaragod"}
-]
+# --- HOSPITAL DATA (Loaded from Frontend) ---
+HOSPITALS = []
+try:
+    hospitals_path = os.path.join(os.path.dirname(__file__), '../../frontend/src/data/hospitals.js')
+    with open(hospitals_path, 'r', encoding='utf-8') as f:
+        js_content = f.read()
+        
+    # Extract hospital attributes from JS array
+    pattern = r'name:\s*"([^"]+)",\s*district:\s*"([^"]+)",\s*latitude:\s*([\d\.]+),\s*longitude:\s*([\d\.]+)'
+    for match in re.finditer(pattern, js_content):
+        HOSPITALS.append({
+            "name": match.group(1),
+            "district": match.group(2),
+            "lat": float(match.group(3)),
+            "lon": float(match.group(4))
+        })
+except Exception as e:
+    print(f"Warning: Failed to load hospitals from frontend data: {e}")
+
+
+SNAKE_SESSIONS = {}
 
 # --- LOCAL WILDLIFE KNOWLEDGE BASE ---
 WILDLIFE_KB = {
@@ -152,10 +157,139 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return R * c
 
+def get_snake_id_question(step):
+    questions = {
+        1: {
+            "text": "Let's try to identify it. **Question 1:** What primary color was the snake?",
+            "options": ["black", "brown", "green", "yellow", "grey", "blue", "olive", "bronze", "not sure"]
+        },
+        2: {
+            "text": "**Question 2:** Did it have any patterns?",
+            "options": ["bands", "spots", "stripes", "plain", "checkered", "zigzag", "spectacle", "monocle", "not sure"]
+        },
+        3: {
+            "text": "**Question 3:** Did the snake spread a hood like a cobra?",
+            "options": ["yes", "no", "not sure"]
+        },
+        4: {
+            "text": "**Question 4:** Approximately how long was it?\n- **small** (<1 ft)\n- **medium** (1-3 ft)\n- **large** (>3 ft)\n- **not sure**",
+            "options": ["small", "medium", "large", "not sure"]
+        },
+        5: {
+            "text": "**Question 5:** Where did you see it?",
+            "options": ["house", "field", "forest", "water", "trees", "garden", "village", "dry", "pond", "not sure"]
+        },
+        6: {
+            "text": "**Question 6:** Was it during the day or night?",
+            "options": ["day", "night", "not sure"]
+        }
+    }
+    return questions.get(step)
+
+def handle_snake_id_session(user_id, msg):
+    session = SNAKE_SESSIONS.get(user_id)
+    if not session:
+        return None
+        
+    step = session["step"]
+    
+    if any(word in msg for word in ["cancel", "stop", "exit", "quit"]):
+        del SNAKE_SESSIONS[user_id]
+        return {
+            "message": "Snake identification cancelled. How else can I help you?",
+            "action": "NONE",
+            "suggestedActions": []
+        }
+        
+    q_data = get_snake_id_question(step)
+    found_option = next((opt for opt in q_data["options"] if opt in msg), "not sure")
+        
+    session["answers"][step] = found_option
+    session["step"] += 1
+    
+    next_q = get_snake_id_question(session["step"])
+    
+    if next_q:
+        return {
+            "message": next_q["text"],
+            "action": "NONE",
+            "suggestedActions": next_q["options"]
+        }
+    else:
+        ans = session["answers"]
+        
+        # 1. Decision Filters (Pre-scoring elimination)
+        candidates = []
+        for snake in SNAKE_DB:
+            # If user affirmatively saw a hood but snake doesn't have one, eliminate
+            if ans[3] == "yes" and snake["hood"] == "no":
+                continue
+            # If user affirmatively saw NO hood but snake has one, eliminate
+            if ans[3] == "no" and snake["hood"] == "yes":
+                continue
+            candidates.append(snake)
+            
+        # 2. Weighted Scoring (Max 14 points)
+        # Hood: +5, Pattern: +3, Color: +2, Habitat: +2, Size: +1, Time: +1
+        MAX_SCORE = 14
+        matches = []
+        
+        for snake in candidates:
+            score = 0
+            if ans[3] != "not sure" and ans[3] == snake["hood"]:
+                score += 5
+            if ans[2] != "not sure" and ans[2] in snake["pattern"]:
+                score += 3
+            if ans[1] != "not sure" and ans[1] in snake["colors"]:
+                score += 2
+            if ans[5] != "not sure" and ans[5] in snake["habitats"]:
+                score += 2
+            if ans[4] != "not sure" and ans[4] in snake["size"]:
+                score += 1
+            if ans.get(6, "not sure") != "not sure" and ans.get(6) in snake["active_time"]:
+                score += 1
+                
+            # Scale to a max of 85% rather than 100% since it's just an estimate
+            confidence = round((score / MAX_SCORE) * 85)
+            
+            # Avoid displaying 0% matches for very low scores
+            if confidence < 5:
+                confidence = 5
+                
+            matches.append((confidence, snake))
+            
+        matches.sort(key=lambda x: x[0], reverse=True)
+        top_snakes = matches[:3]
+        
+        del SNAKE_SESSIONS[user_id]
+        
+        resp_msg = "Based on your description, the snake may be:\n\n"
+        has_venomous = False
+        
+        for conf, snake in top_snakes:
+            venom_str = "⚠️ **Venomous**" if snake["venomous"] else "🟢 Non-venomous"
+            if snake["venomous"]: has_venomous = True
+            resp_msg += f"- **{snake['name']}** — {conf}% match ({venom_str})\n"
+            
+        resp_msg += "\n*This identification is only an estimate based on your description. Never approach or handle a snake.*\n"
+        
+        if has_venomous:
+            resp_msg += "\n**⚠️ WARNING: One possible match is venomous. Keep a safe distance and seek help if needed.**\n"
+            
+        resp_msg += "\nUse the AI Camera Detection feature for a safer, more accurate identification."
+        
+        return {
+            "message": resp_msg.strip(),
+            "action": "OPEN_CAMERA_DETECTION",
+            "suggestedActions": ["Scan Snake"]
+        }
+
 def route_intent(message):
     """Refined keyword-based intent router"""
     msg = message.lower()
     
+    if re.search(r"\b(identify.*snake|describe.*snake|saw a snake|what snake|what kind of snake|couldnt take a photo|could not take a photo)\b", msg):
+        return "SNAKE_DESCRIPTION_ID"
     if re.search(r"\b(help|emergency|urgent|sos|call|ambulance|police|fire)\b", msg):
         return "EMERGENCY"
     if re.search(r"\b(hospital|doctor|clinic|treatment|antivenom|medical|nearest)\b", msg) and not re.search(r"\b(why|how|what|is made|where does|is it)\b", msg):
@@ -189,7 +323,14 @@ def chat():
             return jsonify({'error': 'Message is required'}), 400
 
         # Normalization
-        normalized_msg = re.sub(r'[^\w\s]', '', user_message.lower()).strip()
+        normalized_msg = re.sub(r'[^\w\s\']', '', user_message.lower()).strip()
+        user_ip = request.remote_addr or "default_ip"
+
+        # Check Active Snake ID Session BEFORE Intent Routing
+        if user_ip in SNAKE_SESSIONS:
+            session_resp = handle_snake_id_session(user_ip, normalized_msg)
+            if session_resp:
+                return jsonify(session_resp), 200
 
         # 1. CACHE CHECK
         cache_key = f"{normalized_msg}_{user_location}"
@@ -198,6 +339,16 @@ def chat():
 
         # 2. INTENT ROUTING
         intent = route_intent(normalized_msg)
+        
+        # 2.5 Handle new Identification Intent
+        if intent == "SNAKE_DESCRIPTION_ID":
+            SNAKE_SESSIONS[user_ip] = {"step": 1, "answers": {}}
+            first_q = get_snake_id_question(1)
+            return jsonify({
+                "message": first_q["text"],
+                "action": "NONE",
+                "suggestedActions": first_q["options"]
+            }), 200
         
         # 3. LOCAL RESPONSES
         if intent in LOCAL_RESPONSES:
